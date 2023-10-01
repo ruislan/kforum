@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  name     String  @unique
+  password String
+  phone    String?
+  bio      String?
+  avatar   String?
+  gender   String?
+  isLocked Boolean @default(false) @map("is_locked")
+  isAdmin  Boolean @default(false) @map("is_admin")
+
+  lastLoginAt DateTime? @map("last_login_at")
+  lastLoginIp String?   @map("last_login_ip")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model Discussion {
+  id       Int     @id @default(autoincrement())
+  slug     String  @unique
+  title    String // 标题
+  isSticky Boolean @default(false) @map("is_sticky") // 是否置顶
+  isClosed Boolean @default(false) @map("is_closed") // 是否关闭，关闭之后就不能继续回复了
+  isHidden Boolean @default(false) @map("is_hidden") // 是否隐藏，隐藏了无法被找到
+
+  userCount Int @map("user_count") // 参与讨论人数
+  postCount Int @map("post_count") // 帖子数量
+
+  userId           Int      @map("user_id")
+  firstPostId      Int      @map("first_post_id")
+  lastPostId       Int      @map("last_post_id")
+  lastPostedAt     DateTime @map("last_posted_at")
+  lastPostedUserId Int      @map("last_posted_user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([isSticky])
+}
+
+model Post {
+  id      Int     @id @default(autoincrement())
+  content String
+  type    String // 类型，有可能有投票之类的
+  ip      String? // 发布人的 IP 地址
+
+  discussionId Int @map("discussion_id")
+  userId       Int @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model Reaction {
+  id   Int    @id @default(autoincrement())
+  name String
+  icon String
+
+  createdAt DateTime @default(now()) @map("created_at")
+}
+
+model Tag {
+  name        String  @id
+  icon        String?
+  color       String?
+  description String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+// WebSite Menu
+model WebNavbarMenus {
+  name     String  @id
+  url      String  @default("#")
+  isOpen   Boolean @default(false) @map("is_open") // open in another tab, taget="_blank"
+  sequence Int     @default(0)
+}
