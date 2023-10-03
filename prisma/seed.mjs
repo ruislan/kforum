@@ -26,7 +26,13 @@ async function initBase() {
         await db.webNavMenus.upsert({ where: { name: item.name }, create: item, update: item });
     }
 
-    // init tags
+    // init categories
+    const categories = [
+        { id: 1, slug: 'general', name: '综合' }
+    ];
+    for (const item of categories) {
+        await db.category.upsert({ where: { id: item.id }, create: item, update: item });
+    }
 }
 
 // 用于测试

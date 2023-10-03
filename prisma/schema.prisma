@@ -70,18 +70,20 @@ model Reaction {
   createdAt DateTime @default(now()) @map("created_at")
 }
 
-model Tag {
-  name        String  @id
+model Category {
+  id          Int      @id @default(autoincrement())
+  slug        String
+  name        String
   icon        String?
   color       String?
   description String?
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  parentId    Int? // parent
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 }
 
 // WebSite Menu
-model WebNavbarMenus {
+model WebNavMenus {
   name     String  @id
   url      String  @default("#")
   isOpen   Boolean @default(false) @map("is_open") // open in another tab, taget="_blank"
