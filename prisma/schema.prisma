@@ -50,10 +50,11 @@ model Discussion {
 }
 
 model Post {
-  id      Int     @id @default(autoincrement())
-  content String
-  type    String // 类型，有可能有投票之类的
-  ip      String? // 发布人的 IP 地址
+  id          Int     @id @default(autoincrement())
+  content     String
+  type        String // 类型，有可能有投票之类的
+  ip          String? // 发布人的 IP 地址
+  replyPostId Int? // 回复哪一贴
 
   discussionId Int @map("discussion_id")
   userId       Int @map("user_id")
@@ -74,12 +75,19 @@ model Category {
   id          Int      @id @default(autoincrement())
   slug        String
   name        String
+  sequence    Int      @default(0)
   icon        String?
   color       String?
   description String?
   parentId    Int? // parent
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
+}
+
+// each discussion has no more than 5 tags
+model Tag {
+  name      String   @id
+  createdAt DateTime @default(now()) @map("created_at")
 }
 
 // WebSite Menu

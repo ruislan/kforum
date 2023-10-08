@@ -8,7 +8,7 @@ async function getMenus() {
 export default async function Header() {
     const menus = await getMenus();
     return (
-        <header className='h-14 w-full fixed bg-neutral-900 border-solid border-b border-neutral-800'>
+        <header className='h-14 w-full fixed bg-neutral-800/50 border-solid border-b border-neutral-700'>
             <nav className='flex items-center h-full w-full max-w-6xl m-auto '>
                 <a href='/' className='font-bold text-lg mr-6 flex items-center'>
                     <span>K</span>
