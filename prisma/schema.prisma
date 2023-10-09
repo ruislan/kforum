@@ -24,11 +24,13 @@ model User {
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+
+  // ref
+  discussions Discussion[]
 }
 
 model Discussion {
   id       Int     @id @default(autoincrement())
-  slug     String  @unique
   title    String // 标题
   isSticky Boolean @default(false) @map("is_sticky") // 是否置顶
   isClosed Boolean @default(false) @map("is_closed") // 是否关闭，关闭之后就不能继续回复了
@@ -37,14 +39,19 @@ model Discussion {
   userCount Int @map("user_count") // 参与讨论人数
   postCount Int @map("post_count") // 帖子数量
 
-  userId           Int      @map("user_id")
-  firstPostId      Int      @map("first_post_id")
-  lastPostId       Int      @map("last_post_id")
-  lastPostedAt     DateTime @map("last_posted_at")
-  lastPostedUserId Int      @map("last_posted_user_id")
+  userId           Int       @map("user_id")
+  firstPostId      Int?      @map("first_post_id")
+  lastPostId       Int?      @map("last_post_id")
+  lastPostedAt     DateTime? @map("last_posted_at")
+  lastPostedUserId Int?      @map("last_posted_user_id")
+  categoryId       Int       @map("category_id")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+
+  // ref
+  category Category @relation(fields: [categoryId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
 
   @@index([isSticky])
 }
@@ -73,8 +80,8 @@ model Reaction {
 
 model Category {
   id          Int      @id @default(autoincrement())
-  slug        String
-  name        String
+  slug        String   @unique
+  name        String   @unique
   sequence    Int      @default(0)
   icon        String?
   color       String?
@@ -82,6 +89,9 @@ model Category {
   parentId    Int? // parent
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // ref
+  discussions Discussion[]
 }
 
 // each discussion has no more than 5 tags

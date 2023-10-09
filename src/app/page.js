@@ -1,4 +1,5 @@
 import CategoryList from '@/components/category-list';
+import DiscussionList from '@/components/discussion-list';
 import UserActions from '@/components/user-actions';
 
 export default function Home() {
@@ -16,6 +17,7 @@ export default function Home() {
               4) ...
            */}
       <div className='flex flex-col flex-1'>
+        <DiscussionList />
       </div>
       {/* right side */}
       <div className='flex flex-col w-80 gap-4'>

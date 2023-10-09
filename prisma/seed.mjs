@@ -28,7 +28,7 @@ async function initBase() {
 
     // init categories
     const categories = [
-        { id: 1, slug: 'general', name: '综合' }
+        { id: 1, slug: 'general', name: '综合', description: '综合讨论，不限制类别和话题，什么都可以说' }
     ];
     for (const item of categories) {
         await db.category.upsert({ where: { id: item.id }, create: item, update: item });
