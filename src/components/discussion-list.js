@@ -23,7 +23,7 @@ export default async function DiscussionList({ category = null }) {
     const discussions = await getDiscussions({ categorySlug: category, skip: 0, limit: 10 });
     return (
         <div className='flex flex-col gap-3'>
-            {discussions.map((d, i) => <DiscussionItem key={i} d={d} />)}
+            {discussions.map((d, i) => <DiscussionItem key={i} data={d} />)}
         </div>
     );
 }

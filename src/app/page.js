@@ -4,7 +4,7 @@ import UserActions from '@/components/user-actions';
 
 export default function Home() {
   return (
-    <div className='flex w-full min-h-screen gap-6 mt-6'>
+    <div className='flex w-full min-h-screen gap-6 mt-5'>
       {/* main container:
               1) discussions
                 center: filter[best(?), hot(一段时间内活跃最多), top(置顶), new(最新创建), rising(和hot要有区别，是什么呢？)] / discussion list

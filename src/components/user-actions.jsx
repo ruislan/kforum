@@ -15,7 +15,6 @@ export default function UserActions() {
             }}
             // disabled={canCreateDiscussion}
             >发布新主题</Button>
-            <Button>关注</Button>
         </Box>
     );
 }
