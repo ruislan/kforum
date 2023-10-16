@@ -12,7 +12,9 @@ export default function RootLayout({ children }) {
       <body className='antialiased w-full h-full max-w-full m-0 p-0'>
         <Header />
         <div className='mx-auto max-w-5xl flex md:pt-12 md:pl-0 md:pr-0 pl-4 pr-4'>
-          {children}
+          <div className='flex my-5'>
+            {children}
+          </div>
         </div>
         {/* <Footer /> */}
       </body>

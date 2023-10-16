@@ -1,6 +1,6 @@
 import prisma from '@/lib/prisma';
 import { Blank as BlankIcon } from './icons';
-import Box from './box';
+import Box from './ui/box';
 
 async function getCategory({ slug }) {
     return await prisma.category.findUnique({ where: { slug }});

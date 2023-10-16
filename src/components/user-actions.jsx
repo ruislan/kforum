@@ -1,6 +1,6 @@
 'use client';
-import Box from './box';
-import Button from './button';
+import Box from './ui/box';
+import Button from './ui/button';
 
 export default function UserActions() {
     const canCreateDiscussion = (Math.random() * 10) > 1;

@@ -1,9 +1,9 @@
 'use client';
 import Link from 'next/link';
-import Box from './box';
-import { Blank, Lock, Pin, Post as PostIcon } from './icons';
+import Box from './ui/box';
+import { Blank, Lock, Locked, Pin, Pined, Post as PostIcon } from './icons';
 import SplitBall from './split-ball';
-import Tag from './tag';
+import Tag from './ui/tag';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -30,8 +30,8 @@ export default function DiscussionItem({ data }) {
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                     <span className='text-xs'>{' 1 天前'}</span>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                    <span className='h-4 w-4 mr-0.5'><Lock /></span>
-                    <span className='h-4 w-4 mr-1.5'><Pin /></span>
+                    <span className='h-4 w-4 mr-0.5'><Locked /></span>
+                    <span className='h-4 w-4 mr-1.5'><Pined /></span>
                 </div>
                 <div className='inline-block relative'>
                     <h3 className='inline text-lg font-bold break-words'>fdasfldsafjdsafd;sagjdjgadsjfdks;fjgj geqefsjkdafds a fdsafdjskalfdjsaf ds fdsafdsa fdafs</h3>

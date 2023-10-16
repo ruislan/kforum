@@ -14,15 +14,15 @@ const variants = {
     size: {
         default: {
             default: 'h-10 px-6 py-2',
-            xs: 'h-8 px-2',
-            sm: 'h-9 px-4',
-            lg: 'h-11 px-8',
+            xs: 'h-6 px-2 text-xs',
+            sm: 'h-8 px-4 text-xs',
+            lg: 'h-11 px-8 text-base',
         },
         square: {
             default: 'h-10 w-10 p-6',
-            xs: 'h-6 w-6 p-1',
-            sm: 'h-8 w-8 p-2',
-            lg: 'h-9 w-9 p-4',
+            xs: 'h-6 w-6 p-1 text-xs',
+            sm: 'h-8 w-8 p-2 text-xs',
+            lg: 'h-9 w-9 p-4 text-base',
         }
     },
 };

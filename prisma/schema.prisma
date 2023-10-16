@@ -27,6 +27,7 @@ model User {
 
   // ref
   discussions Discussion[]
+  posts       Post[]
 }
 
 model Discussion {
@@ -68,6 +69,9 @@ model Post {
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+
+  // ref
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Reaction {
