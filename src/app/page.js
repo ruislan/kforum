@@ -16,7 +16,7 @@ export default function Home() {
                 center: summary / activity / badge / notification  (user himself) / settings (user himself)
               4) ...
            */}
-      <div className='flex flex-col flex-1'>
+      <div className='flex flex-col w-[680px]'>
         <DiscussionList />
       </div>
       {/* right side */}

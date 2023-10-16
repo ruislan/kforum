@@ -19,7 +19,7 @@ export default async function Page({ params }) {
   return (
     <div className='flex w-full min-h-screen gap-6'>
       {/* main container */}
-      <div className='flex flex-col flex-1 gap-2'>
+      <div className='flex flex-col w-[680px] gap-2'>
         <DiscussionDetail data={d} />
         {/* d.post?.slice(1)} */}
         <PostList posts={[...d.posts, ...d.posts]} />

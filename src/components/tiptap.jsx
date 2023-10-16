@@ -10,88 +10,94 @@ import Underline from '@tiptap/extension-underline';
 import Button from './ui/button';
 import { Bold, Italic, Underline as UnderlineIcon, Strike, Heading1, Heading2, Heading3, BulletList, OrderedList, BlockQuote, Link as LinkIcon, Image as ImageIcon } from './icons';
 
-function MenuBar({ editor }) {
+function ActionButton({ isActive, ...rest }) {
+  return <Button kind='ghost' shape='square' size='sm' className={isActive ? 'text-neutral-200' : 'text-neutral-500'} {...rest} />;
+}
+
+function MenuBar({ editor, hasReply = false, }) {
   // const [imageURL, setImageURL] = useState('');
   const limit = 500;
   if (!editor) return null;
   return (
     <div className='flex items-center justify-between p-2'>
       <div className='flex items-center gap-1'>
-        <Button kind='ghost' shape='square' size='sm'
+        <ActionButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editor.can().chain().focus().toggleBold().run()}
           isActive={editor.isActive('bold')}>
           <Bold />
-        </Button>
-        <Button kind='ghost' shape='square' size='sm'
+        </ActionButton>
+        <ActionButton
           onClick={() => editor.chain().focus().toggleItalic().run()}
           disabled={!editor.can().chain().focus().toggleItalic().run()}
           isActive={editor.isActive('italic')}>
           <Italic />
-        </Button>
-        <Button kind='ghost' shape='square' size='sm'
+        </ActionButton>
+        <ActionButton
           onClick={() => editor.chain().focus().toggleStrike().run()}
           disabled={!editor.can().chain().focus().toggleStrike().run()}
           isActive={editor.isActive('strike')}>
           <Strike />
-        </Button>
-        <Button kind='ghost' shape='square' size='sm'
+        </ActionButton>
+        <ActionButton
           onClick={() => editor.chain().focus().toggleUnderline().run()}
           disabled={!editor.can().chain().focus().toggleUnderline().run()}
           isActive={editor.isActive('underline')}>
           <UnderlineIcon />
-        </Button>
-        <Button kind='ghost' shape='square' size='sm'
+        </ActionButton>
+        <ActionButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           isActive={editor.isActive('heading', { level: 1 })}>
           <Heading1 />
-        </Button>
-        <Button kind='ghost' shape='square' size='sm'
+        </ActionButton>
+        <ActionButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           isActive={editor.isActive('heading', { level: 2 })}>
           <Heading2 />
-        </Button>
-        <Button kind='ghost' shape='square' size='sm'
+        </ActionButton>
+        <ActionButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           isActive={editor.isActive('heading', { level: 3 })}>
           <Heading3 />
-        </Button>
-        <Button kind='ghost' shape='square' size='sm'
+        </ActionButton>
+        <ActionButton
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           isActive={editor.isActive('bulletList')}>
           <BulletList />
-        </Button>
-        <Button kind='ghost' shape='square' size='sm'
+        </ActionButton>
+        <ActionButton
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           isActive={editor.isActive('orderedList')}>
           <OrderedList />
-        </Button>
-        <Button kind='ghost' shape='square' size='sm'
+        </ActionButton>
+        <ActionButton
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           isActive={editor.isActive('blockquote')}>
           <BlockQuote />
-        </Button>
-        <Button kind='ghost' shape='square' size='sm'
+        </ActionButton>
+        <ActionButton
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           isActive={editor.isActive('blockquote')}>
           <LinkIcon />
-        </Button>
-        <Button kind='ghost' shape='square' size='sm'
+        </ActionButton>
+        <ActionButton
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           isActive={editor.isActive('blockquote')}>
           <ImageIcon />
-        </Button>
+        </ActionButton>
       </div>
-      <div className='flex items-center'>
-        <Button size='sm'>
-          回复
-        </Button>
-      </div>
+      {hasReply &&
+        <div className='flex items-center'>
+          <Button size='sm'>
+            回复
+          </Button>
+        </div>
+      }
     </div>
   );
 }
 
-export default function Tiptap({ content }) {
+export default function Tiptap({ content, kind = 'reply' }) {
   const editor = useEditor({
     extensions: [
       Image, Underline,
@@ -144,7 +150,7 @@ export default function Tiptap({ content }) {
   return (
     <div className='flex flex-col p-0 border border-solid border-neutral-700 rounded-md focus-within:border-neutral-400'>
       <EditorContent editor={editor} />
-      <MenuBar editor={editor} />
+      <MenuBar editor={editor} hasReply={kind === 'reply'} />
     </div>
   );
 };

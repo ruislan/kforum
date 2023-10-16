@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import React from 'react';
 
 
@@ -29,7 +30,7 @@ const variants = {
 
 const Button = React.forwardRef(({ className, kind = 'default', size = 'default', shape = 'default', ...props }, ref) => {
     return (
-        <button ref={ref} className={`${variants.base} ${variants.kind[kind]} ${variants.size[shape][size]} ${className || ''}`} {...props} />
+        <button ref={ref} className={clsx(variants.base, variants.kind[kind], variants.size[shape][size], className || '',)} {...props} />
     );
 });
 Button.displayName = 'Button';
