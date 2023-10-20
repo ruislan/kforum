@@ -13,6 +13,7 @@
     "seed": "node prisma/seed.mjs"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.17",
     "@prisma/client": "^5.4.2",
     "@tiptap/extension-color": "^2.1.12",
     "@tiptap/extension-image": "^2.1.12",

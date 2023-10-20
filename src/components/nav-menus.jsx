@@ -13,7 +13,7 @@ export default function NavMenus({ menus }) {
                 return <Link key={url} href={url}
                     className={clsx(
                         'transition-all hover:text-neutral-50 no-underline',
-                        pathname === url ? 'text-neutral-50' : 'text-neutral-500'
+                        pathname === url ? 'text-neutral-50' : 'text-neutral-400'
                     )}>{name}</Link>
             })}
         </div>

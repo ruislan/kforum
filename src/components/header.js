@@ -1,5 +1,8 @@
 import prisma from '@/lib/prisma';
 import NavMenus from '@/components/nav-menus';
+import SignInDialog from './sign-in-dialog';
+import SignUpDialog from './sign-up-dialog';
+import UserMenus from './user-menus';
 
 async function getMenus() {
     return await prisma.webNavMenus.findMany({ orderBy: { sequence: 'asc' } });
@@ -19,8 +22,11 @@ export default async function Header() {
                     {/* current category/subcategory/subsub/subsubsub... */}
                     {/* search */}
                     {/* user menus */}
-                    <span>注册</span>
-                    <span>登陆</span>
+                    <div className='flex items-center justify-end gap-4'>
+                        <SignUpDialog />
+                        <SignInDialog />
+                        <UserMenus />
+                    </div>
                 </div>
             </nav>
         </header>

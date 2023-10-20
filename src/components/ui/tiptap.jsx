@@ -7,8 +7,8 @@ import Image from '@tiptap/extension-image'
 import ListItem from '@tiptap/extension-list-item';
 import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
-import Button from './ui/button';
-import { Bold, Italic, Underline as UnderlineIcon, Strike, Heading1, Heading2, Heading3, BulletList, OrderedList, BlockQuote, Link as LinkIcon, Image as ImageIcon } from './icons';
+import Button from './button';
+import { Bold, Italic, Underline as UnderlineIcon, Strike, Heading1, Heading2, Heading3, BulletList, OrderedList, BlockQuote, Link as LinkIcon, Image as ImageIcon } from '../icons';
 
 function ActionButton({ isActive, ...rest }) {
   return <Button kind='ghost' shape='square' size='sm' className={isActive ? 'text-neutral-200' : 'text-neutral-500'} {...rest} />;

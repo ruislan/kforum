@@ -2,7 +2,7 @@ import Box from "@/components/ui/box";
 import DiscussionDetail from "@/components/discussion-detail";
 import PostList from "@/components/post-list";
 import SplitBall from "@/components/split-ball";
-import Tiptap from "@/components/tiptap";
+import Tiptap from "@/components/ui/tiptap";
 import UserActions from "@/components/user-actions";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
