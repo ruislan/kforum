@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import React from 'react';
 
 const variants = {
-    base: 'inline-flex whitespace-nowrap items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
+    base: 'inline-flex whitespace-nowrap items-center justify-center font-medium ring-offset-background transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
     kind: {
         default: 'bg-gray-300 text-gray-900 hover:bg-gray-300/90',
         ghost: "hover:bg-neutral-700 hover:text-neutral-300",
@@ -10,20 +10,27 @@ const variants = {
     shape: {
         default: 'default',
         square: 'square',
+        circle: 'circle',
     },
     size: {
         default: {
-            default: 'h-10 px-6 py-2',
-            xs: 'h-6 px-2 text-xs',
-            sm: 'h-8 px-4 text-xs',
-            lg: 'h-11 px-8 text-base',
+            default: 'h-10 px-6 py-2 text-sm rounded-md',
+            xs: 'h-6 px-2 text-xs rounded-md',
+            sm: 'h-8 px-4 text-xs rounded-md',
+            lg: 'h-11 px-8 text-base rounded-md',
         },
         square: {
-            default: 'h-10 w-10 p-6',
-            xs: 'h-6 w-6 p-1 text-xs',
-            sm: 'h-8 w-8 p-2 text-xs',
-            lg: 'h-9 w-9 p-4 text-base',
+            default: 'h-9 w-9 p-3 text-sm rounded-md',
+            xs: 'h-6 w-6 p-1 text-xs rounded-md',
+            sm: 'h-8 w-8 p-2 text-xs rounded-md',
+            lg: 'h-10 w-10 p-4 text-base rounded-md',
         },
+        circle: {
+            default: 'h-9 w-9 p-6 rounded-full',
+            xs: 'h-6 w-6 p-1 text-xs rounded-full',
+            sm: 'h-8 w-8 p-1 text-xs rounded-full',
+            lg: 'h-10 w-10 p-3 text-base rounded-full',
+        }
     },
 };
 

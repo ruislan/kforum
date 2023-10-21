@@ -1,7 +1,14 @@
 import prisma from '@/lib/prisma';
+import rest from '@/lib/rest';
 
 export async function POST(request, { params }) {
-    const { title } = await request.json();
+    const { title, content, category } = await request.json();
+
+    // validate params
+    if (!title) return rest.badRequest({ message: '标题是必填项', field: 'title' });
+    if (!content) return rest.badRequest({ message: '内容是必填项', field: 'content' });
+    if (!category) return rest.badRequest({ message: '分类是必填项', field: 'category' });
+
     const data = await prisma.$transaction(async tx => {
         let discussion = await tx.discussion.create({
             data: {
@@ -10,7 +17,7 @@ export async function POST(request, { params }) {
         });
         const post = await tx.post.create({
             data: {
-                content: 'hello', discussionId: discussion.id, type: 'text',
+                content, discussionId: discussion.id, type: 'text',
                 userId: 1, ip: request.ip,
             }
         });
@@ -21,11 +28,9 @@ export async function POST(request, { params }) {
                 lastPostedAt: new Date(), lastPostedUserId: post.userId,
             }
         });
-        { discussion, post };
+        discussion.posts = [{ ...post }];
+        return discussion;
     });
 
-    return new Response(
-        JSON.stringify({ data }),
-        { status: 200, headers: { 'Content-Type': 'application/json' } }
-    );
+    return rest.ok({ data });
 }

@@ -3,6 +3,7 @@ import NavMenus from '@/components/nav-menus';
 import SignInDialog from './sign-in-dialog';
 import SignUpDialog from './sign-up-dialog';
 import UserMenus from './user-menus';
+import Search from './search';
 
 async function getMenus() {
     return await prisma.webNavMenus.findMany({ orderBy: { sequence: 'asc' } });
@@ -18,11 +19,12 @@ export default async function Header() {
                     <span>Forum</span>
                 </a>
                 <NavMenus menus={menus} />
-                <div className='flex items-center flex-grow justify-end'>
+                <div className='flex items-center flex-grow justify-end gap-4'>
                     {/* current category/subcategory/subsub/subsubsub... */}
                     {/* search */}
+                    <Search />
                     {/* user menus */}
-                    <div className='flex items-center justify-end gap-4'>
+                    <div className='flex items-center gap-4'>
                         <SignUpDialog />
                         <SignInDialog />
                         <UserMenus />

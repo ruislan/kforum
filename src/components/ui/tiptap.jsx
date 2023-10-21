@@ -148,7 +148,7 @@ export default function Tiptap({ content, kind = 'reply' }) {
   })
 
   return (
-    <div className='flex flex-col p-0 border border-solid border-neutral-700 rounded-md focus-within:border-neutral-400'>
+    <div className='flex flex-col p-0 border border-solid border-neutral-700 bg-neutral-800  rounded-md focus-within:border-neutral-400'>
       <EditorContent editor={editor} />
       <MenuBar editor={editor} hasReply={kind === 'reply'} />
     </div>
