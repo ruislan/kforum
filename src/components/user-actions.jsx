@@ -1,20 +1,27 @@
 'use client';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+
 import Box from './ui/box';
 import Button from './ui/button';
-import { useRouter } from 'next/navigation';
 
 export default function UserActions() {
-    const canCreateDiscussion = (Math.random() * 10) > 1;
+    const { data } = useSession();
     const router = useRouter();
+
     return (
         <Box className='flex flex-col gap-3'>
             <Button onClick={async (e) => {
+                if (!data?.user) {
+                    alert('login first');
+                } else {
+                    router.push('/d/create');
+                }
                 // await fetch('/api/discussions', {
                 //     method: 'POST',
                 //     body: JSON.stringify({ title: 'new title' }),
                 //     headers: { 'Content-Type': 'application/json' },
                 // });
-                router.push('/d/create');
             }}
             // disabled={canCreateDiscussion}
             >发布新主题</Button>

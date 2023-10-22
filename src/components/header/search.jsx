@@ -1,5 +1,5 @@
 'use client';
-import { Search as SearchIcon } from './icons';
+import { Search as SearchIcon } from '../icons';
 
 // 点击弹出搜索层，然后进行搜索，不用单独页面
 export default function Search() {

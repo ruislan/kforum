@@ -27,9 +27,9 @@ export default async function Page({ params }) {
   const user = await getUser({ name: params.slug });
   if (!user) return <div>User not found</div>;
   return (
-    <div className='flex w-full min-h-screen gap-6'>
+    <div className='flex w-full h-full gap-6'>
       {/* main container*/}
-      <div className='flex flex-col w-[680px]'>
+      <div className='flex flex-col flex-1 w-max-[680px]'>
         {/* user tabs
             1. overview v1
             2. discussions v1

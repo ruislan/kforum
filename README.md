@@ -3,7 +3,8 @@
 * Framework: NextJS
 * Database: Sqlite
 * ORM: Prisma
-* Styling: NextUI、Tailwind CSS
+* Auth: Next Auth
+* Styling: NextUI、Tailwind CSS、Headless UI
 
 ## Running Locally
 

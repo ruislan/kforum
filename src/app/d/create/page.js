@@ -10,9 +10,9 @@ async function getCategories() {
 export default async function Page({ params }) {
   const categories = await getCategories();
   return (
-    <div className='flex w-full min-h-screen gap-6'>
+    <div className='flex w-full h-full gap-6'>
       {/* main container */}
-      <div className='flex flex-col w-[680px] gap-2'>
+      <div className='flex flex-col flex-1 w-max-[680px] gap-2'>
         <DiscussionCreator categories={categories} />
       </div>
       {/* right side */}

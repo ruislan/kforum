@@ -17,9 +17,9 @@ async function getDiscussion({ id }) {
 export default async function Page({ params }) {
   const d = await getDiscussion({ id: Number(params.id) });
   return (
-    <div className='flex w-full min-h-screen gap-6'>
+    <div className='flex w-full h-full gap-6'>
       {/* main container */}
-      <div className='flex flex-col w-[680px] gap-2'>
+      <div className='flex flex-col flex-1 w-max-[680px] gap-2'>
         <DiscussionDetail data={d} />
         {/* d.post?.slice(1)} */}
         <PostList posts={[...d.posts, ...d.posts]} />
