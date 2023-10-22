@@ -4,6 +4,7 @@
 * Database: Sqlite
 * ORM: Prisma
 * Auth: Next Auth
+* State: Zustand
 * Styling: NextUI、Tailwind CSS、Headless UI
 
 ## Running Locally

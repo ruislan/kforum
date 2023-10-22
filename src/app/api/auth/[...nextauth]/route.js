@@ -1,9 +1,9 @@
-import prisma from '@/lib/prisma';
-import NextAuth from 'next-auth/next';
-import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcrypt';
 
-const errorMessage = 'Incorrect username and password';
+import NextAuth from 'next-auth/next';
+import CredentialsProvider from 'next-auth/providers/credentials';
+
+import prisma from '@/lib/prisma';
 
 const authOptions = {
     providers: [
@@ -15,7 +15,7 @@ const authOptions = {
             },
             async authorize(credentials) {
                 const { username, password } = credentials;
-                if (!username || !password) throw new Error(errorMessage);
+                if (!username || !password) return null;
 
                 const user = await prisma.user.findFirst({
                     where: {
@@ -25,10 +25,10 @@ const authOptions = {
                         ]
                     }
                 });
-                if (!user) throw new Error(errorMessage);
+                if (!user) return null;
 
                 const isPasswordMatched = await bcrypt.compare(password, user.password);
-                if (!isPasswordMatched) throw new Error(errorMessage);
+                if (!isPasswordMatched) return null;
 
                 return { id: user.id, name: user.name, email: user.email, avatar: user.avatar };
             },
@@ -39,8 +39,6 @@ const authOptions = {
     },
     callbacks: {
         async jwt({ token, user }) {
-            console.log('jwt:');
-            console.log(user);
             if (user) {
                 token.id = user.id;
                 token.avatar = user.avatar;
@@ -62,4 +60,4 @@ const authOptions = {
 
 const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST, authOptions };
+export { handler as GET, handler as POST };

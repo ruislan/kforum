@@ -3,6 +3,8 @@ import { getServerSession } from 'next-auth';
 import Header from '@/components/header/header';
 import Providers from '@/components/providers';
 import './globals.css';
+import LoginModal from '@/components/login-modal';
+import RegisterModal from '@/components/register-modal';
 
 export const metadata = {
   title: 'KForum',
@@ -11,7 +13,7 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   const session = await getServerSession();
-  console.log(session);
+
   return (
     <html lang='en' className='dark'>
       <body className='antialiased w-full h-full max-w-full m-0 p-0'>
@@ -23,6 +25,8 @@ export default async function RootLayout({ children }) {
             </div>
           </div>
           {/* <Footer /> */}
+          <LoginModal />
+          <RegisterModal />
         </Providers>
       </body>
     </html>
