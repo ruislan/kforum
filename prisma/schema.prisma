@@ -28,31 +28,34 @@ model User {
   // ref
   discussions Discussion[]
   posts       Post[]
+  reactions   PostReactionRef[]
 }
 
 model Discussion {
-  id       Int     @id @default(autoincrement())
-  title    String // 标题
-  isSticky Boolean @default(false) @map("is_sticky") // 是否置顶
-  isClosed Boolean @default(false) @map("is_closed") // 是否关闭，关闭之后就不能继续回复了
-  isHidden Boolean @default(false) @map("is_hidden") // 是否隐藏，隐藏了无法被找到
+  id            Int     @id @default(autoincrement())
+  title         String // 标题
+  isSticky      Boolean @default(false) @map("is_sticky") // 是否置顶
+  isClosed      Boolean @default(false) @map("is_closed") // 是否关闭，关闭之后就不能继续回复了
+  isHidden      Boolean @default(false) @map("is_hidden") // 是否隐藏，隐藏了无法被找到
+  viewCount     Int     @default(1) @map("view_count") // 浏览统计
+  userCount     Int     @default(1) @map("user_count") // 不重复用户统计
+  shareCount    Int     @default(1) @map("share_count") // 分享链接的统计
+  reactionCount Int     @default(1) @map("reaction_count") // 反馈统计
 
-  userCount Int @map("user_count") // 参与讨论人数
-  postCount Int @map("post_count") // 帖子数量
-
-  userId           Int       @map("user_id")
-  firstPostId      Int?      @map("first_post_id")
-  lastPostId       Int?      @map("last_post_id")
-  lastPostedAt     DateTime? @map("last_posted_at")
-  lastPostedUserId Int?      @map("last_posted_user_id")
-  categoryId       Int       @map("category_id")
+  userId      Int  @map("user_id")
+  firstPostId Int? @unique @map("first_post_id")
+  lastPostId  Int? @unique @map("last_post_id")
+  categoryId  Int  @map("category_id")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // ref
-  category Category @relation(fields: [categoryId], references: [id])
-  user     User     @relation(fields: [userId], references: [id])
+  category  Category @relation(fields: [categoryId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  lastPost  Post?    @relation(name: "last_post", fields: [lastPostId], references: [id])
+  firstPost Post?    @relation(name: "first_post", fields: [firstPostId], references: [id])
+  posts     Post[]   @relation(name: "posts")
 
   @@index([isSticky])
 }
@@ -71,7 +74,11 @@ model Post {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // ref
-  user User @relation(fields: [userId], references: [id])
+  user                User              @relation(fields: [userId], references: [id])
+  discussion          Discussion        @relation(name: "posts", fields: [discussionId], references: [id])
+  firstPostDiscussion Discussion?       @relation(name: "first_post")
+  lastPostDiscussion  Discussion?       @relation(name: "last_post")
+  reactions           PostReactionRef[]
 }
 
 model Reaction {
@@ -80,6 +87,22 @@ model Reaction {
   icon String
 
   createdAt DateTime @default(now()) @map("created_at")
+
+  // ref
+  posts PostReactionRef[]
+}
+
+model PostReactionRef {
+  postId     Int
+  reactionId Int
+  userId     Int
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  post     Post     @relation(fields: [postId], references: [id])
+  reaction Reaction @relation(fields: [reactionId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@id([postId, reactionId, userId])
 }
 
 model Category {

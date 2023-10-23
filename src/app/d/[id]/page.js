@@ -9,9 +9,17 @@ import Link from "next/link";
 
 async function getDiscussion({ id }) {
   if (!id) return null;
-  const d = await prisma.discussion.findUnique({ where: { id }, include: { user: true } });
-  const posts = await prisma.post.findMany({ where: { discussionId: d.id }, include: { user: true }, orderBy: { createdAt: 'asc' } });
-  d.posts = posts;
+  const d = await prisma.discussion.findUnique({
+    where: { id },
+    include: {
+      user: true,
+      posts: {
+        include: { user: true },
+        orderBy: { createdAt: 'asc' }
+        //  take and limit
+      },
+    },
+  });
   return d;
 }
 

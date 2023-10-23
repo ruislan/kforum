@@ -9,9 +9,13 @@ import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import Button from './button';
 import { Bold, Italic, Underline as UnderlineIcon, Strike, Heading1, Heading2, Heading3, BulletList, OrderedList, BlockQuote, Link as LinkIcon, Image as ImageIcon } from '../icons';
+import { generateHTML } from '@tiptap/html';
 
-function ActionButton({ isActive, ...rest }) {
-  return <Button kind='ghost' shape='square' size='sm' className={isActive ? 'text-neutral-200' : 'text-neutral-500'} {...rest} />;
+function ActionButton({ isActive, onClick, ...rest }) {
+  return <Button kind='ghost' shape='square' size='sm'
+    className={isActive ? 'text-neutral-200' : 'text-neutral-500'}
+    onClick={e => { e.preventDefault(); onClick(); }}
+    {...rest} />;
 }
 
 function MenuBar({ editor, hasReply = false, }) {
@@ -97,21 +101,33 @@ function MenuBar({ editor, hasReply = false, }) {
   );
 }
 
+const extensions = [
+  Image, Underline,
+  Color.configure({ types: [TextStyle.name, ListItem.name] }),
+  TextStyle.configure({ types: [ListItem.name] }),
+  StarterKit.configure({
+    bulletList: { keepMarks: true, keepAttributes: false, },
+    orderedList: { keepMarks: true, keepAttributes: false, },
+    heading: { levels: [1, 2, 3,] },
+  }),
+];
+
+export function toHTML(stringContent) {
+  if (!stringContent) return '';
+  try {
+    const json = JSON.parse(stringContent);
+    return generateHTML(json, extensions);
+  } catch (_) {
+    return stringContent;
+  }
+}
+
 export default function Tiptap({ content, kind = 'reply', onCreate = () => { }, onUpdate = () => { } }) {
   const editor = useEditor({
-    extensions: [
-      Image, Underline,
-      Color.configure({ types: [TextStyle.name, ListItem.name] }),
-      TextStyle.configure({ types: [ListItem.name] }),
-      StarterKit.configure({
-        bulletList: { keepMarks: true, keepAttributes: false, },
-        orderedList: { keepMarks: true, keepAttributes: false, },
-        heading: { levels: [1, 2, 3,] },
-      }),
-    ],
+    extensions,
     editorProps: {
       attributes: {
-        class: 'prose dark:prose-invert prose-sm max-w-none p-3 focus:outline-none min-h-[100px] max-w-[618px]',
+        class: 'prose dark:prose-invert prose-sm p-3 focus:outline-none min-h-[100px] max-w-[618px]',
       },
     },
     content,

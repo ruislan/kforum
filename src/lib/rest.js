@@ -2,7 +2,7 @@ const jsonHeaders = { 'Content-Type': 'application/json' };
 
 const Rest = {
     unauthorized() {
-        return new Response({ status: 401, headers: jsonHeaders });
+        return new Response(null, { status: 401, headers: jsonHeaders });
     },
     created(json) {
         const body = json ? JSON.stringify(json) : null;

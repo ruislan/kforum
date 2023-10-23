@@ -55,13 +55,16 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
                 headers: { 'Content-Type': 'application/json' },
             });
             if (res.ok) {
+                const json = await res.json();
                 resetFields();
                 toast.success('发布成功');
-                router.push(`/c/${categorySlug}`);
+                router.push(`/d/${json.data.id}`);
             } else {
                 if (res.status === 400) {
                     const json = await res.json();
                     setError(json.message);
+                } else if (res.status === 401) {
+                    setError('您的登录以过期，请重新登录');
                 } else {
                     throw new Error();
                 }

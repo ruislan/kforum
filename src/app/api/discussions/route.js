@@ -1,11 +1,13 @@
 import prisma from '@/lib/prisma';
 import rest from '@/lib/rest';
 import { getServerSession } from 'next-auth';
+import { authOptions } from '../auth/[...nextauth]/route';
 
 
 export async function POST(request, { params }) {
     // require user
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
+    console.log(session);
     if (!session.user?.id) return rest.unauthorized();
 
     // parse body
@@ -25,7 +27,6 @@ export async function POST(request, { params }) {
         let discussion = await tx.discussion.create({
             data: {
                 title, categoryId: cat.id, userId: session.user.id,
-                userCount: 1, postCount: 1,
             }
         });
         const post = await tx.post.create({
@@ -36,14 +37,11 @@ export async function POST(request, { params }) {
         });
         discussion = await tx.discussion.update({
             where: { id: discussion.id },
-            data: {
-                firstPostId: post.id, lastPostId: post.id,
-                lastPostedAt: new Date(), lastPostedUserId: post.userId,
-            }
+            data: { firstPostId: post.id, lastPostId: post.id }
         });
         discussion.posts = [{ ...post }];
         return discussion;
     });
 
-    return rest.ok({ data });
+    return rest.created({ data });
 }
