@@ -2,7 +2,7 @@
 
 import clsx from 'clsx';
 import { Tab } from '@headlessui/react';
-import Box from './ui/box';
+import Box from '../ui/box';
 
 const titles = ['概览', '发帖', '回复', '收藏'];
 

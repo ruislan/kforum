@@ -1,9 +1,9 @@
 'use client';
 import Link from 'next/link';
-import Box from './ui/box';
-import { Blank, Lock, Locked, Pin, Pined, Post as PostIcon } from './icons';
-import SplitBall from './split-ball';
-import Tag from './ui/tag';
+import Box from '../ui/box';
+import { Blank, Lock, Locked, Pin, Pined, Post as PostIcon } from '../icons';
+import SplitBall from '../ui/split-ball';
+import Tag from '../ui/tag';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,

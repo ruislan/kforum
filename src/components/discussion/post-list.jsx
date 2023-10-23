@@ -2,10 +2,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import Box from './ui/box';
-import { Heart, Locked, Pined, Link as LinkIcon, Flag, Markup, Edit, DeleteBin } from './icons';
-import SplitBall from './split-ball';
-import Button from './ui/button';
+import Box from '../ui/box';
+import { Heart, Locked, Pined, Link as LinkIcon, Flag, Markup, Edit, DeleteBin } from '../icons';
+import SplitBall from '../ui/split-ball';
+import Button from '../ui/button';
 
 function ActionButton({ children }) {
     return (<Button kind='ghost' shape='square' size='sm'><span className='w-full h-full'>{children}</span></Button>);

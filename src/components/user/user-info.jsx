@@ -1,6 +1,6 @@
 
 import Image from 'next/image';
-import Box from './ui/box';
+import Box from '../ui/box';
 
 export default async function UserInfo({ user = null }) {
     if (!user) return null;

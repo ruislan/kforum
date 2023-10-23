@@ -3,11 +3,13 @@
 import { useState, Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { signIn } from 'next-auth/react';
+import toast from 'react-hot-toast';
+
+import useLoginModal from '@/hooks/useLoginModal';
+import useRegisterModal from '@/hooks/useRegisterModal';
 
 import Button from './ui/button';
 import { Close } from './icons';
-import useLoginModal from '@/hooks/useLoginModal';
-import useRegisterModal from '@/hooks/useRegisterModal';
 
 export default function LoginModal() {
     const loginModal = useLoginModal();
@@ -42,6 +44,7 @@ export default function LoginModal() {
             if (res.ok) {
                 resetFields();
                 loginModal.close();
+                toast.success('您已经成功登录，欢迎回来');
             } else {
                 setError('用户名或者密码错误');
             }

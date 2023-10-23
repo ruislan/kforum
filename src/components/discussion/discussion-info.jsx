@@ -1,5 +1,5 @@
 'use client';
-import Box from './ui/box';
+import Box from '../ui/box';
 
 export default function DiscussionInfo({ d }) {
     return (

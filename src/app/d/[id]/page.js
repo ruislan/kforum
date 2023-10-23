@@ -1,13 +1,14 @@
 import Box from "@/components/ui/box";
-import DiscussionDetail from "@/components/discussion-detail";
-import PostList from "@/components/post-list";
-import SplitBall from "@/components/split-ball";
+import DiscussionDetail from "@/components/discussion/discussion-detail";
+import PostList from "@/components/discussion/post-list";
+import SplitBall from "@/components/ui/split-ball";
 import Tiptap from "@/components/ui/tiptap";
-import UserActions from "@/components/user-actions";
+import UserActions from "@/components/user/user-actions";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 
 async function getDiscussion({ id }) {
+  if (!id) return null;
   const d = await prisma.discussion.findUnique({ where: { id }, include: { user: true } });
   const posts = await prisma.post.findMany({ where: { discussionId: d.id }, include: { user: true }, orderBy: { createdAt: 'asc' } });
   d.posts = posts;
@@ -16,6 +17,7 @@ async function getDiscussion({ id }) {
 
 export default async function Page({ params }) {
   const d = await getDiscussion({ id: Number(params.id) });
+  if (!d) return <div>not found</div>
   return (
     <div className='flex w-full h-full gap-6'>
       {/* main container */}

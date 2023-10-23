@@ -1,19 +1,19 @@
 import prisma from '@/lib/prisma';
 import Box from '@/components/ui/box';
-import DiscussionCreator from '@/components/discussion-creator';
+import DiscussionCreator from '@/components/discussion/discussion-creator';
 
 async function getCategories() {
   // XXX flat the categories or just first level categories
   return await prisma.category.findMany({ orderBy: { sequence: 'asc' } });
 }
 
-export default async function Page({ params }) {
+export default async function Page({ searchParams }) {
   const categories = await getCategories();
   return (
     <div className='flex w-full h-full gap-6'>
       {/* main container */}
       <div className='flex flex-col flex-1 w-max-[680px] gap-2'>
-        <DiscussionCreator categories={categories} />
+        <DiscussionCreator categories={categories} initCategorySlug={searchParams.c} />
       </div>
       {/* right side */}
       <div className='flex flex-col w-80 gap-4'>

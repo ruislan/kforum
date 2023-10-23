@@ -1,5 +1,5 @@
-import UserInfo from "@/components/user-info";
-import UserTabs from "@/components/user-tabs";
+import UserInfo from "@/components/user/user-info";
+import UserTabs from "@/components/user/user-tabs";
 import prisma from "@/lib/prisma";
 
 async function getUser({ name }) {

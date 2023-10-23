@@ -1,18 +1,31 @@
 import prisma from '@/lib/prisma';
 import rest from '@/lib/rest';
+import { getServerSession } from 'next-auth';
+
 
 export async function POST(request, { params }) {
-    const { title, content, category } = await request.json();
+    // require user
+    const session = await getServerSession();
+    if (!session.user?.id) return rest.unauthorized();
+
+    // parse body
+    const { title, content, categorySlug } = await request.json();
+
 
     // validate params
-    if (!title) return rest.badRequest({ message: '标题是必填项', field: 'title' });
-    if (!content) return rest.badRequest({ message: '内容是必填项', field: 'content' });
-    if (!category) return rest.badRequest({ message: '分类是必填项', field: 'category' });
+    if (!title || title.length < 1) return rest.badRequest({ message: '标题是必填项', field: 'title' });
+    if (!content || content.length < 1) return rest.badRequest({ message: '内容是必填项', field: 'content' });
+    if (!categorySlug) return rest.badRequest({ message: '分类是必填项', field: 'categorySlug' });
+
+    const cat = await prisma.category.findUnique({ where: { slug: categorySlug } });
+
+    if (!cat) return rest.badRequest({ message: '分类不存在', field: 'category' });
 
     const data = await prisma.$transaction(async tx => {
         let discussion = await tx.discussion.create({
             data: {
-                title, categoryId: 1, userId: 1, userCount: 1, postCount: 1,
+                title, categoryId: cat.id, userId: session.user.id,
+                userCount: 1, postCount: 1,
             }
         });
         const post = await tx.post.create({

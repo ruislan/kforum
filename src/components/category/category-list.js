@@ -3,8 +3,8 @@ import prisma from '@/lib/prisma';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { Blank as BlankIcon } from './icons';
-import Box from './ui/box';
+import { Blank as BlankIcon } from '../icons';
+import Box from '../ui/box';
 
 async function getCategories() {
     // XXX flat the categories or just first level categories

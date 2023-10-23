@@ -1,6 +1,6 @@
-import CategoryList from '@/components/category-list';
-import DiscussionList from '@/components/discussion-list';
-import UserActions from '@/components/user-actions';
+import CategoryList from '@/components/category/category-list';
+import DiscussionList from '@/components/discussion/discussion-list';
+import UserActions from '@/components/user/user-actions';
 
 export default function Home() {
   return (
