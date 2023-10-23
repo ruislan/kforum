@@ -1,10 +1,12 @@
 import { getServerSession } from 'next-auth';
+import { Toaster } from 'react-hot-toast';
 
 import Header from '@/components/header/header';
 import Providers from '@/components/providers';
-import './globals.css';
 import LoginModal from '@/components/login-modal';
 import RegisterModal from '@/components/register-modal';
+
+import './globals.css';
 
 export const metadata = {
   title: 'KForum',
@@ -25,6 +27,7 @@ export default async function RootLayout({ children }) {
             </div>
           </div>
           {/* <Footer /> */}
+          <Toaster />
           <LoginModal />
           <RegisterModal />
         </Providers>

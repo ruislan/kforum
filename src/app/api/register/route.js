@@ -5,10 +5,17 @@ import bcrypt from 'bcrypt';
 export async function POST(request, { params }) {
     try {
         const { email, name, password } = await request.json();
-        if (!email || !name || !password) return rest.badRequest({ message: 'Missing required fields' });
+        if (!email || !name || !password) return rest.badRequest({ message: '注册信息不完整，请检查您的注册信息' });
 
-        const user = await prisma.user.findUnique({ where: { email } });
-        if (user) return rest.badRequest({ message: 'User already exists' });
+        const user = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { email },
+                    { name }
+                ]
+            }
+        });
+        if (user) return rest.badRequest({ message: '用户已经存在' });
         const hashedPassword = bcrypt.hashSync(password, 10);
         const newUser = await prisma.user.create({
             data: {
@@ -17,7 +24,7 @@ export async function POST(request, { params }) {
             }
         });
         delete newUser.password;
-        return rest.ok({ data: newUser });
+        return rest.created();
     } catch (err) {
         return rest.badRequest({ message: err.message });
     }

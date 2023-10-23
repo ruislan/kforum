@@ -7,21 +7,32 @@ import { signIn } from 'next-auth/react';
 import Button from './ui/button';
 import { Close } from './icons';
 import useLoginModal from '@/hooks/useLoginModal';
+import useRegisterModal from '@/hooks/useRegisterModal';
 
 export default function LoginModal() {
     const loginModal = useLoginModal();
+    const registerModal = useRegisterModal();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState(null);
 
     const handleClose = async () => {
         if (isSubmitting) return;
         loginModal.close();
+        resetFields();
     };
+
+    const resetFields = () => {
+        setUsername('');
+        setPassword('');
+        setError(null);
+    }
 
     const handleSubmit = async () => {
         if (isSubmitting) return;
         setIsSubmitting(true);
+        setError(null);
         try {
             const res = await signIn('credentials', {
                 username,
@@ -29,14 +40,13 @@ export default function LoginModal() {
                 redirect: false,
             });
             if (res.ok) {
-                setUsername('');
-                setPassword('');
+                resetFields();
                 loginModal.close();
             } else {
-                console.log('Incorrect username or password');
+                setError('用户名或者密码错误');
             }
         } catch (err) {
-            console.log(err);
+            setError('未知错误，请稍后再试');
         } finally {
             setIsSubmitting(false);
         }
@@ -63,9 +73,9 @@ export default function LoginModal() {
                                         <Close />
                                     </Button>
                                 </div>
-                                <Dialog.Title className='text-xl font-bold pl-8 pr-8 mb-4'>用户登陆</Dialog.Title>
+                                <Dialog.Title className='text-xl font-bold pl-8 pr-8 mb-4'>登陆</Dialog.Title>
                                 <Dialog.Description className='text-sm pl-8 pr-8 mb-4'>
-                                    欢迎回来，👏。继续，即表示您同意我们的用户协议，并承认您理解隐私政策。
+                                    欢迎回来👋。继续登录，即表示您同意我们的用户协议，并承认您理解隐私政策。
                                 </Dialog.Description>
                                 <form onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
                                     <div className='flex flex-col gap-2 pl-8 pr-8 mb-8 w-full'>
@@ -79,9 +89,20 @@ export default function LoginModal() {
                                                 autoComplete='current-password' required
                                                 value={password} placeholder='密码' onChange={e => setPassword(e.target.value)} />
                                         </div>
+                                        {error && <span className='text-sm text-red-500'>{error}</span>}
                                     </div>
                                     <div className='pl-8 pr-8 w-full mb-8'><Button className='w-full' type='submit' disabled={isSubmitting} isLoading={isSubmitting}>登陆</Button></div>
                                 </form>
+                                <div className='px-8 mb-8 text-sm'>
+                                    <span className='mr-1'>还没有账户?</span>
+                                    <span className='underline underline-offset-4 cursor-pointer'
+                                        onClick={e => {
+                                            e.preventDefault();
+                                            if (isSubmitting) return;
+                                            registerModal.open();
+                                            handleClose();
+                                        }}>立即注册</span>
+                                </div>
                             </Dialog.Panel>
                         </Transition.Child>
                     </div>

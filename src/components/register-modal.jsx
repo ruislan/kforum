@@ -1,23 +1,35 @@
 'use client';
 import { useState, Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
+import toast from 'react-hot-toast';
 
 import useRegisterModal from '@/hooks/useRegisterModal';
 
 import Button from './ui/button';
 import { Close } from './icons';
+import useLoginModal from '@/hooks/useLoginModal';
 
 export default function RegisterModal() {
     const registerModal = useRegisterModal();
+    const loginModal = useLoginModal();
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState(null);
 
     const handleClose = async () => {
         if (isSubmitting) return;
         registerModal.close();
+        resetFields();
     }
+
+    const resetFields = () => {
+        setName('');
+        setPassword('');
+        setEmail('');
+        setError(null);
+    };
 
     const handleSubmit = async () => {
         if (isSubmitting) return;
@@ -29,15 +41,20 @@ export default function RegisterModal() {
                 headers: { 'Content-Type': 'application/json' },
             });
             if (res.ok) {
-                setEmail('');
-                setName('');
-                setPassword('');
                 registerModal.close();
+                resetFields();
+                loginModal.open();
+                toast.success('您已经成功注册，请登录吧。');
             } else {
-                console.log(res.status);
+                if (res.status === 400) {
+                    const json = await res.json();
+                    setError(json.message);
+                } else {
+                    throw new Error();
+                }
             }
         } catch (err) {
-
+            setError('未知错误，请稍后再试');
         } finally {
             setIsSubmitting(false);
         }
@@ -64,12 +81,12 @@ export default function RegisterModal() {
                                         <Close />
                                     </Button>
                                 </div>
-                                <Dialog.Title className='text-xl font-bold pl-8 pr-8 mb-4'>用户注册</Dialog.Title>
+                                <Dialog.Title className='text-xl font-bold pl-8 pr-8 mb-4'>注册</Dialog.Title>
                                 <Dialog.Description className='text-sm pl-8 pr-8 mb-4'>
-                                    注册，即表示您同意我们的用户协议，并承认您理解隐私政策。
+                                    欢迎加入👏。继续注册，即表示您同意我们的用户协议，并承认您理解隐私政策。
                                 </Dialog.Description>
                                 <form onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
-                                    <div className='flex flex-col gap-2 pl-8 pr-8 mb-8 w-full'>
+                                    <div className='flex flex-col gap-2 pl-8 pr-8 mb-4 w-full'>
                                         <div className='flex items-center text-sm w-full focus:outline-none bg-neutral-800 p-2 border border-solid border-neutral-700 rounded-md focus-within:border-neutral-400'>
                                             <input type='email' placeholder='邮箱' className='w-full h-7 text-neutral-200 bg-transparent outline-none'
                                                 autoComplete='email' required value={email} onChange={e => setEmail(e.target.value)}
@@ -83,9 +100,19 @@ export default function RegisterModal() {
                                             <input type='password' placeholder='密码' className='w-full h-7 text-neutral-200 bg-transparent outline-none'
                                                 autoComplete='current-password' required value={password} onChange={e => setPassword(e.target.value)} />
                                         </div>
+                                        {error && <span className='text-sm text-red-500'>{error}</span>}
                                     </div>
-                                    <div className='pl-8 pr-8 w-full mb-8'><Button className='w-full' type='submit' disabled={isSubmitting} isLoading={isSubmitting}>注册</Button></div>
+                                    <div className='pl-8 pr-8 w-full mb-4'><Button className='w-full' type='submit' disabled={isSubmitting} isLoading={isSubmitting}>注册</Button></div>
                                 </form>
+                                <div className='px-8 mb-8 text-sm'>
+                                    <span className='mr-1'>已经有账户了?</span>
+                                    <span className='underline underline-offset-4 cursor-pointer'
+                                        onClick={e => {
+                                            e.preventDefault();
+                                            handleClose();
+                                            loginModal.open();
+                                        }}>登录</span>
+                                </div>
                             </Dialog.Panel>
                         </Transition.Child>
                     </div>
