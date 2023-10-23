@@ -15,7 +15,7 @@ export default async function Page({ params }) {
     <div className='flex w-full h-full gap-6'>
       {/* main container*/}
       <div className='flex flex-col flex-1 w-max-[680px]'>
-        <DiscussionList />
+        <DiscussionList category={category} />
       </div>
       {/* right side */}
       <div className='flex flex-col w-80 gap-4'>

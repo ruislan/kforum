@@ -1,3 +1,19 @@
+const proseCss = {
+  css: {
+    p: {
+      marginTop: '6px',
+      marginBottom: '6px',
+    },
+    ul: {
+      marginTop: '6px',
+      marginBottom: '6px',
+    },
+    'ul > li > *': {
+      marginTop: '6px',
+      marginBottom: '6px',
+    },
+  }
+};
 module.exports = {
   darkMode: 'class',
   content: [
@@ -7,6 +23,11 @@ module.exports = {
   ],
   theme: {
     extend: {
+      typography: {
+        DEFAULT: proseCss,
+        sm: proseCss,
+        lg: proseCss,
+      }
     },
   },
   plugins: [

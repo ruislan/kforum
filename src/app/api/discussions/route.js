@@ -13,7 +13,6 @@ export async function POST(request, { params }) {
     // parse body
     const { title, content, categorySlug } = await request.json();
 
-
     // validate params
     if (!title || title.length < 1) return rest.badRequest({ message: '标题是必填项', field: 'title' });
     if (!content || content.length < 1) return rest.badRequest({ message: '内容是必填项', field: 'content' });

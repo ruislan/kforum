@@ -1,7 +1,7 @@
 import prisma from '@/lib/prisma';
 import DiscussionItem from './discussion-item';
 
-async function getDiscussions({ categorySlug, skip, limit }) {
+async function getDiscussions({ category, skip, limit }) {
     const queryCondition = {
         skip, take: limit,
         orderBy: [{ createdAt: 'desc' }],
@@ -14,9 +14,14 @@ async function getDiscussions({ categorySlug, skip, limit }) {
         }
     };
 
-    if (categorySlug) {
-        const category = await prisma.category.findUnique({ where: { slug: categorySlug }, select: { id: true } });
+    if (category) {
         queryCondition.where = { categoryId: category.id };
+    } else {
+        queryCondition.include.category = {
+            select: {
+                id: true, slug: true, name: true
+            }
+        };
     }
 
     const discussions = await prisma.discussion.findMany(queryCondition);
@@ -24,7 +29,7 @@ async function getDiscussions({ categorySlug, skip, limit }) {
 }
 
 export default async function DiscussionList({ category = null }) {
-    const discussions = await getDiscussions({ categorySlug: category, skip: 0, limit: 10 });
+    const discussions = await getDiscussions({ category, skip: 0, limit: 10 });
     return (
         <div className='flex flex-col gap-3'>
             {discussions.map((d, i) => <DiscussionItem key={i} discussion={d} />)}

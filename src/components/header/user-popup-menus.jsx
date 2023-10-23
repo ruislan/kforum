@@ -9,30 +9,31 @@ import { Menu, Transition } from '@headlessui/react';
 
 import Box from '../ui/box';
 
-const menus = [
-    { href: '/u/Admin', label: '个人中心' },
-    { href: '/settings', label: '用户设置' },
-    { type: 'separator' },
-    {
-        type: 'button', label: '退出', onClick: async (e) => {
-            e.preventDefault();
-            await signOut();
-        }
-    },
-]
-
 export default function UserPopupMenus() {
     const { data } = useSession();
     if (!data?.user) return null;
+
+    const menus = [
+        { href: `/u/${data.user.name}`, label: '个人中心' },
+        { href: '/settings', label: '用户设置' },
+        { type: 'separator' },
+        {
+            type: 'button', label: '退出', onClick: async (e) => {
+                e.preventDefault();
+                await signOut();
+            }
+        },
+    ];
 
     return (
         <Menu as='div' className='relative inline-flex text-left'>
             <Menu.Button className='flex gap-1.5 items-center py-0.5 px-1 rounded hover:bg-neutral-700'>
                 <div className='w-9 h-9 bg-gray-300 rounded'>
-                    <Image width='36' height='36' className='w-full h-full rounded'
-                        loader={_ => data?.user?.avatar}
-                        src={data?.user?.name || 'avatar'}
-                        alt={data?.user?.name} />
+                    {data?.user?.avatar && (
+                        <Image width='36' height='36' className='w-full h-full rounded'
+                            src={data?.user?.avatar} alt={data?.user?.name}
+                        />
+                    )}
                 </div>
                 <span className='text-base text-neutral-200'>{data?.user?.name}</span>
             </Menu.Button>
