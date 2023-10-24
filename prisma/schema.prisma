@@ -42,10 +42,13 @@ model Discussion {
   shareCount    Int     @default(1) @map("share_count") // 分享链接的统计
   reactionCount Int     @default(1) @map("reaction_count") // 反馈统计
 
-  userId      Int  @map("user_id")
-  firstPostId Int? @unique @map("first_post_id")
-  lastPostId  Int? @unique @map("last_post_id")
-  categoryId  Int  @map("category_id")
+  userId          Int       @map("user_id")
+  firstPostId     Int?      @unique @map("first_post_id")
+  lastPostId      Int?      @unique @map("last_post_id")
+  lastPostedAt    DateTime? @map("last_posted_at") // 最后一个回帖的
+  categoryId      Int       @map("category_id")
+  lastUpdatedUser Int?      @map("last_updated_user") // 最后一个编辑的用户（不一定是本人，也可能是版主）
+  lastUpdatedAt   DateTime? @map("last_updated_at") // 最后一次编辑的时间
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -67,8 +70,10 @@ model Post {
   ip          String? // 发布人的 IP 地址
   replyPostId Int? // 回复哪一贴
 
-  discussionId Int @map("discussion_id")
-  userId       Int @map("user_id")
+  discussionId    Int       @map("discussion_id")
+  userId          Int       @map("user_id")
+  lastUpdatedUser Int?      @map("last_updated_user") // 最后一个编辑的用户（不一定是本人，也可能是版主）
+  lastUpdatedAt   DateTime? @map("last_updated_at") // 最后一次编辑的时间
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

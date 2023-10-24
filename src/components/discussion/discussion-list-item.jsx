@@ -7,6 +7,7 @@ import { toHTML } from '../ui/tiptap';
 import SplitBall from '../ui/split-ball';
 import Tag from '../ui/tag';
 import DateUtils from '@/lib/date-utils';
+import ProseContent from '../ui/prose-content';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -15,7 +16,7 @@ import DateUtils from '@/lib/date-utils';
     line 4: discussion meta: replies, reactions, participants
     line 5: actions: reply, edit, delete, share, follow, favorite, report
 */
-export default function DiscussionItem({ discussion }) {
+export default function DiscussionListItem({ discussion }) {
     if (!discussion) return null;
     return (
         <Box className='flex flex-col hover:border-neutral-500 cursor-pointer' onClick={() => location.href = '/d/' + discussion.id}>
@@ -52,9 +53,7 @@ export default function DiscussionItem({ discussion }) {
                     <Tag className='ml-1'>Cheer</Tag>
                     <Tag className='ml-1'>Great</Tag>
                 </div>
-                <div className='mt-2 max-h-64 overflow-hidden break-words content-mask-b text-sm prose prose-sm dark:prose-invert'
-                    dangerouslySetInnerHTML={{ __html: toHTML(discussion.firstPost?.content) }}>
-                </div>
+                <ProseContent className='mt-2 max-h-64 overflow-hidden content-mask-b' content={discussion.firstPost?.content} />
                 <div className='text-xs inline-flex items-center text-gray-300 mt-3'>
                     <div className='flex items-center'><span>参与 {discussion.userCount}</span></div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />

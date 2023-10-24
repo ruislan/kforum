@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma';
-import DiscussionItem from './discussion-item';
+import DiscussionListItem from './discussion-list-item';
 
 async function getDiscussions({ category, skip, limit }) {
     const queryCondition = {
@@ -32,7 +32,7 @@ export default async function DiscussionList({ category = null }) {
     const discussions = await getDiscussions({ category, skip: 0, limit: 10 });
     return (
         <div className='flex flex-col gap-3'>
-            {discussions.map((d, i) => <DiscussionItem key={i} discussion={d} />)}
+            {discussions.map((d, i) => <DiscussionListItem key={i} discussion={d} />)}
         </div>
     );
 }

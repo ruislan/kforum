@@ -1,13 +1,13 @@
+import { getServerSession } from 'next-auth';
+
 import prisma from '@/lib/prisma';
 import rest from '@/lib/rest';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]/route';
+import authOptions from '@/lib/auth';
 
 
 export async function POST(request, { params }) {
     // require user
     const session = await getServerSession(authOptions);
-    console.log(session);
     if (!session.user?.id) return rest.unauthorized();
 
     // parse body

@@ -18,7 +18,7 @@ function ActionButton({ isActive, onClick, ...rest }) {
     {...rest} />;
 }
 
-function MenuBar({ editor, hasReply = false, }) {
+function MenuBar({ editor, endActionEnhancer }) {
   // const [imageURL, setImageURL] = useState('');
   const limit = 500;
   if (!editor) return null;
@@ -90,13 +90,7 @@ function MenuBar({ editor, hasReply = false, }) {
           <ImageIcon />
         </ActionButton>
       </div>
-      {hasReply &&
-        <div className='flex items-center'>
-          <Button size='sm'>
-            回复
-          </Button>
-        </div>
-      }
+      {endActionEnhancer}
     </div>
   );
 }
@@ -122,7 +116,7 @@ export function toHTML(stringContent) {
   }
 }
 
-export default function Tiptap({ content, kind = 'reply', onCreate = () => { }, onUpdate = () => { } }) {
+export default function Tiptap({ content, endActionEnhancer, onCreate = () => { }, onUpdate = () => { } }) {
   const editor = useEditor({
     extensions,
     editorProps: {
@@ -138,7 +132,7 @@ export default function Tiptap({ content, kind = 'reply', onCreate = () => { }, 
   return (
     <div className='flex flex-col p-0 border border-solid border-neutral-700 bg-neutral-800  rounded-md focus-within:border-neutral-400'>
       <EditorContent editor={editor} />
-      <MenuBar editor={editor} hasReply={kind === 'reply'} />
+      <MenuBar editor={editor} endActionEnhancer={endActionEnhancer} />
     </div>
   );
 };
