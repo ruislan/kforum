@@ -5,8 +5,8 @@ import toast from 'react-hot-toast';
 
 import useRegisterModal from '@/hooks/useRegisterModal';
 
-import Button from './ui/button';
-import { Close } from './icons';
+import Button from '../ui/button';
+import { Close } from '../icons';
 import useLoginModal from '@/hooks/useLoginModal';
 
 export default function RegisterModal() {
@@ -81,7 +81,7 @@ export default function RegisterModal() {
                                         <Close />
                                     </Button>
                                 </div>
-                                <Dialog.Title className='text-xl font-bold pl-8 pr-8 mb-4'>注册</Dialog.Title>
+                                <Dialog.Title className='text-2xl font-bold pl-8 pr-8 mb-4'>注册</Dialog.Title>
                                 <Dialog.Description className='text-sm pl-8 pr-8 mb-4'>
                                     欢迎加入👏。继续注册，即表示您同意我们的用户协议，并承认您理解隐私政策。
                                 </Dialog.Description>

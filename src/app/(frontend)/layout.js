@@ -3,8 +3,8 @@ import { Toaster } from 'react-hot-toast';
 
 import Header from '@/components/header/header';
 import Providers from '@/components/providers';
-import LoginModal from '@/components/login-modal';
-import RegisterModal from '@/components/register-modal';
+import LoginModal from '@/components/auth/login-modal';
+import RegisterModal from '@/components/auth/register-modal';
 
 import '../globals.css';
 

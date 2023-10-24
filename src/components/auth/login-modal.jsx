@@ -8,8 +8,8 @@ import toast from 'react-hot-toast';
 import useLoginModal from '@/hooks/useLoginModal';
 import useRegisterModal from '@/hooks/useRegisterModal';
 
-import Button from './ui/button';
-import { Close } from './icons';
+import Button from '../ui/button';
+import { Close } from '../icons';
 
 export default function LoginModal() {
     const loginModal = useLoginModal();
@@ -76,12 +76,12 @@ export default function LoginModal() {
                                         <Close />
                                     </Button>
                                 </div>
-                                <Dialog.Title className='text-xl font-bold pl-8 pr-8 mb-4'>登陆</Dialog.Title>
+                                <Dialog.Title className='text-2xl font-bold pl-8 pr-8 mb-4'>登陆</Dialog.Title>
                                 <Dialog.Description className='text-sm pl-8 pr-8 mb-4'>
                                     欢迎回来👋。继续登录，即表示您同意我们的用户协议，并承认您理解隐私政策。
                                 </Dialog.Description>
                                 <form onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
-                                    <div className='flex flex-col gap-2 pl-8 pr-8 mb-8 w-full'>
+                                    <div className='flex flex-col gap-2 pl-8 pr-8 mb-4 w-full'>
                                         <div className='flex items-center text-sm w-full focus:outline-none bg-neutral-800 p-2 border border-solid border-neutral-700 rounded-md focus-within:border-neutral-400'>
                                             <input type='text' className='w-full h-7 text-neutral-200 bg-transparent outline-none'
                                                 autoComplete='username' required
@@ -94,7 +94,7 @@ export default function LoginModal() {
                                         </div>
                                         {error && <span className='text-sm text-red-500'>{error}</span>}
                                     </div>
-                                    <div className='pl-8 pr-8 w-full mb-8'><Button className='w-full' type='submit' disabled={isSubmitting} isLoading={isSubmitting}>登陆</Button></div>
+                                    <div className='pl-8 pr-4 w-full mb-4'><Button className='w-full' type='submit' disabled={isSubmitting} isLoading={isSubmitting}>登陆</Button></div>
                                 </form>
                                 <div className='px-8 mb-8 text-sm'>
                                     <span className='mr-1'>还没有账户?</span>

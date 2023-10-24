@@ -29,16 +29,16 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
     const validateFields = () => {
         setError(null);
         if (categorySlug?.length < 1) {
-            setError('还没准备好，请选择分类');
+            setError('你还没准备好，请选择分类');
             return false;
         }
         if (title?.length < 1) {
-            setError('还没准备好，请填写标题');
+            setError('你还没准备好，请填写标题');
             return false;
         }
 
         if (contentText?.length < 1) {
-            setError('还没准备好，请填写内容');
+            setError('你还没准备好，请填写内容');
             return false;
         }
         return true;

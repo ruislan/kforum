@@ -1,12 +1,8 @@
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../api/auth/[...nextauth]/route';
-import '../globals.css';
 import { redirect } from 'next/navigation';
 
-export const metadata = {
-  title: '登录 | KForum',
-  description: 'Simple, Modern, Beautiful and Fast',
-}
+import { authOptions } from '../api/auth/[...nextauth]/route';
+import '../globals.css';
 
 export default async function RootLayout({ children }) {
   const session = await getServerSession(authOptions);
@@ -14,12 +10,12 @@ export default async function RootLayout({ children }) {
   return (
     <html lang='en' className='dark'>
       <body className='antialiased w-full h-full max-w-full m-0 p-0'>
-          <div className='mx-auto max-w-5xl flex md:pt-12 md:pl-0 md:pr-0 pl-4 pr-4'>
-            <div className='flex my-5 min-h-screen w-full'>
-              {children}
-            </div>
+        <div className='flex w-full min-h-screen'>
+          <div className='w-96 bg-[url("/board-art.jpeg")] bg-no-repeat bg-cover bg-center' />
+          <div className='self-center p-8 w-96'>
+            {children}
           </div>
-          {/* <Footer /> */}
+        </div>
       </body>
     </html>
   )
