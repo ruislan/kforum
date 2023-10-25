@@ -30,7 +30,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick }) {
     const isAuthenticated = status === 'authenticated';
     const isOwner = isAuthenticated && data.user.id === discussion.user.id;
     const isAdmin = isAuthenticated && data.user.isAdmin;
-
+    const c = discussion.category;
     if (!discussion) {
         router.replace('/');
         return;
@@ -39,10 +39,12 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick }) {
         <Box className='flex flex-col pb-0.5'>
             <div className='flex flex-col flex-1'>
                 <div className='flex items-center mb-2 text-gray-300'>
-                    {/* hide category if user is in the category */}
                     <div className='flex items-center'>
-                        <span className='w-5 h-5 bg-gray-300 rounded mr-1.5'><Blank /></span>
-                        <Link href={`/c/${discussion.category?.slug}`} onClick={e => e.stopPropagation()} className='text-xs text-gray-50 hover:underline underline-offset-2 cursor-pointer'>c/{discussion.category?.name}</Link>
+                        {c.icon ?
+                            <span className='mr-1.5'><Image alt={c.name} src={c.icon} className='w-4 h-4 rounded' /></span> :
+                            <span className='w-5 h-5 rounded mr-1.5' style={{ backgroundColor: `${c.color || 'bg-gray-300'}`, }}></span>
+                        }
+                        <Link href={`/c/${c?.slug}`} onClick={e => e.stopPropagation()} className='text-xs text-gray-50 hover:underline underline-offset-2 cursor-pointer'>c/{c?.name}</Link>
                     </div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                     <div className='flex items-center'>

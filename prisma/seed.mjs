@@ -8,11 +8,11 @@ await db.$connect();
 // 运行网站的基本数据
 async function initBase() {
     // init admin
-    const passwordHash = await bcrypt.hash('123456', 10);
+    const passwordHash = await bcrypt.hash('123123', 10);
     const admin = {
-        id: 1, name: 'admin', email: 'admin@ktap.com', phone: '123456789',
+        id: 1, name: 'admin', email: 'admin@ktap.com', phone: '12345678901',
         password: passwordHash, isAdmin: true, gender: 'MAN',
-        avatar: 'https://api.dicebear.com/7.x/notionists/svg?seed=Aneka&size=96',
+        avatar: 'https://api.dicebear.com/7.x/notionists/svg?seed=admin&size=96',
         bio: 'I am the admin', createdAt: new Date(), updatedAt: new Date(),
     };
     await db.user.upsert({ where: { id: admin.id }, create: admin, update: admin });
@@ -28,7 +28,11 @@ async function initBase() {
 
     // init categories
     const categories = [
-        { id: 1, slug: 'general', name: '综合', description: '综合讨论，不限制类别和话题，什么都可以说' }
+        { id: 1, slug: 'general', name: '综合', color: '#0E76BD', description: '综合讨论，不限制类别和话题，什么都可以说' },
+        { id: 2, slug: 'support', name: '帮助与支持', color: '#12A89D', description: '安装、部署和使用的问题与解答' },
+        { id: 3, slug: 'uiux', name: 'UI/UX', color: '#92278F', description: '讨论 KForum 的界面设计' },
+        { id: 4, slug: 'bug', name: 'Bug', color: '#ED207B', description: '提交 Bug 并追踪进度' },
+        { id: 5, slug: 'feature', name: '功能', color: '#F7941D', description: '功能改进与提升和后续迭代的意见和建议' },
     ];
     for (const item of categories) {
         await db.category.upsert({ where: { id: item.id }, create: item, update: item });

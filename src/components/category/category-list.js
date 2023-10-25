@@ -16,14 +16,19 @@ export default async function CategoryList() {
     return (
         <Box className='flex flex-col'>
             <div className='text-sm text-gray-400 font-bold mb-3'>讨论分类</div>
-            {categories.map(c =>
-                <Link key={c.slug} href={`/c/${c.slug}`} className='hover:underline underline-offset-4'>
-                    <div className='flex items-center gap-1 text-sm'>
-                        {c.icon ? <span><Image alt={c.name} src={c.icon} className='w-4 h-4 rounded' /></span> : <span className='w-6 h-6 text-gray-300 rounded'><BlankIcon /></span>}
-                        <span>{c.name}</span>
-                    </div>
-                </Link>
-            )}
+            <div className='flex flex-col gap-1'>
+                {categories.map(c =>
+                    <Link key={c.slug} href={`/c/${c.slug}`} className='hover:underline underline-offset-4'>
+                        <div className='flex items-center gap-1 text-sm'>
+                            {c.icon ?
+                                <span><Image alt={c.name} src={c.icon} className='w-4 h-4 rounded' /></span> :
+                                <span className='w-5 h-5 text-gray-300 rounded' style={{ color: `${c.color}`, }}><BlankIcon /></span>
+                            }
+                            <span>{c.name}</span>
+                        </div>
+                    </Link>
+                )}
+            </div>
         </Box>
     );
 }

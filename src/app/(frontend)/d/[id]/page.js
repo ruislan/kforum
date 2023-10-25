@@ -10,7 +10,7 @@ async function getDiscussion({ id }) {
     where: { id },
     include: {
       user: { select: userModal.fields.simple },
-      category: { select: { id: true, name: true, slug: true } },
+      category: { select: { id: true, name: true, slug: true, color: true, icon: true } },
       firstPost: true,
       posts: {
         where: {

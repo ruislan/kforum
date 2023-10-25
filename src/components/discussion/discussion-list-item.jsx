@@ -3,11 +3,11 @@ import Link from 'next/link';
 
 import { Blank, Lock, Locked, Pin, Pined, Post as PostIcon } from '../icons';
 import Box from '../ui/box';
-import { toHTML } from '../ui/tiptap';
 import SplitBall from '../ui/split-ball';
 import Tag from '../ui/tag';
 import DateUtils from '@/lib/date-utils';
 import ProseContent from '../ui/prose-content';
+import Image from 'next/image';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -17,24 +17,27 @@ import ProseContent from '../ui/prose-content';
     line 5: actions: reply, edit, delete, share, follow, favorite, report
 */
 export default function DiscussionListItem({ discussion }) {
+    const c = discussion.category;
     if (!discussion) return null;
     return (
         <Box className='flex flex-col hover:border-neutral-500 cursor-pointer' onClick={() => location.href = '/d/' + discussion.id}>
             <div className='flex flex-col flex-1'>
                 <div className='flex items-center mb-3 text-gray-300'>
-                    {/* hide category if user is in the category */}
-                    {discussion.category && (
+                    {c && (
                         <>
                             <div className='flex items-center'>
-                                <span className='w-6 h-6 bg-gray-300 rounded mr-1.5'><Blank /></span>
-                                <Link href={`/c/${discussion.category.slug}`} onClick={e => e.stopPropagation()}
-                                    className='text-xs text-gray-50 hover:underline underline-offset-2 cursor-pointer'>c/{discussion.category.name}</Link>
+                                {c.icon ?
+                                    <span className='mr-1.5'><Image alt={c.name} src={c.icon} className='w-4 h-4 rounded' /></span> :
+                                    <span className='w-5 h-5 rounded mr-1.5' style={{ backgroundColor: `${c.color || 'bg-gray-300'}`, }}></span>
+                                }
+                                <Link href={`/c/${c.slug}`} onClick={e => e.stopPropagation()}
+                                    className='text-xs text-gray-50 hover:underline underline-offset-2 cursor-pointer'>c/{c.name}</Link>
                             </div>
                             <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                         </>
                     )}
                     <div className='flex items-center'>
-                        <div className='w-6 h-6 mr-1.5 bg-gray-300 rounded'>
+                        <div className='w-5 h-5 mr-1.5 bg-gray-300 rounded'>
                             <img className='w-full h-full rounded' src={discussion.user?.avatar} alt={discussion.user?.name} />
                         </div>
                         <Link href={`/u/${discussion.user?.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{discussion.user?.name}</Link>

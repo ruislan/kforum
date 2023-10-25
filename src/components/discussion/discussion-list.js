@@ -18,9 +18,7 @@ async function getDiscussions({ category, skip, limit }) {
         queryCondition.where = { categoryId: category.id };
     } else {
         queryCondition.include.category = {
-            select: {
-                id: true, slug: true, name: true
-            }
+            select: { id: true, name: true, slug: true, color: true, icon: true }
         };
     }
 
