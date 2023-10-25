@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
@@ -11,6 +11,7 @@ import Box from '../ui/box';
 import { ArrowRight } from '../icons';
 import Tiptap from '../ui/tiptap';
 import Button from '../ui/button';
+import PostDetailPopover from './post-detail-popover';
 
 export default function PostCreator({ discussion, replyToPost, onCreated }) {
     const { data: session } = useSession();
@@ -19,6 +20,7 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const [tiptap, setTipTap] = useState(null);
+    const formRef = useRef(null);
 
     const resetFields = () => {
         setContentJson('');
@@ -41,7 +43,7 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
         setIsSubmitting(true);
         try {
             const body = { discussionId: discussion.id, content: JSON.stringify(contentJson) };
-            if (replyToPost?.id) body.postId = replyToPost.id;
+            if (replyToPost && !replyToPost.isFirst) body.postId = replyToPost.id;
             const res = await fetch('/api/posts', {
                 method: 'POST',
                 body: JSON.stringify({ ...body }),
@@ -71,6 +73,12 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
         }
     };
 
+    useEffect(() => {
+        if (!tiptap || !replyToPost) return;
+        formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+        tiptap.commands.focus('start', { scrollIntoView: false });
+    }, [replyToPost, tiptap]);
+
     if (!session || !discussion) return null;
     return (
         <Box className='flex flex-col'>
@@ -84,14 +92,18 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
                     <div className='flex items-center mb-1.5 text-xs text-gray-300'>
                         <Link href={`/u/${session.user?.name}`} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{session.user?.name}</Link>
                         <span className='w-4 h-4'><ArrowRight /></span>
-                        <div>回复
-                            {discussion.replyToPost ?
-                                (<Link href={`/u/${discussion.replyToPost.user.name}`} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{discussion.replyToPost.user.name}</Link>)
-                                : '主贴'
+                        <div className='flex items-center text-gray-100'>
+                            <span className='whitespace-nowrap'>回复&nbsp;</span>
+                            {!replyToPost || replyToPost?.isFirst ? '主贴' :
+                                (<PostDetailPopover post={replyToPost} />
+                                    // <span className='text-xs hover:underline underline-offset-2 cursor-pointer'>
+                                    //     u/{replyToPost.user.name}
+                                    // </span>
+                                )
                             }
                         </div>
                     </div>
-                    <form onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
+                    <form ref={formRef} onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
                         <Tiptap onCreate={({ editor }) => setTipTap(editor)} onUpdate={({ editor }) => {
                             setContentJson(editor.getJSON());
                             setContentText(editor.getText());

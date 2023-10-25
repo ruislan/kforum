@@ -9,6 +9,7 @@ async function getDiscussion({ id }) {
     where: { id },
     include: {
       user: { select: { id: true, name: true, email: true, gender: true, avatar: true } },
+      category: { select: { id: true, name: true, slug: true }},
       firstPost: true,
       posts: {
         where: {

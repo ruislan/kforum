@@ -7,12 +7,13 @@ import DateUtils from '@/lib/date-utils';
 import Box from '../ui/box';
 import { Blank, Heart, Locked, Pined, Link as LinkIcon, Bookmark, Flag, EyeOff, Markup, UnBookmark, Pin, Lock, Edit, DeleteBin, Reply } from '../icons';
 import SplitBall from '../ui/split-ball';
-import Tag from '../ui/tag';
+// import Tag from '../ui/tag';
 import Button from '../ui/button';
 import ProseContent from '../ui/prose-content';
+import { runIfFn } from '@/lib/fn';
 
-function ActionButton({ children }) {
-    return (<Button kind='ghost' shape='square' size='sm'><span className='w-full h-full'>{children}</span></Button>);
+function ActionButton({ onClick, children }) {
+    return (<Button onClick={onClick} kind='ghost' shape='square' size='sm'><span className='w-full h-full'>{children}</span></Button>);
 }
 
 /*
@@ -22,7 +23,7 @@ function ActionButton({ children }) {
     line 4: discussion meta: replies, reactions, participants
     line 5: actions: reply, edit, delete, share, follow, favorite, report
 */
-export default function DiscussionDetailInfo({ discussion }) {
+export default function DiscussionDetailInfo({ discussion, onReplyClick }) {
     if (!discussion) return null;
     return (
         <Box className='flex flex-col pb-0.5'>
@@ -31,7 +32,7 @@ export default function DiscussionDetailInfo({ discussion }) {
                     {/* hide category if user is in the category */}
                     <div className='flex items-center'>
                         <span className='w-5 h-5 bg-gray-300 rounded mr-1.5'><Blank /></span>
-                        <Link href={`/c/general`} onClick={e => e.stopPropagation()} className='text-xs text-gray-50 hover:underline underline-offset-2 cursor-pointer'>c/综合分类</Link>
+                        <Link href={`/c/${discussion.category?.slug}`} onClick={e => e.stopPropagation()} className='text-xs text-gray-50 hover:underline underline-offset-2 cursor-pointer'>c/{discussion.category?.name}</Link>
                     </div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                     <div className='flex items-center'>
@@ -51,18 +52,18 @@ export default function DiscussionDetailInfo({ discussion }) {
                     {discussion.isSticky && (<span className='h-4 w-4 mr-1.5'><Pined /></span>)}
                 </div>
                 <h3 className='inline text-xl font-bold break-words text-neutral-200'>{discussion.title}</h3>
-                <div className='flex flex-wrap gap-1 my-2'>
+                {/* <div className='flex flex-wrap gap-1 my-2'>
                     <Tag>News</Tag>
                     <Tag>Help</Tag>
                     <Tag>Function</Tag>
                     <Tag>Cheer</Tag>
                     <Tag>Great</Tag>
-                </div>
+                </div> */}
                 <ProseContent className='my-2' content={discussion.firstPost?.content} />
                 <div className='text-xs inline-flex items-center justify-between text-gray-300'>
                     <div className='flex items-center'><span><Image width={16} height={16} src={'/reactions/heart.png'} alt='heart' /></span></div>
                     <div className='flex items-center gap-1'>
-                        <ActionButton><Reply /></ActionButton>
+                        <ActionButton onClick={() => runIfFn(onReplyClick)}><Reply /></ActionButton>
                         {/* give reaction  */}
                         <ActionButton><Heart /></ActionButton>
                         {/* copy url to share  */}

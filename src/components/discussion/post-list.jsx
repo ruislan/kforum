@@ -8,9 +8,10 @@ import SplitBall from '../ui/split-ball';
 import Button from '../ui/button';
 import DateUtils from '@/lib/date-utils';
 import ProseContent from '../ui/prose-content';
+import { runIfFn } from '@/lib/fn';
 
-function ActionButton({ children }) {
-    return (<Button kind='ghost' shape='square' size='sm'><span className='w-full h-full'>{children}</span></Button>);
+function ActionButton({ onClick, children }) {
+    return (<Button onClick={onClick} kind='ghost' shape='square' size='sm'><span className='w-full h-full'>{children}</span></Button>);
 }
 
 function NoContent() {
@@ -26,7 +27,7 @@ function NoContent() {
     line 2: post content
     line 3: actions: reply, edit, delete, share, follow, favorite, report
 */
-export default function PostList({ posts }) {
+export default function PostList({ posts, onReplyClick }) {
     if (!posts || posts.length === 0) return <NoContent />;
     return (
         <Box className='flex flex-col gap-4 pb-0.5'>
@@ -48,7 +49,7 @@ export default function PostList({ posts }) {
                             <div className='flex items-center'><span><Image width={16} height={16} src={'/reactions/heart.png'} alt='heart' /></span></div>
                             <div className='flex items-center gap-1'>
                                 {/* reply  */}
-                                <ActionButton><Reply /></ActionButton>
+                                <ActionButton onClick={e => runIfFn(onReplyClick, { post })}><Reply /></ActionButton>
                                 {/* give reaction  */}
                                 <ActionButton><Heart /></ActionButton>
                                 {/* copy url to share  */}

@@ -16,12 +16,13 @@ export async function POST(request, { params }) {
     if (!content || content.length < 1) return rest.badRequest({ message: '回复内容是必填项', field: 'content' });
     if (!discussionId) return rest.badRequest({ message: '回复的主贴已经删除或不存在', field: 'discussionId' });
 
-    let discussion;
+    // discussion must exist
+    const discussion = await prisma.discussion.findUnique({ where: { id: discussionId } });
+    if (!discussion) return rest.badRequest({ message: '回复的主贴已经删除或不存在', field: 'discussionId' });
+
+    // does it reply to a post?
     let post;
-    if (!postId) {
-        discussion = await prisma.discussion.findUnique({ where: { id: discussionId } });
-        if (!discussion) return rest.badRequest({ message: '回复的主贴已经删除或不存在', field: 'discussionId' });
-    } else {
+    if (postId) {
         post = await prisma.post.findUnique({ where: { id: postId } });
         if (!post) return rest.badRequest({ message: '回复的帖子已经删除或不存在', field: 'postId' });
     }
@@ -38,7 +39,7 @@ export async function POST(request, { params }) {
     const data = await prisma.$transaction(async tx => {
         const post = await tx.post.create({
             data: {
-                content, discussionId: discussion.id, type: 'text',
+                content, discussionId, type: 'text',
                 userId: session.user.id, ip: request.ip,
                 replyPostId: postId
             }
@@ -48,7 +49,7 @@ export async function POST(request, { params }) {
             lastPostedAt: new Date(),
         };
         if (!sessionUserPost) updateData.userCount = { increment: 1 };
-        discussion = await tx.discussion.update({
+        await tx.discussion.update({
             where: { id: discussion.id },
             data: updateData
         });
