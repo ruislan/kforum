@@ -1,5 +1,7 @@
 # KForum
 
+A Simple, Modern, Beautiful and Fast Forum. (under development)
+
 * Framework: NextJS
 * Database: Sqlite
 * ORM: Prisma
