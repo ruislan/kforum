@@ -66,7 +66,6 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
                 }
             }
         } catch (err) {
-            console.log(err);
             setError('未知错误，请稍后再试');
         } finally {
             setIsSubmitting(false);
