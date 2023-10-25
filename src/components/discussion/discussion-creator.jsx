@@ -51,13 +51,13 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
         try {
             const res = await fetch('/api/discussions', {
                 method: 'POST',
-                body: JSON.stringify({ title, content: JSON.stringify(contentJson), categorySlug }),
+                body: JSON.stringify({ title, content: JSON.stringify(contentJson), text: contentText, categorySlug }),
                 headers: { 'Content-Type': 'application/json' },
             });
             if (res.ok) {
                 const json = await res.json();
                 resetFields();
-                toast.success('发布成功');
+                toast.success('发布成功，正在跳转...');
                 router.push(`/d/${json.data.id}`);
             } else {
                 if (res.status === 400) {
@@ -102,7 +102,7 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
                     }} />
                     {error && <span className='text-sm text-red-500'>{error}</span>}
                     <div className='flex justify-end'>
-                        <Button type='submit' isLoading={isSubmitting} disabled={isSubmitting}>发布</Button>
+                        <Button type='submit' isLoading={isSubmitting} disabled={contentText?.length <= 0}>发布</Button>
                     </div>
                 </div>
             </form>

@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import prisma from '@/lib/prisma';
 import rest from '@/lib/rest';
 import authOptions from '@/lib/auth';
+import { userModal } from '@/lib/models';
 
 export async function POST(request, { params }) {
     // require user
@@ -10,10 +11,10 @@ export async function POST(request, { params }) {
     if (!session.user?.id) return rest.unauthorized();
 
     // parse body
-    const { content, discussionId, postId } = await request.json();
+    const { content, text, discussionId, postId } = await request.json();
 
     // validate params
-    if (!content || content.length < 1) return rest.badRequest({ message: '回复内容是必填项', field: 'content' });
+    if (!content || content.length < 1 || !text || text.length < 1) return rest.badRequest({ message: '回复内容是必填项', field: 'content' });
     if (!discussionId) return rest.badRequest({ message: '回复的主贴已经删除或不存在', field: 'discussionId' });
 
     // discussion must exist
@@ -23,7 +24,12 @@ export async function POST(request, { params }) {
     // does it reply to a post?
     let post;
     if (postId) {
-        post = await prisma.post.findUnique({ where: { id: postId } });
+        post = await prisma.post.findUnique({
+            where: { id: postId },
+            include: {
+                user: { select: userModal.fields.simple }
+            }
+        });
         if (!post) return rest.badRequest({ message: '回复的帖子已经删除或不存在', field: 'postId' });
     }
 
@@ -39,7 +45,7 @@ export async function POST(request, { params }) {
     const data = await prisma.$transaction(async tx => {
         const post = await tx.post.create({
             data: {
-                content, discussionId, type: 'text',
+                content, text, discussionId, type: 'text',
                 userId: session.user.id, ip: request.ip,
                 replyPostId: postId
             }
@@ -53,9 +59,12 @@ export async function POST(request, { params }) {
             where: { id: discussion.id },
             data: updateData
         });
-        post.user = session.user;
         return post;
     });
+
+    // add ref
+    data.user = session.user;
+    data.replyPost = post;
 
     return rest.created({ data });
 }

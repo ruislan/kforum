@@ -2,10 +2,11 @@ import clsx from 'clsx';
 import React from 'react';
 
 const variants = {
-    base: 'inline-flex whitespace-nowrap items-center justify-center font-medium ring-offset-background transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
+    base: 'inline-flex whitespace-nowrap items-center justify-center font-bold ring-offset-background transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
     kind: {
         default: 'bg-gray-300 text-gray-900 hover:bg-gray-300/90',
-        ghost: "hover:bg-neutral-700 hover:text-neutral-300",
+        ghost: 'hover:bg-neutral-700 hover:text-neutral-300',
+        outline: 'border border-neutral-400 hover:border-neutral-400/90 text-gray-100 hover:text-gray-100/90',
     },
     shape: {
         default: 'default',

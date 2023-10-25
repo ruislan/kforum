@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import prisma from '@/lib/prisma';
+import { userModal } from './models';
 
 const authOptions = {
     providers: [
@@ -20,14 +21,15 @@ const authOptions = {
                             { email: username },
                             { name: username }
                         ]
-                    }
+                    },
+                    select: { ...userModal.fields.passport, password: true }
                 });
                 if (!user) return null;
 
                 const isPasswordMatched = await bcrypt.compare(password, user.password);
                 if (!isPasswordMatched) return null;
 
-                return { id: user.id, name: user.name, email: user.email, avatar: user.avatar };
+                return user;
             },
         }),
     ],
@@ -39,12 +41,14 @@ const authOptions = {
             if (user) {
                 token.id = user.id;
                 token.avatar = user.avatar;
+                token.isAdmin = user.isAdmin;
             }
             return token;
         },
         async session({ session, token }) {
             session.user.id = token.id;
             session.user.avatar = token.avatar;
+            session.user.isAdmin = token.isAdmin;
             return session;
         }
     },

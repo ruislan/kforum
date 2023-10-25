@@ -42,7 +42,7 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
         if (!validateFields()) return;
         setIsSubmitting(true);
         try {
-            const body = { discussionId: discussion.id, content: JSON.stringify(contentJson) };
+            const body = { discussionId: discussion.id, content: JSON.stringify(contentJson), text: contentText };
             if (replyToPost && !replyToPost.isFirst) body.postId = replyToPost.id;
             const res = await fetch('/api/posts', {
                 method: 'POST',
@@ -75,8 +75,10 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
 
     useEffect(() => {
         if (!tiptap || !replyToPost) return;
-        formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-        tiptap.commands.focus('start', { scrollIntoView: false });
+        if (!!replyToPost.focus && formRef.current) {
+            formRef.current.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+            tiptap.commands.focus('start', { scrollIntoView: false });
+        }
     }, [replyToPost, tiptap]);
 
     if (!session || !discussion) return null;
@@ -94,13 +96,7 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
                         <span className='w-4 h-4'><ArrowRight /></span>
                         <div className='flex items-center text-gray-100'>
                             <span className='whitespace-nowrap'>回复&nbsp;</span>
-                            {!replyToPost || replyToPost?.isFirst ? '主贴' :
-                                (<PostDetailPopover post={replyToPost} />
-                                    // <span className='text-xs hover:underline underline-offset-2 cursor-pointer'>
-                                    //     u/{replyToPost.user.name}
-                                    // </span>
-                                )
-                            }
+                            {!replyToPost || replyToPost?.isFirst ? '主贴' : <PostDetailPopover post={replyToPost} />}
                         </div>
                     </div>
                     <form ref={formRef} onSubmit={e => { e.preventDefault(); handleSubmit(); }}>

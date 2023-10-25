@@ -1,4 +1,7 @@
 'use client';
+
+import clsx from 'clsx';
+
 export const Close = () => <svg viewBox='0 0 24 24' fill='currentcolor'><path d='M12.0007 10.5865L16.9504 5.63672L18.3646 7.05093L13.4149 12.0007L18.3646 16.9504L16.9504 18.3646L12.0007 13.4149L7.05093 18.3646L5.63672 16.9504L10.5865 12.0007L5.63672 7.05093L7.05093 5.63672L12.0007 10.5865Z'></path></svg>;
 export const Search = () => <svg viewBox='0 0 24 24' fill='currentcolor'><path d='M11 2C15.968 2 20 6.032 20 11C20 15.968 15.968 20 11 20C6.032 20 2 15.968 2 11C2 6.032 6.032 2 11 2ZM11 18C14.8675 18 18 14.8675 18 11C18 7.1325 14.8675 4 11 4C7.1325 4 4 7.1325 4 11C4 14.8675 7.1325 18 11 18ZM19.4853 18.0711L22.3137 20.8995L20.8995 22.3137L18.0711 19.4853L19.4853 18.0711Z'></path></svg>;
 export const Blank = () => <svg viewBox='0 0 24 24' fill='currentcolor'><path d='M4 3H20C20.5523 3 21 3.44772 21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3Z'></path></svg>;
@@ -30,3 +33,6 @@ export const OrderedList = () => <svg viewBox='0 0 24 24' strokeWidth='2' stroke
 export const BlockQuote = () => <svg viewBox='0 0 24 24' strokeWidth='2' stroke='currentColor' fill='none' strokeLinecap='round' strokeLinejoin='round'><path stroke='none' d='M0 0h24v24H0z' fill='none'></path><path d='M6 15h15'></path><path d='M21 19h-15'></path><path d='M15 11h6'></path><path d='M21 7h-6'></path><path d='M9 9h1a1 1 0 1 1 -1 1v-2.5a2 2 0 0 1 2 -2'></path><path d='M3 9h1a1 1 0 1 1 -1 1v-2.5a2 2 0 0 1 2 -2'></path></svg>;
 export const Image = () => <svg viewBox='0 0 24 24' strokeWidth='2' stroke='currentColor' fill='none' strokeLinecap='round' strokeLinejoin='round'><path stroke='none' d='M0 0h24v24H0z' fill='none'></path><path d='M15 8h.01'></path><path d='M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z'></path><path d='M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5'></path><path d='M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3'></path></svg>;
 export const ArrowRight = () => <svg viewBox='0 0 24 24' fill='currentColor'><path d='M16 12L10 18V6L16 12Z'></path></svg>;
+export const ArrowDownS = () => <svg viewBox='0 0 24 24' fill='currentColor'><path d='M11.9997 13.1714L16.9495 8.22168L18.3637 9.63589L11.9997 15.9999L5.63574 9.63589L7.04996 8.22168L11.9997 13.1714Z'></path></svg>;
+export const ArrowUpS = () => <svg viewBox='0 0 24 24' fill='currentColor'><path d='M11.9997 10.8284L7.04996 15.7782L5.63574 14.364L11.9997 8L18.3637 14.364L16.9495 15.7782L11.9997 10.8284Z'></path></svg>;
+export const LoadingIcon = (className) => <svg className={clsx('animate-spin text-current', className)} fill='none' viewBox='0 0 24 24'><circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4'></circle><path className='opacity-75' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z' fill='currentColor'></path></svg>;

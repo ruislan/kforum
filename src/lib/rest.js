@@ -1,12 +1,18 @@
 const jsonHeaders = { 'Content-Type': 'application/json' };
 
-const Rest = {
+const rest = {
     unauthorized() {
         return new Response(null, { status: 401, headers: jsonHeaders });
     },
     created(json) {
         const body = json ? JSON.stringify(json) : null;
         return new Response(body, { status: 201, headers: jsonHeaders });
+    },
+    updated() {
+        return new Response(null, { status: 204, headers: jsonHeaders });
+    },
+    deleted() {
+        return new Response(null, { status: 204, headers: jsonHeaders });
     },
     ok(json) {
         const body = json ? JSON.stringify(json) : null;
@@ -18,4 +24,4 @@ const Rest = {
     },
 };
 
-export default Rest;
+export default rest;

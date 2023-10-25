@@ -65,7 +65,8 @@ model Discussion {
 
 model Post {
   id          Int     @id @default(autoincrement())
-  content     String
+  content     String // 内容，富文本框修饰之后的
+  text        String // 内容，去掉富文本框之后的只有文本的内容
   type        String // 类型，有可能有投票之类的
   ip          String? // 发布人的 IP 地址
   replyPostId Int? // 回复哪一贴
@@ -80,10 +81,12 @@ model Post {
 
   // ref
   user                User              @relation(fields: [userId], references: [id])
+  replyPost           Post?             @relation(name: "replies", fields: [replyPostId], references: [id])
   discussion          Discussion        @relation(name: "posts", fields: [discussionId], references: [id])
   firstPostDiscussion Discussion?       @relation(name: "first_post")
   lastPostDiscussion  Discussion?       @relation(name: "last_post")
   reactions           PostReactionRef[]
+  replies             Post[]            @relation(name: "replies")
 }
 
 model Reaction {

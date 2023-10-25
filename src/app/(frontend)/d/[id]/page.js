@@ -1,4 +1,5 @@
 import prisma from '@/lib/prisma';
+import { userModal } from '@/lib/models';
 
 import UserActions from '@/components/user/user-actions';
 import DiscussionDetail from '@/components/discussion/discussion-detail';
@@ -8,27 +9,36 @@ async function getDiscussion({ id }) {
   const d = await prisma.discussion.findUnique({
     where: { id },
     include: {
-      user: { select: { id: true, name: true, email: true, gender: true, avatar: true } },
-      category: { select: { id: true, name: true, slug: true }},
+      user: { select: userModal.fields.simple },
+      category: { select: { id: true, name: true, slug: true } },
       firstPost: true,
       posts: {
         where: {
-          replyPostId: null,
           firstPostDiscussion: null, // 不包含首贴
         },
-        include: { user: true },
-        orderBy: { createdAt: 'asc' }
-        //  take and limit
+        include: {
+          user: { select: userModal.fields.simple },
+          replyPost: {
+            include: {
+              user: { select: userModal.fields.simple }
+            }
+          }
+        },
+        orderBy: { createdAt: 'asc' },
+        take: 10,
+        skip: 0
       },
     },
   });
-  // increment view count
-  await prisma.discussion.update({
-    where: { id },
-    data: {
-      viewCount: { increment: 1 },
-    }
-  });
+  if (d) {
+    // increment view count
+    await prisma.discussion.update({
+      where: { id },
+      data: {
+        viewCount: { increment: 1 },
+      }
+    });
+  }
   return d;
 }
 

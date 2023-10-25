@@ -45,14 +45,14 @@ export default function DiscussionListItem({ discussion }) {
                     {discussion.isClosed && (<span className='h-4 w-4 mr-0.5'><Locked /></span>)}
                     {discussion.isSticky && (<span className='h-4 w-4 mr-1.5'><Pined /></span>)}
                 </div>
-                <div className='inline-block relative'>
+                {/* <div className='inline-block relative'>
                     <h3 className='inline text-lg font-bold break-words'>{discussion.title}</h3>
                     <Tag className='ml-1'>News</Tag>
                     <Tag className='ml-1'>Help</Tag>
                     <Tag className='ml-1'>Function</Tag>
                     <Tag className='ml-1'>Cheer</Tag>
                     <Tag className='ml-1'>Great</Tag>
-                </div>
+                </div> */}
                 <ProseContent className='mt-2 max-h-64 overflow-hidden content-mask-b' content={discussion.firstPost?.content} />
                 <div className='text-xs inline-flex items-center text-gray-300 mt-3'>
                     <div className='flex items-center'><span>参与 {discussion.userCount}</span></div>
@@ -62,8 +62,8 @@ export default function DiscussionListItem({ discussion }) {
                     <div className='flex items-center'><span>反馈 {discussion.reactionCount}</span></div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                     <div className='flex items-center'><span>浏览 {discussion.viewCount}</span></div>
-                    <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                    <div className='flex items-center'><span>分享 {discussion.shareCount}</span></div>
+                    {/* <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
+                    <div className='flex items-center'><span>分享 {discussion.shareCount}</span></div> */}
                 </div>
             </div>
         </Box>

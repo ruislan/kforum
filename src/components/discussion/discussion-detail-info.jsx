@@ -1,20 +1,21 @@
 'use client';
 
+import { useState } from 'react';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 import DateUtils from '@/lib/date-utils';
+import { runIfFn } from '@/lib/fn';
 import Box from '../ui/box';
 import { Blank, Heart, Locked, Pined, Link as LinkIcon, Bookmark, Flag, EyeOff, Markup, UnBookmark, Pin, Lock, Edit, DeleteBin, Reply } from '../icons';
 import SplitBall from '../ui/split-ball';
 // import Tag from '../ui/tag';
-import Button from '../ui/button';
+import ActionButton from '../ui/action-button';
 import ProseContent from '../ui/prose-content';
-import { runIfFn } from '@/lib/fn';
-
-function ActionButton({ onClick, children }) {
-    return (<Button onClick={onClick} kind='ghost' shape='square' size='sm'><span className='w-full h-full'>{children}</span></Button>);
-}
+import ActionDelete from './action-delete';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -24,7 +25,16 @@ function ActionButton({ onClick, children }) {
     line 5: actions: reply, edit, delete, share, follow, favorite, report
 */
 export default function DiscussionDetailInfo({ discussion, onReplyClick }) {
-    if (!discussion) return null;
+    const router = useRouter();
+    const { data, status } = useSession();
+    const isAuthenticated = status === 'authenticated';
+    const isOwner = isAuthenticated && data.user.id === discussion.user.id;
+    const isAdmin = isAuthenticated && data.user.isAdmin;
+
+    if (!discussion) {
+        router.replace('/');
+        return;
+    }
     return (
         <Box className='flex flex-col pb-0.5'>
             <div className='flex flex-col flex-1'>
@@ -67,24 +77,31 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick }) {
                         {/* give reaction  */}
                         <ActionButton><Heart /></ActionButton>
                         {/* copy url to share  */}
-                        <ActionButton><LinkIcon /></ActionButton>
+                        {/* <ActionButton><LinkIcon /></ActionButton> */}
                         {/* save to bookmark */}
-                        <ActionButton><Bookmark /></ActionButton>
-                        <ActionButton><UnBookmark /></ActionButton>
+                        {/* <ActionButton><Bookmark /></ActionButton>
+                        <ActionButton><UnBookmark /></ActionButton> */}
                         {/* report: owner, moderator and the user who has reported don't show this flag icon */}
-                        <ActionButton><Flag /></ActionButton>
+                        {/* <ActionButton><Flag /></ActionButton> */}
                         {/* hide */}
-                        <ActionButton><EyeOff /></ActionButton>
-                        {/* define this port: owner, moderator. multi choose, items: spoiler(剧透)，NSFW(少儿不宜)，fake（假的），approved（实锤），spam（水贴）, OC（原创）, official（官方）*/}
-                        <ActionButton><Markup /></ActionButton>
-                        {/* let discussion stay top of the discussion list: owner, moderator */}
-                        <ActionButton><Pin /></ActionButton>
-                        {/* lock all: owner, moderator */}
-                        <ActionButton><Lock /></ActionButton>
-                        {/* edit:owner, moderator */}
-                        <ActionButton><Edit /></ActionButton>
-                        {/* delete:owner, moderator */}
-                        <ActionButton><DeleteBin /></ActionButton>
+                        {/* <ActionButton><EyeOff /></ActionButton> */}
+                        {(isOwner || isAdmin) &&
+                            <>
+                                {/* define this port: owner, moderator. multi choose, items: spoiler(剧透)，NSFW(少儿不宜)，fake（假的），approved（实锤），spam（水贴）, OC（原创）, official（官方）*/}
+                                {/* <ActionButton><Markup /></ActionButton> */}
+                                {/* let discussion stay top of the discussion list: owner, moderator */}
+                                <ActionButton><Pin /></ActionButton>
+                                {/* lock all: owner, moderator */}
+                                <ActionButton><Lock /></ActionButton>
+                                {/* edit:owner, moderator */}
+                                <ActionButton><Edit /></ActionButton>
+                                {/* delete:owner, moderator */}
+                                <ActionDelete // 删除首贴会自动删除整个讨论（目前是这个规则）
+                                    confirmContent='你确定要删除这篇讨论及其所有的回复吗？'
+                                    post={discussion.firstPost} onDeleted={() => router.replace('/')}
+                                />
+                            </>
+                        }
                     </div>
                 </div>
             </div>

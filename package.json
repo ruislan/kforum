@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
-    "@prisma/client": "^5.4.2",
+    "@prisma/client": "^5.5.0",
     "@tiptap/extension-color": "^2.1.12",
     "@tiptap/extension-image": "^2.1.12",
     "@tiptap/extension-list-item": "^2.1.12",
@@ -30,7 +30,7 @@
     "date-fns": "^2.30.0",
     "eslint": "8.48.0",
     "eslint-config-next": "13.4.19",
-    "next": "^13.5.4",
+    "next": "^13.5.6",
     "next-auth": "^4.24.3",
     "postcss": "8.4.29",
     "react": "18.2.0",
@@ -41,6 +41,6 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",
-    "prisma": "^5.4.2"
+    "prisma": "^5.5.0"
   }
 }
