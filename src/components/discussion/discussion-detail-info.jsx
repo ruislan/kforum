@@ -16,6 +16,7 @@ import SplitBall from '../ui/split-ball';
 import ActionButton from '../ui/action-button';
 import ProseContent from '../ui/prose-content';
 import ActionDelete from './action-delete';
+import ActionSticky from './action-sticky';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -27,14 +28,18 @@ import ActionDelete from './action-delete';
 export default function DiscussionDetailInfo({ discussion, onReplyClick }) {
     const router = useRouter();
     const { data, status } = useSession();
+    const [isSticky, setIsSticky] = useState(discussion?.isSticky);
+
     const isAuthenticated = status === 'authenticated';
-    const isOwner = isAuthenticated && data.user.id === discussion.user.id;
+    const isOwner = isAuthenticated && data.user.id === discussion?.user.id;
     const isAdmin = isAuthenticated && data.user.isAdmin;
     const c = discussion.category;
+
     if (!discussion) {
         router.replace('/');
         return;
     }
+
     return (
         <Box className='flex flex-col pb-0.5'>
             <div className='flex flex-col flex-1'>
@@ -59,9 +64,8 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick }) {
                             <span className='text-xs'>{`编辑于 ${DateUtils.fromNow(discussion.lastUpdatedAt)}`}</span>
                         </>
                     )}
-                    {(discussion.isClosed || discussion.isSticky) && (<SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />)}
-                    {discussion.isClosed && (<span className='h-4 w-4 mr-0.5'><Locked /></span>)}
-                    {discussion.isSticky && (<span className='h-4 w-4 mr-1.5'><Pined /></span>)}
+                    {discussion.isClosed && (<span className='h-4 w-4 ml-1.5'><Locked /></span>)}
+                    {isSticky && (<span className='h-4 w-4 text-green-400 ml-1.5'><Pined /></span>)}
                 </div>
                 <h3 className='inline text-xl font-bold break-words text-neutral-200'>{discussion.title}</h3>
                 {/* <div className='flex flex-wrap gap-1 my-2'>
@@ -92,7 +96,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick }) {
                                 {/* define this port: owner, moderator. multi choose, items: spoiler(剧透)，NSFW(少儿不宜)，fake（假的），approved（实锤），spam（水贴）, OC（原创）, official（官方）*/}
                                 {/* <ActionButton><Markup /></ActionButton> */}
                                 {/* let discussion stay top of the discussion list: owner, moderator */}
-                                <ActionButton><Pin /></ActionButton>
+                                <ActionSticky discussion={discussion} onSticky={(sticky) => { setIsSticky(sticky); discussion.isSticky = sticky; }} />
                                 {/* lock all: owner, moderator */}
                                 <ActionButton><Lock /></ActionButton>
                                 {/* edit:owner, moderator */}

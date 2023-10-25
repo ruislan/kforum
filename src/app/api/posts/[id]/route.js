@@ -16,8 +16,6 @@ export async function DELETE(request, { params }) {
     // check if user is admin or is owner
     const isAdmin = session.user.isAdmin;
     const isOwner = post.userId === session.user.id;
-    console.log(isAdmin);
-    console.log(isOwner);
     if (!isAdmin && !isOwner) return rest.badRequest({ message: '帖子不存在' }); // 非正常调用，隐藏真实原因
 
     // delete post

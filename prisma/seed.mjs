@@ -19,8 +19,7 @@ async function initBase() {
 
     // init nav menus
     const navMenus = [
-        { name: '首页', url: '/', },
-        { name: '流行', url: '/popular', sequence: 1, }
+        { name: '首页', url: '/', sequence: 0 },
     ];
     for (const item of navMenus) {
         await db.webNavMenus.upsert({ where: { name: item.name }, create: item, update: item });
