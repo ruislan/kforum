@@ -1,6 +1,7 @@
 import CategoryList from '@/components/category/category-list';
 import DiscussionList from '@/components/discussion/discussion-list';
-import UserActions from '@/components/user/user-actions';
+import ActionCreate from '@/components/discussion/action-create';
+import Box from '@/components/ui/box';
 
 export default function Home() {
   return (
@@ -21,7 +22,7 @@ export default function Home() {
       </div>
       {/* right side */}
       <div className='flex flex-col w-80 gap-4'>
-        <UserActions category={null} />
+        <Box className='flex flex-col gap-3'><ActionCreate category={null} /></Box>
         <CategoryList />
       </div>
     </div>

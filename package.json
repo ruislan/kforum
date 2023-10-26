@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
-    "@prisma/client": "^5.5.0",
+    "@prisma/client": "^5.5.2",
     "@tiptap/extension-color": "^2.1.12",
     "@tiptap/extension-image": "^2.1.12",
     "@tiptap/extension-list-item": "^2.1.12",
@@ -41,6 +41,6 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",
-    "prisma": "^5.5.0"
+    "prisma": "^5.5.2"
   }
 }

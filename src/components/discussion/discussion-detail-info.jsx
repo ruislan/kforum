@@ -17,6 +17,7 @@ import ActionButton from '../ui/action-button';
 import ProseContent from '../ui/prose-content';
 import ActionDelete from './action-delete';
 import ActionSticky from './action-sticky';
+import ActionLock from './action-lock';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -29,6 +30,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick }) {
     const router = useRouter();
     const { data, status } = useSession();
     const [isSticky, setIsSticky] = useState(discussion?.isSticky);
+    const [isLocked, setIsLocked] = useState(discussion?.isLocked);
 
     const isAuthenticated = status === 'authenticated';
     const isOwner = isAuthenticated && data.user.id === discussion?.user.id;
@@ -64,8 +66,9 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick }) {
                             <span className='text-xs'>{`编辑于 ${DateUtils.fromNow(discussion.lastUpdatedAt)}`}</span>
                         </>
                     )}
-                    {discussion.isClosed && (<span className='h-4 w-4 ml-1.5'><Locked /></span>)}
-                    {isSticky && (<span className='h-4 w-4 text-green-400 ml-1.5'><Pined /></span>)}
+                    <span className='ml-1' />
+                    {isSticky && (<span className='h-4 w-4 ml-0.5 text-green-400'><Pined /></span>)}
+                    {isLocked && (<span className='h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}
                 </div>
                 <h3 className='inline text-xl font-bold break-words text-neutral-200'>{discussion.title}</h3>
                 {/* <div className='flex flex-wrap gap-1 my-2'>
@@ -98,7 +101,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick }) {
                                 {/* let discussion stay top of the discussion list: owner, moderator */}
                                 <ActionSticky discussion={discussion} onSticky={(sticky) => { setIsSticky(sticky); discussion.isSticky = sticky; }} />
                                 {/* lock all: owner, moderator */}
-                                <ActionButton><Lock /></ActionButton>
+                                <ActionLock discussion={discussion} onLocked={(lock) => { setIsLocked(lock); discussion.isLocked = lock; }}><Lock /></ActionLock>
                                 {/* edit:owner, moderator */}
                                 <ActionButton><Edit /></ActionButton>
                                 {/* delete:owner, moderator */}

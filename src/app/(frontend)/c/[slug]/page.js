@@ -1,8 +1,10 @@
+import prisma from '@/lib/prisma';
+
 import CategoryInfo from '@/components/category/category-info';
 import CategoryList from '@/components/category/category-list';
 import DiscussionList from '@/components/discussion/discussion-list';
-import UserActions from '@/components/user/user-actions';
-import prisma from '@/lib/prisma';
+import ActionCreate from '@/components/discussion/action-create';
+import Box from '@/components/ui/box';
 
 async function getCategory(slug) {
   const category = await prisma.category.findUnique({ where: {slug}});
@@ -20,7 +22,7 @@ export default async function Page({ params }) {
       {/* right side */}
       <div className='flex flex-col w-80 gap-4'>
         <CategoryInfo category={category} />
-        <UserActions category={category} />
+        <Box className='flex flex-col gap-3'><ActionCreate category={category} /></Box>
         <CategoryList />
       </div>
     </div>

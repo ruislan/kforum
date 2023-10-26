@@ -1,7 +1,8 @@
 import prisma from '@/lib/prisma';
 import { userModal } from '@/lib/models';
 
-import UserActions from '@/components/user/user-actions';
+import Box from '@/components/ui/box';
+import ActionCreate from '@/components/discussion/action-create';
 import DiscussionDetail from '@/components/discussion/discussion-detail';
 
 async function getDiscussion({ id }) {
@@ -54,7 +55,7 @@ export default async function Page({ params }) {
       {/* right side */}
       <div className='flex flex-col w-80 gap-4'>
         {/* discussion'meta */}
-        <UserActions />
+        <Box className='flex flex-col gap-3'><ActionCreate /></Box>
       </div>
     </div>
   )

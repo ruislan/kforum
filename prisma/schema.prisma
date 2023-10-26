@@ -35,7 +35,7 @@ model Discussion {
   id            Int     @id @default(autoincrement())
   title         String // 标题
   isSticky      Boolean @default(false) @map("is_sticky") // 是否置顶
-  isClosed      Boolean @default(false) @map("is_closed") // 是否关闭，关闭之后就不能继续回复了
+  isLocked      Boolean @default(false) @map("is_locked") // 是否锁帖，锁帖之后就不能继续回复了
   isHidden      Boolean @default(false) @map("is_hidden") // 是否隐藏，隐藏了无法被找到
   viewCount     Int     @default(1) @map("view_count") // 浏览统计
   userCount     Int     @default(1) @map("user_count") // 不重复用户统计
