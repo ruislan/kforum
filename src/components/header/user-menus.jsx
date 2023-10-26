@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import useLoginModal from '@/hooks/useLoginModal';
 import useRegisterModal from '@/hooks/useRegisterModal';
 
-import UserPopupMenus from './user-popup-menus';
+import UserMenusDropdown from './user-menus-dropdown';
 
 export default function UserMenus() {
     const { data } = useSession();
@@ -18,7 +18,7 @@ export default function UserMenus() {
                     <span onClick={() => registerModal.open()} className='cursor-pointer whitespace-nowrap transition-all text-neutral-400 hover:text-neutral-50 no-underline'>注册</span>
                 </>
             )}
-            <UserPopupMenus />
+            <UserMenusDropdown />
         </div>
     );
 }

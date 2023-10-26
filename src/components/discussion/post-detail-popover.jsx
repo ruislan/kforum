@@ -18,7 +18,7 @@ export default function PostDetailPopover({ post }) {
                         leave='transition ease-in duration-150' leaveFrom='opacity-100 translate-y-0' leaveTo='opacity-0 translate-y-1'
                     >
                         <Popover.Panel className='absolute bottom-full left-[160px] z-10 mb-2 -translate-x-1/2 transform px-4'>
-                            <div className='overflow-auto bg-neutral-800 border border-solid border-neutral-500 w-screen max-w-sm max-h-[340px] rounded-md shadow-xl'>
+                            <div className='overflow-auto bg-neutral-800 border border-solid border-neutral-700 w-screen max-w-sm max-h-[340px] rounded-md shadow-xl'>
                                 <div className='flex flex-col p-3'>
                                     <ProseContent content={post.content} />
                                 </div>

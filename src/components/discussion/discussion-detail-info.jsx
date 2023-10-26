@@ -18,6 +18,7 @@ import ProseContent from '../ui/prose-content';
 import ActionDelete from './action-delete';
 import ActionSticky from './action-sticky';
 import ActionLock from './action-lock';
+import ActionReact from './action-react';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -80,16 +81,18 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick }) {
                 </div> */}
                 <ProseContent className='my-2' content={discussion.firstPost?.content} />
                 <div className='text-xs inline-flex items-center justify-between text-gray-300'>
-                    <div className='flex items-center'><span><Image width={16} height={16} src={'/reactions/heart.png'} alt='heart' /></span></div>
+                    <div className='flex items-center'>
+                        <Image width={16} height={16} src={'/reactions/heart.png'} alt='heart' />
+                    </div>
                     <div className='flex items-center gap-1'>
                         <ActionButton onClick={() => runIfFn(onReplyClick)}><Reply /></ActionButton>
                         {/* give reaction  */}
-                        <ActionButton><Heart /></ActionButton>
+                        <ActionReact post={discussion.firstPost} onReacted={() => console.log('do')} />
                         {/* copy url to share  */}
                         {/* <ActionButton><LinkIcon /></ActionButton> */}
                         {/* save to bookmark */}
                         {/* <ActionButton><Bookmark /></ActionButton>
-                        <ActionButton><UnBookmark /></ActionButton> */}
+                            <ActionButton><UnBookmark /></ActionButton> */}
                         {/* report: owner, moderator and the user who has reported don't show this flag icon */}
                         {/* <ActionButton><Flag /></ActionButton> */}
                         {/* hide */}

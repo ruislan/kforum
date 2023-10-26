@@ -9,7 +9,7 @@ import { Menu, Transition } from '@headlessui/react';
 
 import Box from '../ui/box';
 
-export default function UserPopupMenus() {
+export default function UserMenusDropdown() {
     const { data } = useSession();
     if (!data?.user) return null;
 

@@ -16,6 +16,7 @@ async function initBase() {
         bio: 'I am the admin', createdAt: new Date(), updatedAt: new Date(),
     };
     await db.user.upsert({ where: { id: admin.id }, create: admin, update: admin });
+    console.log('已完成管理员初始化. User: admin, Pass: 123123');
 
     // init nav menus
     const navMenus = [
@@ -24,6 +25,7 @@ async function initBase() {
     for (const item of navMenus) {
         await db.webNavMenus.upsert({ where: { name: item.name }, create: item, update: item });
     }
+    console.log('已完成菜单初始化.');
 
     // init categories
     const categories = [
@@ -36,6 +38,26 @@ async function initBase() {
     for (const item of categories) {
         await db.category.upsert({ where: { id: item.id }, create: item, update: item });
     }
+    console.log('已完成分类初始化.');
+
+    // init reactions
+    const reactions = [
+        { name: '爱心', icon: '/reactions/heart.png' },
+        { name: '微笑', icon: '/reactions/smiling.png' },
+        { name: '亲亲', icon: '/reactions/kiss.png' },
+        { name: '心碎', icon: '/reactions/broken-heart.png' },
+        { name: '哭泣', icon: '/reactions/crying.png' },
+        { name: '悲伤', icon: '/reactions/sad.png' },
+        { name: '愤怒', icon: '/reactions/angry.png' },
+        { name: '小丑', icon: '/reactions/clown.png' },
+    ];
+    for (let i = 1; i <= reactions.length; i++) {
+        const reaction = reactions[i - 1];
+        reaction.position = i;
+        reaction.id = i;
+        await db.reaction.upsert({ where: { id: reaction.id }, create: reaction, update: reaction });
+    }
+    console.log('已完成反馈初始化.');
 }
 
 // 用于测试
