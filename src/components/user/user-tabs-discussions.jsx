@@ -1,7 +1,8 @@
 'use client';
 
-import Box from "../ui/box";
+import Box from '../ui/box';
 
+// 只列出用户的讨论主题（含首贴）
 export default function UserTabsDiscussions() {
     return (
         <Box>

@@ -20,7 +20,7 @@ export default function UserTabs({ user, tab }) {
             selectedIndex={!tab ? 0 : tabs.findIndex(t => t.slug === tab)}
             onChange={(index => router.push(`/u/${user.name}${tabs[index].relativePath}`))}
         >
-            <Tab.List className='flex space-x-1 rounded-md bg-neutral-800 p-1'>
+            <Tab.List className='flex space-x-1 rounded-md bg-neutral-800 border border-solid border-neutral-700 px-2 py-1.5'>
                 {tabs?.map((tab) => (
                     <Tab key={tab.name} className={({ selected }) =>
                         clsx('rounded-md py-2 px-4 text-sm font-semibold text-gray-100 focus:outline-none',
@@ -30,9 +30,9 @@ export default function UserTabs({ user, tab }) {
                 ))}
             </Tab.List>
             <Tab.Panels className='mt-2'>
-                <Tab.Panel><UserTabsOverview /></Tab.Panel>
-                <Tab.Panel><UserTabsDiscussions /></Tab.Panel>
-                <Tab.Panel><UserTabsPosts /></Tab.Panel>
+                <Tab.Panel><UserTabsOverview user={user} /></Tab.Panel>
+                <Tab.Panel><UserTabsDiscussions user={user} /></Tab.Panel>
+                <Tab.Panel><UserTabsPosts user={user} /></Tab.Panel>
             </Tab.Panels>
         </Tab.Group>
     );

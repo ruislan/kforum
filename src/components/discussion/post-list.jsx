@@ -2,27 +2,20 @@
 import { useState } from 'react';
 
 import Link from 'next/link';
-
-import Box from '../ui/box';
-import { Link as LinkIcon, Flag, Markup, Edit, DeleteBin, Reply, ArrowDownS, ArrowUpS, LoadingIcon } from '../icons';
-import SplitBall from '../ui/split-ball';
-import DateUtils from '@/lib/date-utils';
-import ProseContent from '../ui/prose-content';
-import { runIfFn } from '@/lib/fn';
 import { useSession } from 'next-auth/react';
+
+import DateUtils from '@/lib/date-utils';
+import { runIfFn } from '@/lib/fn';
+import Box from '../ui/box';
+import SplitBall from '../ui/split-ball';
+import ProseContent from '../ui/prose-content';
 import ActionButton from '../ui/action-button';
+import ReactionGroup from '../ui/reaction-group';
+import NoContent from '../ui/no-content';
+import { Link as LinkIcon, Flag, Markup, Edit, DeleteBin, Reply, ArrowDownS, ArrowUpS, LoadingIcon } from '../icons';
 import ActionDelete from './action-delete';
 import ActionReact from './action-react';
-import ReactionGroup from '../ui/reaction-group';
 import PostUpdater from './post-updater';
-
-function NoContent() {
-    return (
-        <Box className='h-16 flex justify-center items-center'>
-            <span className='text-base font-bold text-neutral-400'>还没有内容，就等你来回帖啦</span>
-        </Box>
-    );
-}
 
 function PostReplyContent({ replyPost }) {
     const limit = 100;
@@ -141,7 +134,7 @@ function PostItem({ item, onReplyClick }) {
     line 3: actions: reply, edit, delete, share, follow, favorite, report
 */
 export default function PostList({ posts, onReplyClick }) {
-    if (!posts || posts.length === 0) return <NoContent />;
+    if (!posts || posts.length === 0) return <NoContent text='还没有内容，就等你来回帖啦' />;
     return (
         <Box className='flex flex-col gap-3 pb-2'>
             {posts?.map((post, i) => <PostItem key={i} item={post} onReplyClick={onReplyClick} />)}
