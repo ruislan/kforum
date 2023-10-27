@@ -34,16 +34,30 @@ export async function PUT(request, { params }) {
 
     const postId = Number(params.id) || 0;
     const { id: reactionId, isReact } = await request.json();
-    const post = await prisma.post.findUnique({ where: { id: postId } });
+    const post = await prisma.post.findUnique({ where: { id: postId }, include: { discussion: true } });
     if (!post) return rest.badRequest({ message: '帖子不存在' });
 
     // update reaction
     await prisma.$transaction(async (tx) => {
         const data = { postId, reactionId, userId: session.user.id };
         const ref = await tx.postReactionRef.findUnique({ where: { postId_reactionId_userId: data } });
-        if (isReact && !ref) await tx.postReactionRef.create({ data }); // 没有就创建一个
-        if (!isReact && ref) await tx.postReactionRef.delete({ where: { postId_reactionId_userId: data } }); // 有就删除
-        // 其他两个情况不用处理
+        let inc = 0;
+        if (isReact && !ref) {
+            await tx.postReactionRef.create({ data }); // 没有就创建一个
+            inc = 1;
+        }
+        if (!isReact && ref) {
+            await tx.postReactionRef.delete({ where: { postId_reactionId_userId: data } }); // 有就删除
+            inc = -1;
+        }
+        // isReact && ref 和 !isReact && !ref 这两个情况不用处理
+
+        if (inc !== 0) { // 更新discussion
+            await tx.discussion.update({
+                where: { id: post.discussion.id },
+                data: { reactionCount: { increment: inc } }
+            });
+        }
     });
     return rest.updated();
 }

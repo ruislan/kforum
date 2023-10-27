@@ -79,7 +79,7 @@ function MenuBar({ editor, endActionEnhancer }) {
           isActive={editor.isActive('blockquote')}>
           <BlockQuote />
         </ActionButton>
-        <ActionButton
+        {/* <ActionButton
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           isActive={editor.isActive('blockquote')}>
           <LinkIcon />
@@ -88,7 +88,7 @@ function MenuBar({ editor, endActionEnhancer }) {
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           isActive={editor.isActive('blockquote')}>
           <ImageIcon />
-        </ActionButton>
+        </ActionButton> */}
       </div>
       {endActionEnhancer}
     </div>

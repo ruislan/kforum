@@ -30,8 +30,8 @@ function PostReplyContent({ replyPost }) {
     const toggleExpend = async () => setExpend(prev => !prev);
     if (!replyPost) return null;
     return (
-        <div className='flex mt-2 bg-neutral-700 rounded-r-md'>
-            <div className='w-1 h-full bg-neutral-400'></div>
+        <div className='flex mt-2 bg-neutral-500/20 rounded-r-md'>
+            <div className='w-1 h-full bg-neutral-600'></div>
             <div className='p-2 w-full'>
                 <div className='flex items-center justify-between mb-2 text-gray-300'>
                     <div className='flex items-center'>
@@ -46,7 +46,7 @@ function PostReplyContent({ replyPost }) {
                     </div>}
                 </div>
                 <div className={expend ? '' : 'max-h-[64px] overflow-hidden'}>
-                    <ProseContent isSummary={!expend} limit={limit} content={replyPost.text} />
+                    <ProseContent isSummary={!expend} limit={limit} content={replyPost.content} />
                 </div>
             </div>
         </div>
