@@ -19,6 +19,8 @@ import ActionDelete from './action-delete';
 import ActionSticky from './action-sticky';
 import ActionLock from './action-lock';
 import ActionReact from './action-react';
+import ReactionGroup from '../ui/reaction-group';
+import { reactionModal } from '@/lib/models';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -32,11 +34,26 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick }) {
     const { data, status } = useSession();
     const [isSticky, setIsSticky] = useState(discussion?.isSticky);
     const [isLocked, setIsLocked] = useState(discussion?.isLocked);
+    const [reactions, setReactions] = useState(discussion?.firstPost?.reactions);
 
     const isAuthenticated = status === 'authenticated';
     const isOwner = isAuthenticated && data.user.id === discussion?.user.id;
     const isAdmin = isAuthenticated && data.user.isAdmin;
     const c = discussion.category;
+
+    const handleUserReacted = async ({ reaction, isReacted }) => {
+        let arr = [...reactions];
+        const existReaction = arr.find(r => r.id === reaction.id);
+        if (isReacted) {
+            if (existReaction) existReaction.count += 1;
+            else arr.push({ ...reaction, count: 1 });
+        } else {
+            if (existReaction) existReaction.count -= 1;
+            if (existReaction.count === 0) arr = arr.filter(r => r.id !== existReaction.id);
+        }
+        arr.sort((a, b) => b.count - a.count);
+        setReactions(arr); // 将变更后的数据设置到state中触发更新
+    };
 
     if (!discussion) {
         router.replace('/');
@@ -79,15 +96,13 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick }) {
                     <Tag>Cheer</Tag>
                     <Tag>Great</Tag>
                 </div> */}
-                <ProseContent className='my-2' content={discussion.firstPost?.content} />
+                <ProseContent className='my-3' content={discussion.firstPost?.content} />
                 <div className='text-xs inline-flex items-center justify-between text-gray-300'>
-                    <div className='flex items-center'>
-                        <Image width={16} height={16} src={'/reactions/heart.png'} alt='heart' />
-                    </div>
+                    <ReactionGroup reactions={reactions} />
                     <div className='flex items-center gap-1'>
                         <ActionButton onClick={() => runIfFn(onReplyClick)}><Reply /></ActionButton>
                         {/* give reaction  */}
-                        <ActionReact post={discussion.firstPost} onReacted={() => console.log('do')} />
+                        <ActionReact post={discussion.firstPost} onReacted={handleUserReacted} />
                         {/* copy url to share  */}
                         {/* <ActionButton><LinkIcon /></ActionButton> */}
                         {/* save to bookmark */}

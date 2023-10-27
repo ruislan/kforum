@@ -102,9 +102,9 @@ model Reaction {
 }
 
 model PostReactionRef {
-  postId     Int
-  reactionId Int
-  userId     Int
+  postId     Int      @map("post_id")
+  reactionId Int      @map("reaction_id")
+  userId     Int      @map("user_id")
   createdAt  DateTime @default(now()) @map("created_at")
 
   post     Post     @relation(fields: [postId], references: [id])
@@ -122,7 +122,7 @@ model Category {
   icon        String?
   color       String?
   description String?
-  parentId    Int? // parent
+  parentId    Int?     @map("parent_id") // parent
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 

@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma';
-import { userModal } from '@/lib/models';
+import { reactionModal, userModal } from '@/lib/models';
 
 import Box from '@/components/ui/box';
 import ActionCreate from '@/components/discussion/action-create';
@@ -18,6 +18,11 @@ async function getDiscussion({ id }) {
           firstPostDiscussion: null, // 不包含首贴
         },
         include: {
+          reactions: {
+            select: {
+              userId: true, postId: true, reaction: true,
+            }
+          },
           user: { select: userModal.fields.simple },
           replyPost: {
             include: {
@@ -32,6 +37,34 @@ async function getDiscussion({ id }) {
     },
   });
   if (d) {
+    // avoid n + 1, batch load reactions;
+    const postIds = [d.firstPost.id, ...d.posts.map(p => p.id)];
+    const refs = await prisma.PostReactionRef.groupBy({
+      by: ['reactionId', 'postId'],
+      where: {
+        postId: { in: postIds }
+      },
+      _count: {
+        userId: true
+      }
+    });
+    const reactionIds = refs.map(r => r.reactionId);
+    const reactions = await prisma.reaction.findMany({
+      where: {
+        id: { in: reactionIds }
+      }
+    });
+    for (const post of [d.firstPost, ...d.posts]) {
+      post.reactions = refs.filter(r => r.postId === post.id).map(r => {
+        const reaction = reactions.find(re => re.id === r.reactionId);
+        return {
+          ...reaction,
+          count: r._count.userId
+        }
+      });
+      post.reactions.sort((a, b) => b.count - a.count);
+    }
+
     // increment view count
     await prisma.discussion.update({
       where: { id },

@@ -11,10 +11,11 @@ import DateUtils from '@/lib/date-utils';
 import ProseContent from '../ui/prose-content';
 import { runIfFn } from '@/lib/fn';
 import { useSession } from 'next-auth/react';
-import toast from 'react-hot-toast';
-import ConfirmModal from '../ui/confirm-modal';
 import ActionButton from '../ui/action-button';
 import ActionDelete from './action-delete';
+import ActionReact from './action-react';
+import ReactionGroup from '../ui/reaction-group';
+import { reactionModal } from '@/lib/models';
 
 function NoContent() {
     return (
@@ -58,9 +59,24 @@ function PostItem({ post, onReplyClick }) {
     const isAuthenticated = status === 'authenticated';
     const isOwner = isAuthenticated && data.user.id === post.user.id;
     const isAdmin = isAuthenticated && data.user.isAdmin;
-
+    const [reactions, setReactions] = useState(post?.reactions);
     const [isDeleted, setIsDeleted] = useState(false);
 
+    const handleUserReacted = async ({ reaction, isReacted }) => {
+        let arr = [...reactions];
+        const existReaction = arr.find(r => r.id === reaction.id);
+        if (isReacted) {
+            if (existReaction) existReaction.count += 1;
+            else arr.push({ ...reaction, count: 1 });
+        } else {
+            if (existReaction) existReaction.count -= 1;
+            if (existReaction.count === 0) arr = arr.filter(r => r.id !== existReaction.id);
+        }
+        arr.sort((a, b) => b.count - a.count);
+        setReactions(arr); // 将变更后的数据设置到state中触发更新
+    };
+
+    if (!post) return null;
 
     return (
         <div className='flex'>
@@ -77,14 +93,14 @@ function PostItem({ post, onReplyClick }) {
                         <span className='text-xs'>{DateUtils.fromNow(post.createdAt)}</span>
                     </div>
                     <PostReplyContent replyPost={post.replyPost} />
-                    <ProseContent className='mt-2' content={post.content} />
+                    <ProseContent className='my-1' content={post.content} />
                     <div className='text-xs inline-flex items-center justify-between text-gray-300'>
-                        <div className='flex items-center'><span><Image width={16} height={16} src={'/reactions/heart.png'} alt='heart' /></span></div>
+                        <ReactionGroup reactions={reactions} />
                         <div className='flex items-center gap-1'>
                             {/* reply  */}
                             <ActionButton onClick={() => runIfFn(onReplyClick, { post })}><Reply /></ActionButton>
                             {/* give reaction  */}
-                            <ActionButton><Heart /></ActionButton>
+                            <ActionReact post={post} onReacted={handleUserReacted} />
                             {/* copy url to share  */}
                             {/* <ActionButton><LinkIcon /></ActionButton> */}
                             {/* report: owner, moderator and the user who has reported don't show this flag icon */}
