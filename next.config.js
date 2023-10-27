@@ -27,6 +27,14 @@ const nextConfig = {
         return [
             { source: '/(.*)', headers: securityHeaders },
         ];
+    },
+    async rewrites() {
+        return [
+            {
+                source: '/u/:slug/:path',
+                destination: '/u/:slug?tab=:path'
+            },
+        ];
     }
 };
 

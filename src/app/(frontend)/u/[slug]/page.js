@@ -1,11 +1,12 @@
-import UserInfo from "@/components/user/user-info";
-import UserTabs from "@/components/user/user-tabs";
-import prisma from "@/lib/prisma";
+import UserInfo from '@/components/user/user-info';
+import UserTabs from '@/components/user/user-tabs';
 
 async function getUser({ name }) {
   const user = await prisma.user.findFirst({
     where: { name },
-    include: {
+    select: {
+      id: true, name: true, email: true, avatar: true, gender: true,
+      createdAt: true,
       _count: {
         select: {
           discussions: true,
@@ -23,7 +24,7 @@ async function getUser({ name }) {
   return user;
 }
 
-export default async function Page({ params }) {
+export default async function Page({ params, searchParams }) {
   const user = await getUser({ name: params.slug });
   if (!user) return <div>User not found</div>;
   return (
@@ -38,7 +39,7 @@ export default async function Page({ params }) {
             5. following v2
             6. followers v2
          */}
-        <UserTabs />
+        <UserTabs user={user} tab={searchParams.tab} />
       </div>
       {/* right side */}
       <div className='flex flex-col w-80 gap-4'>
@@ -46,5 +47,5 @@ export default async function Page({ params }) {
         <UserInfo user={user} />
       </div>
     </div>
-  )
+  );
 }

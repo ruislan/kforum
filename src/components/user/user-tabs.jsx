@@ -2,30 +2,37 @@
 
 import clsx from 'clsx';
 import { Tab } from '@headlessui/react';
-import Box from '../ui/box';
+import { useRouter } from 'next/navigation';
+import UserTabsOverview from './user-tabs-overview';
+import UserTabsDiscussions from './user-tabs-discussions';
+import UserTabsPosts from './user-tabs-posts';
 
-const titles = ['概览', '发帖', '回复', '收藏'];
+const tabs = [
+    { slug: 'overview', name: '概览', relativePath: '' },
+    { slug: 'discussions', name: '主题', relativePath: '/discussions' },
+    { slug: 'posts', name: '回帖', relativePath: '/posts' },
+];
 
-export default function UserTabs() {
+export default function UserTabs({ user, tab }) {
+    const router = useRouter();
     return (
-        <Tab.Group manual>
+        <Tab.Group manual
+            selectedIndex={!tab ? 0 : tabs.findIndex(t => t.slug === tab)}
+            onChange={(index => router.push(`/u/${user.name}${tabs[index].relativePath}`))}
+        >
             <Tab.List className='flex space-x-1 rounded-md bg-neutral-800 p-1'>
-                {titles.map((title) => (
-                    <Tab key={title} className={({ selected }) =>
+                {tabs?.map((tab) => (
+                    <Tab key={tab.name} className={({ selected }) =>
                         clsx('rounded-md py-2 px-4 text-sm font-semibold text-gray-100 focus:outline-none',
-                            selected ? 'bg-white/[0.12] shadow-lg' : 'text-gray-100 hover:bg-white/[0.12] hover:text-gray')}>
-                        {title}
+                            selected ? 'bg-neutral-700/80 shadow-lg' : 'text-gray-100 hover:bg-neutral-700/80 hover:text-gray')}>
+                        {tab.name}
                     </Tab>
                 ))}
             </Tab.List>
             <Tab.Panels className='mt-2'>
-                {titles.map((title) => (
-                    <Tab.Panel key={title} className='flex flex-col gap-2'>
-                        <Box>{title}</Box>
-                        <Box>{title}</Box>
-                        <Box>{title}</Box>
-                    </Tab.Panel>
-                ))}
+                <Tab.Panel><UserTabsOverview /></Tab.Panel>
+                <Tab.Panel><UserTabsDiscussions /></Tab.Panel>
+                <Tab.Panel><UserTabsPosts /></Tab.Panel>
             </Tab.Panels>
         </Tab.Group>
     );
