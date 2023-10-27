@@ -7,6 +7,7 @@ import LoginModal from '@/components/auth/login-modal';
 import RegisterModal from '@/components/auth/register-modal';
 
 import '../globals.css';
+import Footer from '@/components/footer/footer';
 
 export const metadata = {
   title: 'KForum',
@@ -26,7 +27,7 @@ export default async function RootLayout({ children }) {
               {children}
             </div>
           </div>
-          {/* <Footer /> */}
+          <Footer />
           <Toaster />
           <LoginModal />
           <RegisterModal />
