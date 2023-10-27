@@ -1,11 +1,10 @@
 'use client';
 import { useState } from 'react';
 
-import Image from 'next/image';
 import Link from 'next/link';
 
 import Box from '../ui/box';
-import { Heart, Link as LinkIcon, Flag, Markup, Edit, DeleteBin, Reply, ArrowDownS, ArrowUpS, LoadingIcon } from '../icons';
+import { Link as LinkIcon, Flag, Markup, Edit, DeleteBin, Reply, ArrowDownS, ArrowUpS, LoadingIcon } from '../icons';
 import SplitBall from '../ui/split-ball';
 import DateUtils from '@/lib/date-utils';
 import ProseContent from '../ui/prose-content';
@@ -15,6 +14,7 @@ import ActionButton from '../ui/action-button';
 import ActionDelete from './action-delete';
 import ActionReact from './action-react';
 import ReactionGroup from '../ui/reaction-group';
+import PostUpdater from './post-updater';
 
 function NoContent() {
     return (
@@ -53,13 +53,15 @@ function PostReplyContent({ replyPost }) {
     );
 }
 
-function PostItem({ post, onReplyClick }) {
+function PostItem({ item, onReplyClick }) {
     const { data, status } = useSession();
     const isAuthenticated = status === 'authenticated';
-    const isOwner = isAuthenticated && data.user.id === post.user.id;
+    const isOwner = isAuthenticated && data.user.id === item.user.id;
     const isAdmin = isAuthenticated && data.user.isAdmin;
-    const [reactions, setReactions] = useState(post?.reactions);
+    const [post, setPost] = useState(item);
+    const [reactions, setReactions] = useState(item.reactions || []);
     const [isDeleted, setIsDeleted] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(false);
 
     const handleUserReacted = async ({ reaction, isReacted }) => {
         let arr = [...reactions];
@@ -75,7 +77,7 @@ function PostItem({ post, onReplyClick }) {
         setReactions(arr); // 将变更后的数据设置到state中触发更新
     };
 
-    if (!post) return null;
+    if (!item) return null;
 
     return (
         <div className='flex'>
@@ -92,30 +94,42 @@ function PostItem({ post, onReplyClick }) {
                         <span className='text-xs'>{DateUtils.fromNow(post.createdAt)}</span>
                     </div>
                     <PostReplyContent replyPost={post.replyPost} />
-                    <ProseContent className='my-1' content={post.content} />
-                    <div className='text-xs inline-flex items-center justify-between text-gray-300'>
-                        <ReactionGroup reactions={reactions} />
-                        <div className='flex items-center gap-1'>
-                            {/* reply  */}
-                            <ActionButton onClick={() => runIfFn(onReplyClick, { post })}><Reply /></ActionButton>
-                            {/* give reaction  */}
-                            <ActionReact post={post} onReacted={handleUserReacted} />
-                            {/* copy url to share  */}
-                            {/* <ActionButton><LinkIcon /></ActionButton> */}
-                            {/* report: owner, moderator and the user who has reported don't show this flag icon */}
-                            {/* <ActionButton><Flag /></ActionButton> */}
-                            {/* define this port: owner, moderator. multi choose, items: spoiler(剧透)，NSFW(少儿不宜)，fake（假的），approved（实锤），spam（水贴）, OC（原创）, official（官方）*/}
-                            {/* <ActionButton><Markup /></ActionButton> */}
-                            {(isOwner || isAdmin) &&
-                                <>
-                                    {/* edit:owner, moderator */}
-                                    <ActionButton><Edit /></ActionButton>
-                                    {/* delete:owner, moderator */}
-                                    <ActionDelete post={post} onDeleted={() => setIsDeleted(true)} />
-                                </>
-                            }
+                    {isEditMode ?
+                        <PostUpdater
+                            post={post}
+                            onUpdated={({ content, text }) => {
+                                setPost({ ...post, content, text });
+                                setIsEditMode(false);
+                            }}
+                            onCanceled={() => setIsEditMode(false)}
+                        /> :
+                        <ProseContent className='my-1' content={post.content} />
+                    }
+                    {!isEditMode && (
+                        <div className='text-xs inline-flex items-center justify-between text-gray-300'>
+                            <ReactionGroup reactions={reactions} />
+                            <div className='flex items-center gap-1'>
+                                {/* reply  */}
+                                <ActionButton onClick={() => runIfFn(onReplyClick, { post })}><Reply /></ActionButton>
+                                {/* give reaction  */}
+                                <ActionReact post={post} onReacted={handleUserReacted} />
+                                {/* copy url to share  */}
+                                {/* <ActionButton><LinkIcon /></ActionButton> */}
+                                {/* report: owner, moderator and the user who has reported don't show this flag icon */}
+                                {/* <ActionButton><Flag /></ActionButton> */}
+                                {/* define this port: owner, moderator. multi choose, items: spoiler(剧透)，NSFW(少儿不宜)，fake（假的），approved（实锤），spam（水贴）, OC（原创）, official（官方）*/}
+                                {/* <ActionButton><Markup /></ActionButton> */}
+                                {(isOwner || isAdmin) &&
+                                    <>
+                                        {/* edit:owner, moderator */}
+                                        <ActionButton onClick={() => setIsEditMode(true)}><Edit /></ActionButton>
+                                        {/* delete:owner, moderator */}
+                                        <ActionDelete post={post} onDeleted={() => setIsDeleted(true)} />
+                                    </>
+                                }
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>}
         </div>
     );
@@ -130,7 +144,7 @@ export default function PostList({ posts, onReplyClick }) {
     if (!posts || posts.length === 0) return <NoContent />;
     return (
         <Box className='flex flex-col gap-3 pb-2'>
-            {posts?.map((post, i) => <PostItem key={i} post={post} onReplyClick={onReplyClick} />)}
+            {posts?.map((post, i) => <PostItem key={i} item={post} onReplyClick={onReplyClick} />)}
         </Box>
     );
 }

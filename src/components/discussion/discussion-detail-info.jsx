@@ -20,6 +20,7 @@ import ActionSticky from './action-sticky';
 import ActionLock from './action-lock';
 import ActionReact from './action-react';
 import ReactionGroup from '../ui/reaction-group';
+import PostUpdater from './post-updater';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -31,9 +32,11 @@ import ReactionGroup from '../ui/reaction-group';
 export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockClick }) {
     const router = useRouter();
     const { data, status } = useSession();
+    const [firstPost, setFirstPost] = useState(discussion?.firstPost);
+    const [reactions, setReactions] = useState(discussion?.firstPost?.reactions);
     const [isSticky, setIsSticky] = useState(discussion?.isSticky);
     const [isLocked, setIsLocked] = useState(discussion?.isLocked);
-    const [reactions, setReactions] = useState(discussion?.firstPost?.reactions);
+    const [isEditMode, setIsEditMode] = useState(false);
 
     const isAuthenticated = status === 'authenticated';
     const isOwner = isAuthenticated && data.user.id === discussion?.user.id;
@@ -101,41 +104,57 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                     <Tag>Cheer</Tag>
                     <Tag>Great</Tag>
                 </div> */}
-                <ProseContent className='my-3' content={discussion.firstPost?.content} />
-                <div className='text-xs inline-flex items-center justify-between text-gray-300'>
-                    <ReactionGroup reactions={reactions} />
-                    <div className='flex items-center gap-1'>
-                        <ActionButton onClick={() => runIfFn(onReplyClick)}><Reply /></ActionButton>
-                        {/* give reaction  */}
-                        <ActionReact post={discussion.firstPost} onReacted={handleUserReacted} />
-                        {/* copy url to share  */}
-                        {/* <ActionButton><LinkIcon /></ActionButton> */}
-                        {/* save to bookmark */}
-                        {/* <ActionButton><Bookmark /></ActionButton>
+                {isEditMode ?
+                    <PostUpdater
+                        post={firstPost}
+                        onUpdated={({ content, text }) => {
+                            const updatedPost = { ...firstPost, content, text };
+                            discussion.firstPost = updatedPost;
+                            setFirstPost(updatedPost);
+                            setIsEditMode(false);
+                        }}
+                        onCanceled={() => setIsEditMode(false)}
+                    /> :
+                    <ProseContent className='my-3' content={firstPost?.content} />
+                }
+
+                {!isEditMode && (
+                    <div className='text-xs inline-flex items-center justify-between text-gray-300'>
+                        <ReactionGroup reactions={reactions} />
+                        <div className='flex items-center gap-1'>
+                            <ActionButton onClick={() => runIfFn(onReplyClick)}><Reply /></ActionButton>
+                            {/* give reaction  */}
+                            <ActionReact post={firstPost} onReacted={handleUserReacted} />
+                            {/* copy url to share  */}
+                            {/* <ActionButton><LinkIcon /></ActionButton> */}
+                            {/* save to bookmark */}
+                            {/* <ActionButton><Bookmark /></ActionButton>
                             <ActionButton><UnBookmark /></ActionButton> */}
-                        {/* report: owner, moderator and the user who has reported don't show this flag icon */}
-                        {/* <ActionButton><Flag /></ActionButton> */}
-                        {/* hide */}
-                        {/* <ActionButton><EyeOff /></ActionButton> */}
-                        {(isOwner || isAdmin) &&
-                            <>
-                                {/* define this port: owner, moderator. multi choose, items: spoiler(剧透)，NSFW(少儿不宜)，fake（假的），approved（实锤），spam（水贴）, OC（原创）, official（官方）*/}
-                                {/* <ActionButton><Markup /></ActionButton> */}
-                                {/* let discussion stay top of the discussion list: owner, moderator */}
-                                <ActionSticky discussion={discussion} onSticky={(sticky) => { setIsSticky(sticky); discussion.isSticky = sticky; }} />
-                                {/* lock all: owner, moderator */}
-                                <ActionLock discussion={discussion} onLocked={handleLockClick}><Lock /></ActionLock>
-                                {/* edit:owner, moderator */}
-                                <ActionButton><Edit /></ActionButton>
-                                {/* delete:owner, moderator */}
-                                <ActionDelete // 删除首贴会自动删除整个讨论（目前是这个规则）
-                                    confirmContent='你确定要删除这篇讨论及其所有的回复吗？'
-                                    post={discussion.firstPost} onDeleted={() => router.replace('/')}
-                                />
-                            </>
-                        }
+                            {/* report: owner, moderator and the user who has reported don't show this flag icon */}
+                            {/* <ActionButton><Flag /></ActionButton> */}
+                            {/* hide */}
+                            {/* <ActionButton><EyeOff /></ActionButton> */}
+                            {(isOwner || isAdmin) &&
+                                <>
+                                    {/* define this port: owner, moderator. multi choose, items: spoiler(剧透)，NSFW(少儿不宜)，fake（假的），approved（实锤），spam（水贴）, OC（原创）, official（官方）*/}
+                                    {/* <ActionButton><Markup /></ActionButton> */}
+                                    {/* let discussion stay top of the discussion list: owner, moderator */}
+                                    <ActionSticky discussion={discussion} onSticky={(sticky) => { setIsSticky(sticky); discussion.isSticky = sticky; }} />
+                                    {/* lock all: owner, moderator */}
+                                    <ActionLock discussion={discussion} onLocked={handleLockClick}><Lock /></ActionLock>
+                                    {/* edit:owner, moderator */}
+                                    <ActionButton onClick={() => setIsEditMode(true)}><Edit /></ActionButton>
+                                    {/* delete:owner, moderator */}
+                                    <ActionDelete // 删除首贴会自动删除整个讨论（目前是这个规则）
+                                        confirmContent='你确定要删除这篇讨论及其所有的回复吗？'
+                                        post={firstPost}
+                                        onDeleted={() => router.replace('/')}
+                                    />
+                                </>
+                            }
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </Box>
     );
