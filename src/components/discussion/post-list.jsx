@@ -15,7 +15,6 @@ import ActionButton from '../ui/action-button';
 import ActionDelete from './action-delete';
 import ActionReact from './action-react';
 import ReactionGroup from '../ui/reaction-group';
-import { reactionModal } from '@/lib/models';
 
 function NoContent() {
     return (

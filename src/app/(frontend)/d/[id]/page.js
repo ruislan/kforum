@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma';
-import { reactionModal, userModal } from '@/lib/models';
+import { userModal } from '@/lib/models';
 
 import Box from '@/components/ui/box';
 import ActionCreate from '@/components/discussion/action-create';

@@ -20,7 +20,6 @@ import ActionSticky from './action-sticky';
 import ActionLock from './action-lock';
 import ActionReact from './action-react';
 import ReactionGroup from '../ui/reaction-group';
-import { reactionModal } from '@/lib/models';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -29,7 +28,7 @@ import { reactionModal } from '@/lib/models';
     line 4: discussion meta: replies, reactions, participants
     line 5: actions: reply, edit, delete, share, follow, favorite, report
 */
-export default function DiscussionDetailInfo({ discussion, onReplyClick }) {
+export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockClick }) {
     const router = useRouter();
     const { data, status } = useSession();
     const [isSticky, setIsSticky] = useState(discussion?.isSticky);
@@ -53,6 +52,12 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick }) {
         }
         arr.sort((a, b) => b.count - a.count);
         setReactions(arr); // 将变更后的数据设置到state中触发更新
+    };
+
+    const handleLockClick = async (lock) => {
+        setIsLocked(lock);
+        discussion.isLocked = lock;
+        runIfFn(onLockClick, lock);
     };
 
     if (!discussion) {
@@ -119,7 +124,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick }) {
                                 {/* let discussion stay top of the discussion list: owner, moderator */}
                                 <ActionSticky discussion={discussion} onSticky={(sticky) => { setIsSticky(sticky); discussion.isSticky = sticky; }} />
                                 {/* lock all: owner, moderator */}
-                                <ActionLock discussion={discussion} onLocked={(lock) => { setIsLocked(lock); discussion.isLocked = lock; }}><Lock /></ActionLock>
+                                <ActionLock discussion={discussion} onLocked={handleLockClick}><Lock /></ActionLock>
                                 {/* edit:owner, moderator */}
                                 <ActionButton><Edit /></ActionButton>
                                 {/* delete:owner, moderator */}

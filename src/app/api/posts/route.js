@@ -20,6 +20,7 @@ export async function POST(request, { params }) {
     // discussion must exist
     const discussion = await prisma.discussion.findUnique({ where: { id: discussionId } });
     if (!discussion) return rest.badRequest({ message: '回复的主贴已经删除或不存在', field: 'discussionId' });
+    if (discussion.isLocked) return rest.badRequest({ message: '该讨论已被锁定或结束，无法回复' });
 
     // does it reply to a post?
     let post;
