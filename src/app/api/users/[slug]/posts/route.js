@@ -12,19 +12,22 @@ export async function GET(request, { params }) {
 
     const take = 10;
     const skip = Math.max(0, page - 1) * take;
-    const count = await prisma.discussion.count({ where: { userId: user.id } });
-    const data = await prisma.discussion.findMany({
-        where: { userId: user.id },
-        skip, take,
+
+    const count = await prisma.post.count({ where: { userId: user.id } });
+    const data = await prisma.post.findMany({
+        where: {
+            userId: user.id,
+            replyPostId: { not: null }
+        },
         include: {
-            user: {
-                select: userModal.fields.simple,
+            discussion: {
+                include: {
+                    category: true,
+                    user: { select: userModal.fields.simple }
+                }
             },
-            posts: {
-                where: { userId: user.id },
-                take: 2,
-            },
-        }
-    })
+        },
+        skip, take
+    });
     return rest.ok({ data, hasMore: count > skip + take });
 }

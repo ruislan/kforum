@@ -38,7 +38,7 @@ export default function DiscussionListItem({ discussion }) {
                     )}
                     <div className='flex items-center'>
                         <div className='w-5 h-5 mr-1.5 bg-gray-300 rounded'>
-                            <img className='w-full h-full rounded' src={discussion.user?.avatar} alt={discussion.user?.name} />
+                            <Image width={20} height={20}  src={discussion.user?.avatar} alt={discussion.user?.name} />
                         </div>
                         <Link href={`/u/${discussion.user?.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{discussion.user?.name}</Link>
                     </div>
@@ -60,7 +60,7 @@ export default function DiscussionListItem({ discussion }) {
                 <div className='text-xs inline-flex items-center text-gray-300 mt-3'>
                     <div className='flex items-center'><span>参与 {discussion.userCount}</span></div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                    <div className='flex items-center'><span>回复 {discussion._count.posts}</span></div>
+                    <div className='flex items-center'><span>回复 {discussion.postCount || 0}</span></div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                     <div className='flex items-center'><span>反馈 {discussion.reactionCount}</span></div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />

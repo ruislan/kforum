@@ -3,13 +3,12 @@
 import clsx from 'clsx';
 import { Tab } from '@headlessui/react';
 import { useRouter } from 'next/navigation';
-import UserTabsOverview from './user-tabs-overview';
 import UserTabsDiscussions from './user-tabs-discussions';
 import UserTabsPosts from './user-tabs-posts';
 
 const tabs = [
-    { slug: 'overview', name: '概览', relativePath: '' },
-    { slug: 'discussions', name: '主题', relativePath: '/discussions' },
+    // { slug: 'overview', name: '活动（概览）', relativePath: '' }, // v0.7.0
+    { slug: 'discussions', name: '话题', relativePath: '/' },
     { slug: 'posts', name: '回帖', relativePath: '/posts' },
 ];
 
@@ -30,7 +29,6 @@ export default function UserTabs({ user, tab }) {
                 ))}
             </Tab.List>
             <Tab.Panels className='mt-2'>
-                <Tab.Panel><UserTabsOverview user={user} /></Tab.Panel>
                 <Tab.Panel><UserTabsDiscussions user={user} /></Tab.Panel>
                 <Tab.Panel><UserTabsPosts user={user} /></Tab.Panel>
             </Tab.Panels>

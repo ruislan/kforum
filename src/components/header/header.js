@@ -5,6 +5,8 @@ import NavMenus from '@/components/header/nav-menus';
 
 import Search from './search';
 import UserMenus from './user-menus';
+import Button from '../ui/button';
+import { Plus } from '../icons';
 
 async function getMenus() {
     return await prisma.webNavMenus.findMany({ orderBy: { sequence: 'asc' } });
@@ -23,6 +25,8 @@ export default async function Header() {
                 <NavMenus menus={menus} />
                 <div className='flex items-center flex-grow justify-end gap-4'>
                     <Search />
+                    <Link href='/d/create' className='flex items-center justify-center w-9 h-9 text-gray-300 p-4 hover:bg-neutral-700 rounded-md'>
+                        <span className='flex w-7 h-7'><Plus /></span></Link>
                     <UserMenus />
                 </div>
             </nav>

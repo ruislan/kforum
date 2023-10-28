@@ -26,6 +26,11 @@ async function getDiscussions({ category, isStickyFirst, skip, limit }) {
     }
 
     const discussions = await prisma.discussion.findMany(queryCondition);
+    discussions.forEach(d => {
+        d.postCount = d._count.posts - 1; // sub first posts
+        delete d._count;
+    });
+
     return discussions;
 }
 
