@@ -1,16 +1,19 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import Box from '../ui/box';
 import toast from 'react-hot-toast';
+
+import DateUtils from '@/lib/date-utils';
+
+import Box from '../ui/box';
 import NoContent from '../ui/no-content';
 import Button from '../ui/button';
-import Link from 'next/link';
-import Image from 'next/image';
 import SplitBall from '../ui/split-ball';
-import DateUtils from '@/lib/date-utils';
 import ProseContent from '../ui/prose-content';
-import { LoadingIcon, Locked, Pined } from '../icons';
+import Spinner from '../ui/spinner';
+
+import { Locked, Pined } from '../icons';
 
 // 只列出用户的回帖（非讨论首贴）
 export default function UserTabsPosts({ user }) {
@@ -70,7 +73,7 @@ export default function UserTabsPosts({ user }) {
                     </div>
                 </Box>
             ))}
-            {isLoading && <div className='flex justify-center mt-4'><LoadingIcon className='w-8 h-8' /></div>}
+            {isLoading && <Spinner />}
             {hasMore && (
                 <div className='self-center py-2'>
                     <Button kind='ghost' onClick={() => setPage(prev => prev + 1)}>查看更多</Button>
