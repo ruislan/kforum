@@ -12,8 +12,8 @@ export default function NavMenus({ menus }) {
             {menus.map(({ url, name }) => {
                 return <Link key={url} href={url}
                     className={clsx(
-                        'transition-all hover:text-neutral-50 no-underline',
-                        pathname === url ? 'text-neutral-50' : 'text-neutral-400'
+                        'font-semibold transition-all hover:text-neutral-100 no-underline',
+                        pathname === url ? 'text-neutral-100' : 'text-neutral-400'
                     )}>{name}</Link>
             })}
         </div>
