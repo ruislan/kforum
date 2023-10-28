@@ -10,7 +10,7 @@ import Image from 'next/image';
 import SplitBall from '../ui/split-ball';
 import DateUtils from '@/lib/date-utils';
 import ProseContent from '../ui/prose-content';
-import { Locked, Pined } from '../icons';
+import { LoadingIcon, Locked, Pined } from '../icons';
 
 // 只列出用户的回帖（非讨论首贴）
 export default function UserTabsPosts({ user }) {
@@ -49,6 +49,7 @@ export default function UserTabsPosts({ user }) {
             {dataList.map((item, i) => (
                 <Box key={i} className='flex flex-col text-sm pl-0 pr-0 pt-0 pb-0'>
                     <div className='flex items-center p-2 border-b border-neutral-700'>
+                        <span className='text-xs text-gray-400 mr-1.5 mt-0.5'>回复</span>
                         <Link href={`/d/${item.discussion.id}`} className='hover:underline underline-offset-2 cursor-pointer'>{item.discussion.title}</Link>
                         {item.discussion.isSticky && (<span className='h-4 w-4 ml-1.5 text-green-400'><Pined /></span>)}
                         {item.discussion.isLocked && (<span className='h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}
@@ -69,6 +70,7 @@ export default function UserTabsPosts({ user }) {
                     </div>
                 </Box>
             ))}
+            {isLoading && <div className='flex justify-center mt-4'><LoadingIcon className='w-8 h-8' /></div>}
             {hasMore && (
                 <div className='self-center py-2'>
                     <Button kind='ghost' onClick={() => setPage(prev => prev + 1)}>查看更多</Button>

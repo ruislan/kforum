@@ -10,7 +10,7 @@ import Box from '../ui/box';
 import NoContent from '../ui/no-content';
 import Button from '../ui/button';
 import SplitBall from '../ui/split-ball';
-import { Locked, Pined } from '../icons';
+import { LoadingIcon, Locked, Pined } from '../icons';
 
 // 只列出用户的讨论主题（含首贴）
 export default function UserTabsDiscussions({ user }) {
@@ -39,9 +39,7 @@ export default function UserTabsDiscussions({ user }) {
         })();
     }, [page, user]);
 
-    if (!isLoading && dataList.length === 0) {
-        return <NoContent text={`嗯，看来 u/${user.name} 还在潜水`} />;
-    }
+    if (!isLoading && dataList.length === 0) return <NoContent text={`嗯，看来 u/${user.name} 还在潜水`} />;
 
     return (
         <div className='text-sm text-neutral-100 flex flex-col gap-2'>
@@ -69,6 +67,7 @@ export default function UserTabsDiscussions({ user }) {
                     </div>
                 </Box>
             ))}
+            {isLoading && <div className='flex justify-center mt-4'><LoadingIcon className='w-8 h-8' /></div>}
             {hasMore && (
                 <div className='self-center py-2'>
                     <Button kind='ghost' onClick={() => setPage(prev => prev + 1)}>查看更多</Button>

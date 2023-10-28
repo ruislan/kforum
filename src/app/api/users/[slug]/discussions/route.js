@@ -16,8 +16,15 @@ export async function GET(request, { params }) {
         where: { userId: user.id },
         include: {
             category: true,
+            _count: {
+                select: { posts: true },
+            }
         },
         skip, take
-    })
+    });
+    data.forEach(d => {
+        d.postCount = d._count.posts - 1; // sub first post;
+        delete d._count;
+    });
     return rest.ok({ data, hasMore: count > skip + take });
 }
