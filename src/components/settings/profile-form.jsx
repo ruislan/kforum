@@ -4,22 +4,56 @@ import { useSession } from 'next-auth/react';
 
 import Spinner from '../ui/spinner';
 import Button from '../ui/button';
-import Input from '../ui/input';
 import Image from 'next/image';
 import Select from '../ui/select';
+import toast from 'react-hot-toast';
 
-export default function ProfileForm() {
-    const { data, status } = useSession();
-    const [email, setEmail] = useState(data.user?.email);
-    const [gender, setGender] = useState(data.user?.gender);
-    const [bio, setBio] = useState(data.user?.bio);
+export default function ProfileForm({ user }) {
+    const { status, update } = useSession();
+    const [avatar, setAvatar] = useState(user?.avatar);
+    const [gender, setGender] = useState(user?.gender);
+    const [bio, setBio] = useState(user?.bio);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
 
+    const validateFields = () => {
+        setError(null);
+        return true;
+    };
+
     const handleSubmit = async () => {
+        if (isSubmitting) return;
+        if (!validateFields()) return;
+        setIsSubmitting(true);
+        try {
+            const res = await fetch('/api/settings/profile', {
+                method: 'PUT',
+                body: JSON.stringify({ avatar, gender, bio }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if (res.ok) {
+                toast.success('保存成功');
+                update({ avatar }); // update user session
+            } else {
+                if (res.status === 400) {
+                    const json = await res.json();
+                    setError(json.message);
+                } else if (res.status === 401) {
+                    setError('您的登录以过期，请重新登录');
+                } else {
+                    throw new Error();
+                }
+            }
+        } catch (err) {
+            setError('未知错误，请稍后再试');
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     if (status === 'loading') return <Spinner />;
+
+    if (!user) return null;
 
     return (
         <form
@@ -32,7 +66,7 @@ export default function ProfileForm() {
             <div className='flex flex-col gap-1'>
                 <h3 className='font-bold'>头像</h3>
                 <div className='w-32 h-32 bg-gray-300 rounded z-10 shadow-lg'>
-                    <Image width={128} height={128} src={data.user?.avatar} alt={data.user?.name} />
+                    <Image width={128} height={128} src={user?.avatar} alt={user?.name} />
                 </div>
                 <div>
                     <Button type='button' size='xs'>换新头像</Button>
@@ -51,9 +85,14 @@ export default function ProfileForm() {
             </div>
             <div className='flex flex-col gap-1'>
                 <h3 className='font-bold'>自我介绍</h3>
-                <textarea className='w-full text-sm h-32 py-2 px-3 min-h-[40px] rounded-md bg-transparent border border-neutral-700 outline-none'>
-                    {bio}
-                </textarea>
+                <textarea
+                    value={bio}
+                    onChange={e => setBio(e.target.value)}
+                    maxLength={300}
+                    placeholder='请输入自我介绍'
+                    name='bio'
+                    className='w-full text-sm h-32 py-2 px-3 min-h-[40px] rounded-md bg-transparent border border-neutral-700 outline-none'
+                />
             </div>
             {error && <span className='text-sm text-red-500'>{error}</span>}
             <div>

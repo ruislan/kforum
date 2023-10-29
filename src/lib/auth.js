@@ -1,4 +1,3 @@
-import bcrypt from 'bcrypt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import prisma from '@/lib/prisma';
 import { userModal } from './models';
@@ -37,11 +36,16 @@ const authOptions = {
         signIn: '/login',
     },
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, trigger, session }) {
             if (user) {
                 token.id = user.id;
                 token.avatar = user.avatar;
                 token.isAdmin = user.isAdmin;
+            }
+            if (trigger === 'update') {
+                if (session?.email) token.email = session.email;
+                if (session?.avatar) token.avatar = session.avatar;
+                if (session?.gender) token.gender = session.gender;
             }
             return token;
         },
