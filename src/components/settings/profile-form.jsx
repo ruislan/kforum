@@ -1,16 +1,12 @@
 'use client';
 import { useState } from 'react';
-import { useSession } from 'next-auth/react';
 
 import Spinner from '../ui/spinner';
 import Button from '../ui/button';
-import Image from 'next/image';
 import Select from '../ui/select';
 import toast from 'react-hot-toast';
 
 export default function ProfileForm({ user }) {
-    const { status, update } = useSession();
-    const [avatar, setAvatar] = useState(user?.avatar);
     const [gender, setGender] = useState(user?.gender);
     const [bio, setBio] = useState(user?.bio);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,12 +24,11 @@ export default function ProfileForm({ user }) {
         try {
             const res = await fetch('/api/settings/profile', {
                 method: 'PUT',
-                body: JSON.stringify({ avatar, gender, bio }),
+                body: JSON.stringify({ gender, bio }),
                 headers: { 'Content-Type': 'application/json' }
             });
             if (res.ok) {
                 toast.success('保存成功');
-                update({ avatar }); // update user session
             } else {
                 if (res.status === 400) {
                     const json = await res.json();
@@ -50,9 +45,6 @@ export default function ProfileForm({ user }) {
             setIsSubmitting(false);
         }
     }
-
-    if (status === 'loading') return <Spinner />;
-
     if (!user) return null;
 
     return (
@@ -63,15 +55,6 @@ export default function ProfileForm({ user }) {
                 handleSubmit();
             }}
         >
-            <div className='flex flex-col gap-1'>
-                <h3 className='font-bold'>头像</h3>
-                <div className='w-32 h-32 bg-gray-300 rounded z-10 shadow-lg'>
-                    <Image width={128} height={128} src={user?.avatar} alt={user?.name} />
-                </div>
-                <div>
-                    <Button type='button' size='xs'>换新头像</Button>
-                </div>
-            </div>
             <div className='flex flex-col gap-1'>
                 <h3 className='font-bold'>性别</h3>
                 <Select

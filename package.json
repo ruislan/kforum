@@ -37,6 +37,7 @@
     "react-dom": "18.2.0",
     "react-hot-toast": "^2.4.1",
     "tailwindcss": "3.3.3",
+    "uuid": "^9.0.1",
     "zustand": "^4.4.4"
   },
   "devDependencies": {

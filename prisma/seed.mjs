@@ -10,7 +10,7 @@ async function initBase() {
     // init admin
     const passwordHash = await bcrypt.hash('123123', 10);
     const admin = {
-        id: 1, name: 'admin', email: 'admin@ktap.com', phone: '12345678901',
+        id: 1, name: 'admin', email: 'admin@kforum.com', phone: '12345678901',
         password: passwordHash, isAdmin: true, gender: 'MAN',
         avatar: 'https://api.dicebear.com/7.x/notionists/svg?seed=admin&size=96',
         bio: 'I am the admin', createdAt: new Date(), updatedAt: new Date(),

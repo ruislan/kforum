@@ -8,6 +8,7 @@ import Box from '@/components/ui/box';
 import ProfileForm from '@/components/settings/profile-form';
 import SecurityForm from '@/components/settings/security-form';
 import prisma from '@/lib/prisma';
+import AvatarUploader from '@/components/settings/avatar-uploader';
 
 const menus = [
   { label: '基本', path: '/settings' },
@@ -23,6 +24,8 @@ async function getUser({ userId }) {
   delete user.phone;
   return user;
 }
+
+export const dynamic = 'force-dynamic'; // no cache for this page
 
 export default async function Page({ params }) {
   const session = await getServerSession(authOptions);
@@ -40,7 +43,12 @@ export default async function Page({ params }) {
       <div className='flex flex-col w-[680px]'>
         <Box>
           {params.slug === 'general' && <GeneralForm user={user} />}
-          {params.slug === 'profile' && <ProfileForm user={user} />}
+          {params.slug === 'profile' && (
+            <div className='flex flex-col gap-4'>
+              <AvatarUploader user={user} />
+              <ProfileForm user={user} />
+            </div>
+          )}
           {params.slug === 'security' && <SecurityForm />}
         </Box>
       </div>
