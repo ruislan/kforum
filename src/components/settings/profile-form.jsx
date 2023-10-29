@@ -6,6 +6,7 @@ import Spinner from '../ui/spinner';
 import Button from '../ui/button';
 import Input from '../ui/input';
 import Image from 'next/image';
+import Select from '../ui/select';
 
 export default function ProfileForm() {
     const { data, status } = useSession();
@@ -39,19 +40,18 @@ export default function ProfileForm() {
             </div>
             <div className='flex flex-col gap-1'>
                 <h3 className='font-bold'>性别</h3>
-                <select
-                    className='w-full text-sm h-10 p-2 rounded bg-transparent border border-neutral-700 outline-none'
+                <Select
                     value={gender}
                     onChange={e => setGender(e.target.value)}
                 >
                     <option value='MAN'>男</option>
                     <option value='WOMAN'>女</option>
                     <option value='UNKNOWN'>保密</option>
-                </select>
+                </Select>
             </div>
             <div className='flex flex-col gap-1'>
                 <h3 className='font-bold'>自我介绍</h3>
-                <textarea className='w-full text-sm h-32 p-2 min-h-[40px] rounded bg-transparent border border-neutral-700 outline-none'>
+                <textarea className='w-full text-sm h-32 py-2 px-3 min-h-[40px] rounded-md bg-transparent border border-neutral-700 outline-none'>
                     {bio}
                 </textarea>
             </div>

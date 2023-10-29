@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 import Box from '../ui/box';
 import Button from '../ui/button';
 import Tiptap from '../ui/tiptap';
+import Select from '../ui/select';
+import Input from '../ui/input';
 
 // 点击弹出搜索层，然后进行搜索，不用单独页面
 export default function DiscussionCreator({ categories, initCategorySlug }) {
@@ -80,21 +82,24 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
         <Box>
             <form onSubmit={async e => { e.preventDefault(); handleSubmit(); }}>
                 <div className='flex flex-col w-full gap-2'>
-                    <div className='text-sm focus:outline-none bg-neutral-800 p-3 border border-solid border-neutral-700 rounded-md focus-within:border-neutral-400'>
-                        <select required className='w-full text-neutral-200 bg-transparent outline-none'
-                            onChange={e => setCategorySlug(e.target.value)} value={categorySlug}
-                        >
-                            <option value={null}>选择分类</option>
-                            {categories.map(c => <option key={c.slug} value={c.slug}>{c.name}</option>)}
-                        </select>
-                    </div>
-                    <div className='flex items-center text-sm focus:outline-none bg-neutral-800 p-3 border border-solid border-neutral-700 rounded-md focus-within:border-neutral-400'>
-                        <input type='text' value={title} onChange={e => setTitle(e.target.value)}
-                            maxLength={300} minLength={2} required
-                            placeholder='起一个不错的标题吧...'
-                            className='w-full text-neutral-200 bg-transparent outline-none' />
-                        <span className='text-xs ml-2 text-neutral-500'>{title?.length || 0}/300</span>
-                    </div>
+                    <Select
+                        required
+                        onChange={e => setCategorySlug(e.target.value)}
+                        value={categorySlug}
+                    >
+                        <option value={null}>选择分类</option>
+                        {categories.map(c => <option key={c.slug} value={c.slug}>{c.name}</option>)}
+                    </Select>
+                    <Input
+                        type='text'
+                        value={title}
+                        onChange={e => setTitle(e.target.value)}
+                        placeholder='起一个不错的标题吧...'
+                        required
+                        maxLength={300}
+                        minLength={2}
+                        endEnhancer={<span className='text-xs ml-2 text-neutral-500'>{title?.length || 0}/300</span>}
+                    />
                     <Tiptap kind='default' content={''} onUpdate={({ editor }) => {
                         setContentJson(editor.getJSON());
                         setContentText(editor.getText());

@@ -26,7 +26,7 @@ const authOptions = {
                 });
                 if (!user) return null;
 
-                const isPasswordMatched = await bcrypt.compare(password, user.password);
+                const isPasswordMatched = userModal.comparePassword(password, user.password);
                 if (!isPasswordMatched) return null;
 
                 return user;

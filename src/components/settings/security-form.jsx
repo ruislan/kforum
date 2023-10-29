@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import Button from '../ui/button';
 import Input from '../ui/input';
+import toast from 'react-hot-toast';
 
 export default function SecurityForm() {
     const [password, setPassword] = useState('');
@@ -11,12 +12,59 @@ export default function SecurityForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
 
+    const resetFields = () => {
+        setPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setError(null);
+    };
+
+    const validateFields = () => {
+        setError(null);
+        if (newPassword.length < 6) {
+            setError('新设密码长度至少为 6 位');
+            return false;
+        }
+        if (newPassword !== confirmPassword) {
+            setError('两次密码输入不一致');
+            return false;
+        }
+        return true;
+    }
+
     const handleSubmit = async () => {
+        if (isSubmitting) return;
+        if (!validateFields()) return;
+        setIsSubmitting(true);
+        try {
+            const res = await fetch('/api/settings/password', {
+                method: 'PUT',
+                body: JSON.stringify({ password, newPassword }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if (res.ok) {
+                resetFields();
+                toast.success('保存成功');
+            } else {
+                if (res.status === 400) {
+                    const json = await res.json();
+                    setError(json.message);
+                } else if (res.status === 401) {
+                    setError('您的登录以过期，请重新登录');
+                } else {
+                    throw new Error();
+                }
+            }
+        } catch (err) {
+            setError('未知错误，请稍后再试');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
         <form
-            onSubmit={e => {
+            onSubmit={async e => {
                 e.preventDefault();
                 handleSubmit();
             }}

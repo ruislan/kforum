@@ -121,7 +121,7 @@ export default function Tiptap({ content, endActionEnhancer, onCreate = () => { 
     extensions,
     editorProps: {
       attributes: {
-        class: 'prose dark:prose-invert prose-sm p-3 focus:outline-none min-h-[100px] max-w-[618px]',
+        class: 'prose dark:prose-invert prose-sm py-2 px-3 focus:outline-none min-h-[100px] max-w-[618px]',
       },
     },
     content,
@@ -130,7 +130,7 @@ export default function Tiptap({ content, endActionEnhancer, onCreate = () => { 
   });
 
   return (
-    <div className='flex flex-col p-0 border border-solid border-neutral-700 bg-neutral-800  rounded-md focus-within:border-neutral-400'>
+    <div className='flex flex-col p-0 border border-solid border-neutral-700 bg-neutral-800 rounded-md focus-within:border-neutral-400'>
       <EditorContent editor={editor} />
       <MenuBar editor={editor} endActionEnhancer={endActionEnhancer} />
     </div>

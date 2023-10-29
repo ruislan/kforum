@@ -1,6 +1,6 @@
+import { userModal } from '@/lib/models';
 import prisma from '@/lib/prisma';
 import rest from '@/lib/rest';
-import bcrypt from 'bcrypt';
 
 export async function POST(request, { params }) {
     try {
@@ -16,7 +16,7 @@ export async function POST(request, { params }) {
             }
         });
         if (user) return rest.badRequest({ message: '用户已经存在' });
-        const hashedPassword = bcrypt.hashSync(password, 10);
+        const hashedPassword = userModal.hashPassword(password);
         const newUser = await prisma.user.create({
             data: {
                 email, name, password: hashedPassword,
