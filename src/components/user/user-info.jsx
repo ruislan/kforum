@@ -16,11 +16,11 @@ export default async function UserInfo({ user = null }) {
             <div className='grid grid-cols-3'>
                 <div className='flex flex-col text-sm'>
                     <div className='text-gray-100'>发帖数</div>
-                    <div className='text-gray-400'>{user.meta?.discussions || 0}</div>
+                    <div className='text-gray-400'>{user.discussionCount || 0}</div>
                 </div>
                 <div className='flex flex-col text-sm'>
                     <div className='text-gray-100'>回复数</div>
-                    <div className='text-gray-400'>{user.meta?.posts || 0}</div>
+                    <div className='text-gray-400'>{user.postCount || 0}</div>
                 </div>
                 <div className='flex flex-col text-sm'>
                     <div className='text-gray-100'>注册于</div>

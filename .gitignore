@@ -37,6 +37,7 @@ next-env.d.ts
 
 
 .vscode
+public/uploads
 backup
 temp
 NOTE.md

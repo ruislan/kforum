@@ -90,7 +90,7 @@ export default function RegisterForm() {
             </div>
             <div className='text-sm'>
                 <span className='mr-1'>已经有账户了?</span>
-                <Link href='/login' className='underline underline-offset-4 cursor-pointer'>
+                <Link href='/login' className='underline underline-offset-2 cursor-pointer'>
                     登录
                 </Link>
             </div>

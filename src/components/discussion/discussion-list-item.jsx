@@ -38,7 +38,7 @@ export default function DiscussionListItem({ discussion }) {
                     )}
                     <div className='flex items-center'>
                         <div className='w-5 h-5 mr-1.5 bg-gray-300 rounded'>
-                            <Image width={20} height={20}  src={discussion.user?.avatar} alt={discussion.user?.name} />
+                            <Image className='rounded' width={20} height={20}  src={discussion.user?.avatar} alt={discussion.user?.name} />
                         </div>
                         <Link href={`/u/${discussion.user?.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{discussion.user?.name}</Link>
                     </div>

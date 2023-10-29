@@ -75,7 +75,7 @@ export default function LoginForm() {
             <div className='w-full mb-4'><Button className='w-full' type='submit' disabled={isSubmitting || isSuccess} isLoading={isSubmitting || isSuccess}>登陆</Button></div>
             <div className='text-sm'>
                 <span className='mr-1'>还没有账户?</span>
-                <Link href='/register' className='underline underline-offset-4 cursor-pointer'>立即注册</Link>
+                <Link href='/register' className='underline underline-offset-2 cursor-pointer'>立即注册</Link>
             </div>
         </form>
     );

@@ -81,7 +81,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                     </div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                     <div className='flex items-center'>
-                        <div className='w-5 h-5 mr-1.5 bg-gray-300 rounded'><img className='w-full h-full rounded' src={discussion.user.avatar} alt={discussion.user.name} /></div>
+                        <div className='w-5 h-5 mr-1.5 bg-gray-300 rounded'><Image width={20} height={20} className='rounded' src={discussion.user.avatar} alt={discussion.user.name} /></div>
                         <Link href={`/u/${discussion.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{discussion.user.name}</Link>
                     </div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />

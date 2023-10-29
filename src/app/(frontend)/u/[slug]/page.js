@@ -16,10 +16,8 @@ async function getUser({ name }) {
     }
   });
   if (!user) return null;
-  user.meta = {
-    discussions: user._count.discussions,
-    posts: user._count.posts - user._count.discussions, // sub first posts
-  };
+  user.discussionCount = user._count.discussions;
+  user.postCount = user._count.posts - user._count.discussions;// sub first posts
   delete user._count;
   return user;
 }
@@ -32,7 +30,7 @@ export default async function Page({ params, searchParams }) {
       {/* main container*/}
       <div className='flex flex-col flex-1 w-max-[680px]'>
         {/* user tabs
-            1. overview v1
+            1. overview(activities) v3
             2. discussions v1
             3. posts v1
             4. Saved / Favorite v2

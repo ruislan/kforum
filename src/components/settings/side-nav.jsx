@@ -10,7 +10,7 @@ function MenuItem({ menu, isActive }) {
         <Link
             href={menu.path}
             className={clsx(
-                'transition-colors hover:text-gray-100 hover:underline underline-offset-2',
+                'transition-colors font-semibold hover:text-gray-100 hover:underline underline-offset-2',
                 isActive ? 'text-gray-50 pointer-events-none cursor-none' : 'text-gray-400'
             )}>
             {menu.label}

@@ -98,7 +98,7 @@ export default function LoginModal() {
                                 </form>
                                 <div className='px-8 mb-8 text-sm'>
                                     <span className='mr-1'>还没有账户?</span>
-                                    <span className='underline underline-offset-4 cursor-pointer'
+                                    <span className='underline underline-offset-2 cursor-pointer'
                                         onClick={e => {
                                             e.preventDefault();
                                             if (isSubmitting) return;

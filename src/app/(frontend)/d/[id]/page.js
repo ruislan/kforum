@@ -5,6 +5,15 @@ import Box from '@/components/ui/box';
 import ActionCreate from '@/components/discussion/action-create';
 import DiscussionDetail from '@/components/discussion/discussion-detail';
 
+async function incrementDiscussionView({ id }) {
+  await prisma.discussion.update({
+    where: { id },
+    data: {
+      viewCount: { increment: 1 },
+    }
+  });
+}
+
 async function getDiscussion({ id }) {
   if (!id) return null;
   const d = await prisma.discussion.findUnique({
@@ -64,20 +73,13 @@ async function getDiscussion({ id }) {
       });
       post.reactions.sort((a, b) => b.count - a.count);
     }
-
-    // increment view count
-    await prisma.discussion.update({
-      where: { id },
-      data: {
-        viewCount: { increment: 1 },
-      }
-    });
   }
   return d;
 }
 
 export default async function Page({ params }) {
-  const d = await getDiscussion({ id: Number(params.id) });
+  const id = Number(params.id);
+  const [d, _] = await Promise.all([getDiscussion({ id }), incrementDiscussionView({ id })]);
   if (!d) return <div>not found</div>
   return (
     <div className='flex w-full h-full gap-6'>

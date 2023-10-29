@@ -106,7 +106,7 @@ export default function RegisterModal() {
                                 </form>
                                 <div className='px-8 mb-8 text-sm'>
                                     <span className='mr-1'>已经有账户了?</span>
-                                    <span className='underline underline-offset-4 cursor-pointer'
+                                    <span className='underline underline-offset-2 cursor-pointer'
                                         onClick={e => {
                                             e.preventDefault();
                                             handleClose();

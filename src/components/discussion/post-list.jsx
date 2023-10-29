@@ -2,6 +2,7 @@
 import { useState } from 'react';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 
 import DateUtils from '@/lib/date-utils';
@@ -28,7 +29,9 @@ function PostReplyContent({ replyPost }) {
             <div className='p-2 w-full'>
                 <div className='flex items-center justify-between mb-2 text-gray-300'>
                     <div className='flex items-center'>
-                        <div className='w-5 h-5 mr-1.5 bg-gray-300 rounded'><img className='w-full h-full rounded' src={replyPost.user.avatar} alt={replyPost.user.name} /></div>
+                        <div className='w-5 h-5 mr-1.5 bg-gray-300 rounded'>
+                            <Image width={20} height={20} className='rounded' src={replyPost.user.avatar} alt={replyPost.user.name} />
+                        </div>
                         <Link href={`/u/${replyPost.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{replyPost.user.name}</Link>
                     </div>
                     {replyPost.text.length > limit && <div className='flex items-center'>
@@ -75,7 +78,9 @@ function PostItem({ item, onReplyClick }) {
     return (
         <div className='flex'>
             <div className='flex flex-col items-center mr-2'>
-                <div className='w-9 h-9 bg-gray-300 rounded'><img className='w-full h-full rounded' src={post.user.avatar} alt={post.user.name} /></div>
+                <div className='w-9 h-9 bg-gray-300 rounded'>
+                    <Image width={36} height={36} className='rounded' src={post.user.avatar} alt={post.user.name} />
+                </div>
                 {/* click line to collapse post replies */}
                 {!isDeleted && <div className='mt-2 my-1 border-l-2 border-neutral-600 h-full cursor-pointer hover:border-neutral-300' />}
             </div>

@@ -12,6 +12,7 @@ import { ArrowRight } from '../icons';
 import Tiptap from '../ui/tiptap';
 import Button from '../ui/button';
 import PostDetailPopover from './post-detail-popover';
+import Image from 'next/image';
 
 export default function PostCreator({ discussion, replyToPost, onCreated }) {
     const { data: session } = useSession();
@@ -86,7 +87,7 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
             <div className='flex mb-3'>
                 <div>
                     <div className='w-9 h-9 mr-1.5 bg-gray-300 rounded'>
-                        <img className='w-full h-full rounded' src={session.user?.avatar} alt={session.user?.name} />
+                        <Image width={36} height={36} className='rounded' src={session.user?.avatar} alt={session.user?.name} />
                     </div>
                 </div>
                 <div className='flex flex-col w-full'>
