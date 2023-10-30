@@ -187,8 +187,6 @@ export const discussionModel = {
         queryCondition.take = take;
         queryCondition.skip = skip;
 
-        console.log(queryCondition);
-
         const countCondition = queryCondition.where ? { where: queryCondition.where } : {};
         const countFetch = prisma.discussion.count(countCondition);
         const discussionsFetch = prisma.discussion.findMany(queryCondition);

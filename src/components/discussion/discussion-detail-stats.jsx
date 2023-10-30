@@ -7,7 +7,6 @@ import Reaction from '../ui/reaction';
 
 export default function DiscussionStats({ discussion }) {
     const reaction = useMemo(() => maxBy(discussion.firstPost.reactions, 'count'), [discussion.firstPost.reactions]);
-    console.log(discussion);
     return (
         <Box className='flex flex-col'>
             <h3 className='text-sm text-gray-400 font-bold mb-3'>话题分析</h3>
