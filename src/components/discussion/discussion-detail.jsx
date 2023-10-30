@@ -1,16 +1,45 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+
 import DiscussionDetailInfo from './discussion-detail-info';
 import PostCreator from './post-creator';
 import PostList from './post-list';
 import Box from '../ui/box';
 
 export default function DiscussionDetail({ discussion }) {
-    const [posts, setPosts] = useState(discussion.posts || []);
+    const [isLoading, setIsLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
+    const [posts, setPosts] = useState([]);
     const [replyToPost, setReplyToPost] = useState(null);
     const [isLocked, setIsLocked] = useState(discussion.isLocked);
 
-    const changeReplyToPost = (post, focus = true) => setReplyToPost({ ...post, clickTime: new Date(), focus }); // 加这个clickTime用于区分在不同时间点击同一个帖子
+    const changeReplyToPost = async (post, focus = true) => {
+        setReplyToPost({ ...post, clickTime: new Date(), focus }); // 加这个clickTime用于区分在不同时间点击同一个帖子
+    }
+
+    useEffect(() => {
+        (async () => {
+            setIsLoading(true);
+            try {
+                const res = await fetch(`/api/posts?discussionId=${discussion.id}&page=${page}`);
+                if (res.ok) {
+                    const json = await res.json();
+                    setPosts(prev => page < 2 ? json.data : [...prev, ...json.data]);
+                    setHasMore(json.hasMore);
+                } else {
+                    toast.error('未知错误，请刷新重试');
+                }
+            } catch (err) {
+                toast.error('未知错误，请刷新重试');
+            } finally {
+                setIsLoading(false);
+            }
+        })();
+
+    }, [page, discussion.id]);
+
     return (
         <>
             <DiscussionDetailInfo
@@ -18,7 +47,13 @@ export default function DiscussionDetail({ discussion }) {
                 onReplyClick={() => changeReplyToPost({ ...discussion.firstPost, isFirst: true })}
                 onLockClick={(lock) => setIsLocked(lock)}
             />
-            <PostList posts={posts} onReplyClick={({ post }) => changeReplyToPost(post)} />
+            <PostList
+                posts={posts}
+                isLoading={isLoading}
+                hasMore={hasMore}
+                onMoreClick={() => setPage(prev => prev + 1)}
+                onReplyClick={({ post }) => changeReplyToPost(post)}
+            />
             {isLocked ?
                 <Box className='h-16 flex justify-center items-center'>
                     <span className='text-base font-bold text-neutral-400'>该讨论已经锁定</span>

@@ -17,6 +17,7 @@ import { Link as LinkIcon, Flag, Markup, Edit, DeleteBin, Reply, ArrowDownS, Arr
 import ActionDelete from './action-delete';
 import ActionReact from './action-react';
 import PostUpdater from './post-updater';
+import Button from '../ui/button';
 
 function PostReplyContent({ replyPost }) {
     const limit = 100;
@@ -138,11 +139,21 @@ function PostItem({ item, onReplyClick }) {
     line 2: post content
     line 3: actions: reply, edit, delete, share, follow, favorite, report
 */
-export default function PostList({ posts, onReplyClick }) {
-    if (!posts || posts.length === 0) return <NoContent text='还没有内容，就等你来回帖啦' />;
+export default function PostList({ isLoading, posts, hasMore, onMoreClick, onReplyClick }) {
+    if (!isLoading && (!posts || posts.length === 0)) return <NoContent text='还没有内容，就等你来回帖啦' />;
     return (
-        <Box className='flex flex-col gap-3 pb-2'>
-            {posts?.map((post, i) => <PostItem key={i} item={post} onReplyClick={onReplyClick} />)}
-        </Box>
+        <>
+            {posts.length > 0 &&
+                <Box className='flex flex-col gap-3 pb-2'>
+                    {posts?.map((post, i) => <PostItem key={i} item={post} onReplyClick={onReplyClick} />)}
+                </Box>
+            }
+            {isLoading && <div className='flex justify-center my-4'><LoadingIcon className='w-8 h-8' /></div>}
+            {hasMore && (
+                <div className='self-center py-2'>
+                    <Button kind='ghost' disabled={isLoading} onClick={onMoreClick}>查看更多</Button>
+                </div>
+            )}
+        </>
     );
 }

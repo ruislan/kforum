@@ -66,6 +66,67 @@ export const categoryModel = {
     }
 };
 
+export const postModel = {
+    async getPosts({ discussionId, isOldFirst = false, page = 1 }) {
+        const countCondition = {};
+        if (discussionId) countCondition.where = { discussionId };
+        const fetchCount = prisma.post.count(countCondition);
+
+        const queryCondition = {};
+        if (discussionId) queryCondition.where = { discussionId };
+
+        const { limit: take, skip } = pageUtils.getDefaultLimitAndSkip(page);
+        queryCondition.take = take;
+        queryCondition.skip = skip;
+        if (isOldFirst) queryCondition.orderBy = { createdAt: 'desc' };
+        queryCondition.include = {
+            reactions: {
+                select: {
+                    userId: true, postId: true, reaction: true,
+                }
+            },
+            user: { select: userModel.fields.simple },
+            replyPost: {
+                include: {
+                    user: { select: userModel.fields.simple }
+                }
+            }
+        };
+        const fetchPosts = await prisma.post.findMany(queryCondition);
+        let [posts, count] = await Promise.all([fetchPosts, fetchCount]);
+        if (discussionId) count -= 1; // remove discussion first post;
+
+        // avoid n + 1, batch load Posts reactions and reaction stats;
+        const postIds = posts.map(p => p.id);
+        const refs = await prisma.PostReactionRef.groupBy({
+            by: ['reactionId', 'postId'],
+            where: {
+                postId: { in: postIds }
+            },
+            _count: {
+                userId: true
+            }
+        });
+        const reactionIds = refs.map(r => r.reactionId);
+        const reactions = await prisma.reaction.findMany({
+            where: {
+                id: { in: reactionIds }
+            }
+        });
+        for (const post of posts) {
+            post.reactions = refs.filter(r => r.postId === post.id).map(r => {
+                const reaction = reactions.find(re => re.id === r.reactionId);
+                return {
+                    ...reaction,
+                    count: r._count.userId
+                }
+            });
+            post.reactions.sort((a, b) => b.count - a.count);
+        }
+        return { posts, hasMore: count > skip + take };
+    }
+};
+
 export const discussionModel = {
     async getDiscussions({
         categoryId = null,
@@ -120,66 +181,43 @@ export const discussionModel = {
             }
         });
     },
-    async getDiscussion({ id }) {
+    async getDiscussion({ id, withFirstPost = true, withUser = true, withCategory = true }) {
         if (!id) return null;
-        const d = await prisma.discussion.findUnique({
+        const queryCondition = {
             where: { id },
             include: {
-                user: { select: userModel.fields.simple },
-                category: { select: { id: true, name: true, slug: true, color: true, icon: true } },
-                firstPost: true,
-                posts: {
-                    where: {
-                        firstPostDiscussion: null, // 不包含首贴
-                    },
-                    include: {
-                        reactions: {
-                            select: {
-                                userId: true, postId: true, reaction: true,
-                            }
-                        },
-                        user: { select: userModel.fields.simple },
-                        replyPost: {
-                            include: {
-                                user: { select: userModel.fields.simple }
-                            }
-                        }
-                    },
-                    orderBy: { createdAt: 'asc' },
-                    take: 10,
-                    skip: 0
-                },
-            },
-        });
-        if (d) {
-            // avoid n + 1, batch load reactions;
-            const postIds = [d.firstPost.id, ...d.posts.map(p => p.id)];
-            const refs = await prisma.PostReactionRef.groupBy({
-                by: ['reactionId', 'postId'],
-                where: {
-                    postId: { in: postIds }
-                },
-                _count: {
-                    userId: true
-                }
-            });
-            const reactionIds = refs.map(r => r.reactionId);
-            const reactions = await prisma.reaction.findMany({
-                where: {
-                    id: { in: reactionIds }
-                }
-            });
-            for (const post of [d.firstPost, ...d.posts]) {
-                post.reactions = refs.filter(r => r.postId === post.id).map(r => {
-                    const reaction = reactions.find(re => re.id === r.reactionId);
-                    return {
-                        ...reaction,
-                        count: r._count.userId
-                    }
-                });
-                post.reactions.sort((a, b) => b.count - a.count);
+                category: withCategory,
+                firstPost: withFirstPost
             }
-        }
+        };
+        if (withUser) queryCondition.include.user = { select: userModel.fields.simple };
+        const d = await prisma.discussion.findUnique(queryCondition);
+        if (!d) return null;
+
+        // avoid n+1, load first post reactions and stats
+        const refs = await prisma.PostReactionRef.groupBy({
+            by: ['reactionId', 'postId'],
+            where: {
+                postId: d.firstPost.id
+            },
+            _count: {
+                userId: true
+            }
+        });
+        const reactionIds = refs.map(r => r.reactionId);
+        const reactions = await prisma.reaction.findMany({
+            where: {
+                id: { in: reactionIds }
+            }
+        });
+        d.firstPost.reactions = refs.map(r => {
+            const reaction = reactions.find(re => re.id === r.reactionId);
+            return {
+                ...reaction,
+                count: r._count.userId
+            }
+        });
+        d.firstPost.reactions.sort((a, b) => b.count - a.count);
         return d;
     }
 };

@@ -6,7 +6,7 @@ import authOptions from '@/lib/auth';
 import { discussionModel } from '@/lib/models';
 
 export async function GET(request, { params }) {
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(request.url);
     const page = searchParams.get('page');
     const { discussions, hasMore } = await discussionModel.getDiscussions({ page });
     return rest.ok({ data: discussions, hasMore });
