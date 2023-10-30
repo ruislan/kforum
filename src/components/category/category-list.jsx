@@ -1,18 +1,13 @@
-import prisma from '@/lib/prisma';
-
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 
 import { Blank as BlankIcon } from '../icons';
 import Box from '../ui/box';
 
-async function getCategories() {
-    // XXX flat the categories or just first level categories
-    return await prisma.category.findMany({ orderBy: { sequence: 'asc' } });
-}
+export default function CategoryList({ categories }) {
+    if (!categories) return null;
 
-export default async function CategoryList() {
-    const categories = await getCategories();
     return (
         <Box className='flex flex-col'>
             <div className='text-sm text-gray-400 font-bold mb-3'>讨论分类</div>

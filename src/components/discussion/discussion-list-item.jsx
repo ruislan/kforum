@@ -56,7 +56,7 @@ export default function DiscussionListItem({ discussion }) {
                     <Tag className='ml-1'>Cheer</Tag>
                     <Tag className='ml-1'>Great</Tag>
                 </div> */}
-                <ProseContent className='mt-2 max-h-64 overflow-hidden content-mask-b' content={discussion.firstPost?.content} />
+                <ProseContent className='max-h-64 overflow-hidden content-mask-b' content={discussion.firstPost?.content} />
                 <div className='text-xs inline-flex items-center text-gray-300 mt-3'>
                     <div className='flex items-center'><span>参与 {discussion.userCount}</span></div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />

@@ -7,8 +7,8 @@ import GeneralForm from '@/components/settings/general-form';
 import Box from '@/components/ui/box';
 import ProfileForm from '@/components/settings/profile-form';
 import SecurityForm from '@/components/settings/security-form';
-import prisma from '@/lib/prisma';
 import AvatarUploader from '@/components/settings/avatar-uploader';
+import { userModel } from '@/lib/models';
 
 const menus = [
   { label: '基本', path: '/settings' },
@@ -16,22 +16,12 @@ const menus = [
   { label: '安全', path: '/settings/security' },
 ];
 
-async function getUser({ userId }) {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-  });
-  delete user.password;
-  delete user.phone;
-  return user;
-}
-
 export const dynamic = 'force-dynamic'; // no cache for this page
 
 export default async function Page({ params }) {
   const session = await getServerSession(authOptions);
-  if (!session) redirect('/');
-
-  const user = await getUser({ userId: session.user.id });
+  const user = await userModel.getUser({ id: session.user?.id });
+  if (!user) redirect('/');
 
   return (
     <div className='flex w-full min-h-screen gap-6'>

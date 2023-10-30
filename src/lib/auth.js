@@ -1,6 +1,6 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
 import prisma from '@/lib/prisma';
-import { userModal } from './models';
+import { userModel } from './models';
 
 const authOptions = {
     providers: [
@@ -21,11 +21,11 @@ const authOptions = {
                             { name: username }
                         ]
                     },
-                    select: { ...userModal.fields.passport, password: true }
+                    select: { ...userModel.fields.passport, password: true }
                 });
                 if (!user) return null;
 
-                const isPasswordMatched = userModal.comparePassword(password, user.password);
+                const isPasswordMatched = userModel.comparePassword(password, user.password);
                 if (!isPasswordMatched) return null;
 
                 return user;

@@ -1,29 +1,9 @@
+import { userModel } from '@/lib/models';
 import UserInfo from '@/components/user/user-info';
 import UserTabs from '@/components/user/user-tabs';
 
-async function getUser({ name }) {
-  const user = await prisma.user.findFirst({
-    where: { name },
-    select: {
-      id: true, name: true, email: true, avatar: true, gender: true,
-      createdAt: true,
-      _count: {
-        select: {
-          discussions: true,
-          posts: true,
-        }
-      }
-    }
-  });
-  if (!user) return null;
-  user.discussionCount = user._count.discussions;
-  user.postCount = user._count.posts - user._count.discussions;// sub first posts
-  delete user._count;
-  return user;
-}
-
 export default async function Page({ params, searchParams }) {
-  const user = await getUser({ name: params.slug });
+  const user = await userModel.getUserByName({ name: params.slug });
   if (!user) return <div>User not found</div>;
   return (
     <div className='flex w-full h-full gap-6'>

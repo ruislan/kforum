@@ -14,5 +14,7 @@ export default withAuth({
 export const config = {
     matcher: [
         '/d/create',
+        '/settings',
+        '/settings/:path*',
     ]
 };

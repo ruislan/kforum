@@ -1,4 +1,5 @@
-import { userModal } from '@/lib/models';
+import { userModel } from '@/lib/models';
+import pageUtils from '@/lib/page-utils';
 import prisma from '@/lib/prisma';
 import rest from '@/lib/rest';
 
@@ -10,8 +11,7 @@ export async function GET(request, { params }) {
     const user = await prisma.user.findUnique({ where: { name } });
     if (!user) return rest.ok({ data: [] });
 
-    const take = 10;
-    const skip = Math.max(0, page - 1) * take;
+    const { limit: take, skip } = pageUtils.getDefaultLimitAndSkip(page);
 
     const count = await prisma.post.count({ where: { userId: user.id } });
     const data = await prisma.post.findMany({
@@ -23,7 +23,7 @@ export async function GET(request, { params }) {
             discussion: {
                 include: {
                     category: true,
-                    user: { select: userModal.fields.simple }
+                    user: { select: userModel.fields.simple }
                 }
             },
         },

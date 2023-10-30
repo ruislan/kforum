@@ -1,9 +1,15 @@
+import { categoryModel, discussionModel } from '@/lib/models';
+
 import CategoryList from '@/components/category/category-list';
 import DiscussionList from '@/components/discussion/discussion-list';
 import ActionCreate from '@/components/discussion/action-create';
 import Box from '@/components/ui/box';
 
-export default function Home() {
+export default async function Home() {
+  const fetchDiscussions = discussionModel.getDiscussions({ withFirstPost: true });
+  const fetchCategories = categoryModel.getCategories();
+  const [{ discussions, hasMore }, categories] = await Promise.all([fetchDiscussions, fetchCategories]);
+
   return (
     <div className='flex w-full h-full gap-6'>
       {/* main container:
@@ -12,18 +18,18 @@ export default function Home() {
                 right: create discussion / recent posted discussions
               2) discussion/[id]
                 center: discussion / posts / create post(reply someone?)
-                right side: about discussion (some meta) / related discussions
+                right side: about discussion (some stats) / related discussions
               3) user/[id]
                 center: summary / activity / badge / notification  (user himself) / settings (user himself)
               4) ...
            */}
       <div className='flex flex-col flex-1 w-max-[680px]'>
-        <DiscussionList />
+        <DiscussionList discussions={discussions} hasMore={hasMore} />
       </div>
       {/* right side */}
       <div className='flex flex-col w-80 gap-4'>
         <Box className='flex flex-col gap-3'><ActionCreate category={null} /></Box>
-        <CategoryList />
+        <CategoryList categories={categories} />
       </div>
     </div>
   )

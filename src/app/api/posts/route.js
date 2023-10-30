@@ -3,7 +3,11 @@ import { getServerSession } from 'next-auth';
 import prisma from '@/lib/prisma';
 import rest from '@/lib/rest';
 import authOptions from '@/lib/auth';
-import { userModal } from '@/lib/models';
+import { userModel } from '@/lib/models';
+
+export async function GET(request, { params }) {
+    return rest.ok({ data: []});
+}
 
 export async function POST(request, { params }) {
     // require user
@@ -28,7 +32,7 @@ export async function POST(request, { params }) {
         post = await prisma.post.findUnique({
             where: { id: postId },
             include: {
-                user: { select: userModal.fields.simple }
+                user: { select: userModel.fields.simple }
             }
         });
         if (!post) return rest.badRequest({ message: '回复的帖子已经删除或不存在', field: 'postId' });

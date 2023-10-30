@@ -1,14 +1,9 @@
-import prisma from '@/lib/prisma';
+import { categoryModel } from '@/lib/models';
 import Box from '@/components/ui/box';
 import DiscussionCreator from '@/components/discussion/discussion-creator';
 
-async function getCategories() {
-  // XXX flat the categories or just first level categories
-  return await prisma.category.findMany({ orderBy: { sequence: 'asc' } });
-}
-
 export default async function Page({ searchParams }) {
-  const categories = await getCategories();
+  const categories = await categoryModel.getCategories();
   return (
     <div className='flex w-full h-full gap-6'>
       {/* main container */}

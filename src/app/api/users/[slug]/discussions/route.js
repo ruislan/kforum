@@ -1,3 +1,4 @@
+import pageUtils from '@/lib/page-utils';
 import prisma from '@/lib/prisma';
 import rest from '@/lib/rest';
 
@@ -9,8 +10,8 @@ export async function GET(request, { params }) {
     const user = await prisma.user.findUnique({ where: { name } });
     if (!user) return rest.ok({ data: [] });
 
-    const take = 10;
-    const skip = Math.max(0, page - 1) * take;
+    const { limit: take, skip } = pageUtils.getDefaultLimitAndSkip(page);
+
     const count = await prisma.discussion.count({ where: { userId: user.id } });
     const data = await prisma.discussion.findMany({
         where: { userId: user.id },

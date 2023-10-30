@@ -3,7 +3,14 @@ import { getServerSession } from 'next-auth';
 import prisma from '@/lib/prisma';
 import rest from '@/lib/rest';
 import authOptions from '@/lib/auth';
+import { discussionModel } from '@/lib/models';
 
+export async function GET(request, { params }) {
+    const { searchParams } = new URL(request.url)
+    const page = searchParams.get('page');
+    const { discussions, hasMore } = await discussionModel.getDiscussions({ page });
+    return rest.ok({ data: discussions, hasMore });
+}
 
 export async function POST(request, { params }) {
     // require user
