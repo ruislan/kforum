@@ -5,7 +5,6 @@ import NavMenus from '@/components/header/nav-menus';
 
 import Search from './search';
 import UserMenus from './user-menus';
-import Button from '../ui/button';
 import { Plus } from '../icons';
 
 async function getMenus() {
