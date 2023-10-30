@@ -5,10 +5,19 @@ import DiscussionList from '@/components/discussion/discussion-list';
 import ActionCreate from '@/components/discussion/action-create';
 import Box from '@/components/ui/box';
 
+async function getDiscussions() {
+  return await discussionModel.getDiscussions({
+    withFirstPost: true,
+    isStickyFirst: true
+  });
+}
+
+async function getCategories() {
+  return await categoryModel.getCategories();
+}
+
 export default async function Home() {
-  const fetchDiscussions = discussionModel.getDiscussions({ withFirstPost: true });
-  const fetchCategories = categoryModel.getCategories();
-  const [{ discussions, hasMore }, categories] = await Promise.all([fetchDiscussions, fetchCategories]);
+  const [{ discussions, hasMore }, categories] = await Promise.all([getDiscussions(), getCategories()]);
 
   return (
     <div className='flex w-full h-full gap-6'>
@@ -23,11 +32,12 @@ export default async function Home() {
                 center: summary / activity / badge / notification  (user himself) / settings (user himself)
               4) ...
            */}
-      <div className='flex flex-col flex-1 w-max-[680px]'>
-        <DiscussionList discussions={discussions} hasMore={hasMore} />
+      <div className='flex flex-col flex-1 w-[680px] w-max-[680px]'>
+        <DiscussionList discussions={discussions} hasMore={hasMore} isStickyFirst={false} categoryId={null} />
       </div>
       {/* right side */}
       <div className='flex flex-col w-80 gap-4'>
+        {/* TODO forum description and stats, like discussions, posts, users, */}
         <Box className='flex flex-col gap-3'><ActionCreate category={null} /></Box>
         <CategoryList categories={categories} />
       </div>

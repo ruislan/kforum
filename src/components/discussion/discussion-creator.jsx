@@ -10,7 +10,6 @@ import Tiptap from '../ui/tiptap';
 import Select from '../ui/select';
 import Input from '../ui/input';
 
-// 点击弹出搜索层，然后进行搜索，不用单独页面
 export default function DiscussionCreator({ categories, initCategorySlug }) {
     const router = useRouter();
     const [categorySlug, setCategorySlug] = useState(initCategorySlug);

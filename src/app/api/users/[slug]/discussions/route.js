@@ -4,7 +4,7 @@ import rest from '@/lib/rest';
 
 export async function GET(request, { params }) {
     const { searchParams } = new URL(request.url)
-    const page = searchParams.get('page');
+    const page = Number(searchParams.get('page')) || 1;
     const name = params.slug;
 
     const user = await prisma.user.findUnique({ where: { name } });

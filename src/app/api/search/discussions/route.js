@@ -5,7 +5,7 @@ import rest from '@/lib/rest';
 
 export async function GET(request, { params }) {
     const { searchParams } = new URL(request.url)
-    const page = searchParams.get('page');
+    const page = Number(searchParams.get('page')) || 1;
     const q = searchParams.get('q');
     const { limit: take, skip } = pageUtils.getDefaultLimitAndSkip(page);
 

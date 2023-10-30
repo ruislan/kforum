@@ -5,7 +5,7 @@ import rest from '@/lib/rest';
 
 export async function GET(request, { params }) {
     const { searchParams } = new URL(request.url)
-    const page = searchParams.get('page');
+    const page = Number(searchParams.get('page')) || 1;
     const name = params.slug;
 
     const user = await prisma.user.findUnique({ where: { name } });
@@ -13,12 +13,14 @@ export async function GET(request, { params }) {
 
     const { limit: take, skip } = pageUtils.getDefaultLimitAndSkip(page);
 
-    const count = await prisma.post.count({ where: { userId: user.id } });
-    const data = await prisma.post.findMany({
-        where: {
-            userId: user.id,
-            replyPostId: { not: null }
-        },
+    const whereClause = {
+        userId: user.id,
+        firstPostDiscussion: null, // just reply post
+    }
+
+    const fetchCount = prisma.post.count({ where: whereClause });
+    const fetchPosts = prisma.post.findMany({
+        where: whereClause,
         include: {
             discussion: {
                 include: {
@@ -29,5 +31,6 @@ export async function GET(request, { params }) {
         },
         skip, take
     });
+    const [count, data] = await Promise.all([fetchCount, fetchPosts]);
     return rest.ok({ data, hasMore: count > skip + take });
 }

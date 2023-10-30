@@ -7,7 +7,7 @@ import { postModel, userModel } from '@/lib/models';
 
 export async function GET(request, { params }) {
     const { searchParams } = new URL(request.url);
-    const page = searchParams.get('page');
+    const page = Number(searchParams.get('page')) || 1;
     const discussionId = Number(searchParams.get('discussionId')) || null;
     const { posts, hasMore } = await postModel.getPosts({ discussionId, page });
     return rest.ok({ data: posts, hasMore });
@@ -43,8 +43,8 @@ export async function POST(request, { params }) {
     }
 
 
-    // 检查用户是否已经发过帖子
-    const sessionUserPost = await prisma.post.findFirst({
+    // 检查用户是否已经发过帖子，没有则增加一次参与人计数
+    const sessionUserPosted = await prisma.post.findFirst({
         where: {
             discussionId,
             userId: session.user.id
@@ -63,7 +63,7 @@ export async function POST(request, { params }) {
             lastPostId: post.id,
             lastPostedAt: new Date(),
         };
-        if (!sessionUserPost) updateData.userCount = { increment: 1 };
+        if (!sessionUserPosted) updateData.userCount = { increment: 1 };
         await tx.discussion.update({
             where: { id: discussion.id },
             data: updateData

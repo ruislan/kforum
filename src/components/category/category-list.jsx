@@ -10,7 +10,7 @@ export default function CategoryList({ categories }) {
 
     return (
         <Box className='flex flex-col'>
-            <div className='text-sm text-gray-400 font-bold mb-3'>讨论分类</div>
+            <h3 className='text-sm text-gray-400 font-bold mb-3'>讨论分类</h3>
             <div className='flex flex-col gap-1'>
                 {categories.map(c =>
                     <Link key={c.slug} href={`/c/${c.slug}`} className='hover:underline underline-offset-2'>

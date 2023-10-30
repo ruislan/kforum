@@ -4,11 +4,19 @@ import prisma from '@/lib/prisma';
 import rest from '@/lib/rest';
 import authOptions from '@/lib/auth';
 import { discussionModel } from '@/lib/models';
+import _ from 'lodash';
 
 export async function GET(request, { params }) {
     const { searchParams } = new URL(request.url);
-    const page = searchParams.get('page');
-    const { discussions, hasMore } = await discussionModel.getDiscussions({ page });
+    const page = Number(searchParams.get('page')) || 1;
+    const isStickyFirst = searchParams.get('isStickyFirst');
+    const categoryId = Number(searchParams.get('categoryId')) || null;
+    const { discussions, hasMore } = await discussionModel.getDiscussions({
+        categoryId, // 如果有categoryId说明是某个分类下面的全部话题，则无需在每个话题上携带自己的分类
+        page,
+        isStickyFirst,
+        withFirstPost: true
+    });
     return rest.ok({ data: discussions, hasMore });
 }
 

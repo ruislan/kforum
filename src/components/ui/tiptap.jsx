@@ -121,7 +121,7 @@ export default function Tiptap({ content, endActionEnhancer, onCreate = () => { 
     extensions,
     editorProps: {
       attributes: {
-        class: 'prose dark:prose-invert prose-sm py-2 px-3 focus:outline-none min-h-[100px] max-w-[618px]',
+        class: 'prose dark:prose-invert prose-sm py-2 px-3 focus:outline-none min-h-[100px] max-w-full',
       },
     },
     content,

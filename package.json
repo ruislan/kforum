@@ -30,6 +30,7 @@
     "date-fns": "^2.30.0",
     "eslint": "8.48.0",
     "eslint-config-next": "13.4.19",
+    "lodash": "^4.17.21",
     "next": "^13.5.6",
     "next-auth": "^4.24.4",
     "postcss": "^8.4.31",

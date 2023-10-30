@@ -74,7 +74,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                 <div className='flex items-center mb-2 text-gray-300'>
                     <div className='flex items-center'>
                         {c.icon ?
-                            <span className='mr-1.5'><Image alt={c.name} src={c.icon} className='w-4 h-4 rounded' /></span> :
+                            <span className='mr-1.5'><Image width={20} height={20} alt={c.name} src={c.icon} className='rounded' /></span> :
                             <span className='w-5 h-5 rounded mr-1.5' style={{ backgroundColor: `${c.color || 'bg-gray-300'}`, }}></span>
                         }
                         <Link href={`/c/${c?.slug}`} onClick={e => e.stopPropagation()} className='text-xs text-gray-50 hover:underline underline-offset-2 cursor-pointer'>c/{c?.name}</Link>

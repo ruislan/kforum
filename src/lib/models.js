@@ -56,8 +56,20 @@ export const userModel = {
 };
 
 export const categoryModel = {
-    async getCategory(slug) {
-        const category = await prisma.category.findUnique({ where: { slug } });
+    async getCategory({ slug, withStats = true }) {
+        const queryCondition = { where: { slug } };
+        if (withStats) {
+            queryCondition.include = {
+                _count: {
+                    select: { discussions: true }
+                }
+            };
+        }
+        const category = await prisma.category.findUnique(queryCondition);
+        if (withStats) {
+            category.discussionCount = category._count.discussions;
+            delete category._count;
+        }
         return category;
     },
     async getCategories() {
@@ -67,13 +79,27 @@ export const categoryModel = {
 };
 
 export const postModel = {
-    async getPosts({ discussionId, isOldFirst = false, page = 1 }) {
+    async getPosts({
+        discussionId, // 如果有discussionId说明是某个话题下面的回帖
+        isOldFirst = false,
+        page = 1
+    }) {
         const countCondition = {};
-        if (discussionId) countCondition.where = { discussionId };
+        if (discussionId) {
+            countCondition.where = {
+                discussionId,
+                firstPostDiscussion: null,
+            }
+        };
         const fetchCount = prisma.post.count(countCondition);
 
         const queryCondition = {};
-        if (discussionId) queryCondition.where = { discussionId };
+        if (discussionId) {
+            queryCondition.where = {
+                discussionId,
+                firstPostDiscussion: null,
+            };
+        }
 
         const { limit: take, skip } = pageUtils.getDefaultLimitAndSkip(page);
         queryCondition.take = take;
@@ -94,7 +120,6 @@ export const postModel = {
         };
         const fetchPosts = await prisma.post.findMany(queryCondition);
         let [posts, count] = await Promise.all([fetchPosts, fetchCount]);
-        if (discussionId) count -= 1; // remove discussion first post;
 
         // avoid n + 1, batch load Posts reactions and reaction stats;
         const postIds = posts.map(p => p.id);
@@ -129,7 +154,7 @@ export const postModel = {
 
 export const discussionModel = {
     async getDiscussions({
-        categoryId = null,
+        categoryId = null, // 如果有categoryId说明是某个分类下面的全部话题，则无需在每个话题上携带自己的分类
         page = 1,
         isStickyFirst = false,
         isOldFirst = true,
@@ -162,6 +187,8 @@ export const discussionModel = {
         queryCondition.take = take;
         queryCondition.skip = skip;
 
+        console.log(queryCondition);
+
         const countCondition = queryCondition.where ? { where: queryCondition.where } : {};
         const countFetch = prisma.discussion.count(countCondition);
         const discussionsFetch = prisma.discussion.findMany(queryCondition);
@@ -181,18 +208,34 @@ export const discussionModel = {
             }
         });
     },
-    async getDiscussion({ id, withFirstPost = true, withUser = true, withCategory = true }) {
+    async getDiscussion({
+        id,
+        withFirstPost = true,
+        withLastPost = true,
+        withUser = true,
+        withCategory = true
+    }) {
         if (!id) return null;
         const queryCondition = {
             where: { id },
             include: {
                 category: withCategory,
-                firstPost: withFirstPost
+                firstPost: withFirstPost,
+                _count: {
+                    select: { posts: true },
+                }
             }
         };
         if (withUser) queryCondition.include.user = { select: userModel.fields.simple };
+        if (withLastPost) queryCondition.include.lastPost = {
+            include: {
+                user: { select: userModel.fields.simple }
+            }
+        };
         const d = await prisma.discussion.findUnique(queryCondition);
         if (!d) return null;
+        d.postCount = d._count.posts - 1; // sub first posts
+        delete d._count;
 
         // avoid n+1, load first post reactions and stats
         const refs = await prisma.PostReactionRef.groupBy({

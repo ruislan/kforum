@@ -3,6 +3,7 @@ import { discussionModel } from '@/lib/models';
 import Box from '@/components/ui/box';
 import ActionCreate from '@/components/discussion/action-create';
 import DiscussionDetail from '@/components/discussion/discussion-detail';
+import DiscussionStats from '@/components/discussion/discussion-detail-stats';
 
 export default async function Page({ params }) {
   const id = Number(params.id);
@@ -16,12 +17,12 @@ export default async function Page({ params }) {
   return (
     <div className='flex w-full h-full gap-6'>
       {/* main container */}
-      <div className='flex flex-col flex-1 w-max-[680px] gap-2'>
+      <div className='flex flex-col flex-1 w-[680px] w-max-[680px] gap-2'>
         <DiscussionDetail discussion={d} />
       </div>
       {/* right side */}
       <div className='flex flex-col w-80 gap-4'>
-        {/* discussion'meta */}
+        <DiscussionStats discussion={d} />
         <Box className='flex flex-col gap-3'><ActionCreate /></Box>
       </div>
     </div>
