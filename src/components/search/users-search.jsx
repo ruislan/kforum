@@ -51,15 +51,15 @@ export default function UsersSearch({ query }) {
                             alt={item.name}
                         />
                     </div>
-                    <div className='flex items-center text-sm'>
+                    <div className='flex items-center text-xs'>
                         <Link
                             href={`/u/${item.name}`}
-                            className='text-sm font-semibold text-gray-300 hover:text-gray-200 underline underline-offset-2'
+                            className='font-semibold text-gray-300 hover:text-gray-200 underline underline-offset-2'
                         >
                             u/{item.name}
                         </Link>
                         <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                        <span className='text-sm text-gray-400'>注册于 {dateUtils.fromNow(item.createdAt)}</span>
+                        <span className='text-gray-400'>注册于 {dateUtils.fromNow(item.createdAt)}</span>
                     </div>
                 </Box>
             ))}
