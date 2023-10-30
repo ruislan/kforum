@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 
-import DateUtils from '@/lib/date-utils';
+import dateUtils from '@/lib/date-utils';
 import { runIfFn } from '@/lib/fn';
 import Box from '../ui/box';
 import { Blank, Heart, Locked, Pined, Link as LinkIcon, Bookmark, Flag, EyeOff, Markup, UnBookmark, Pin, Lock, Edit, DeleteBin, Reply } from '../icons';
@@ -85,11 +85,11 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                         <Link href={`/u/${discussion.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{discussion.user.name}</Link>
                     </div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                    <span className='text-xs'>{DateUtils.fromNow(discussion.createdAt)}</span>
+                    <span className='text-xs'>{dateUtils.fromNow(discussion.createdAt)}</span>
                     {discussion.lastUpdatedAt && (
                         <>
                             <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                            <span className='text-xs'>{`编辑于 ${DateUtils.fromNow(discussion.lastUpdatedAt)}`}</span>
+                            <span className='text-xs'>{`编辑于 ${dateUtils.fromNow(discussion.lastUpdatedAt)}`}</span>
                         </>
                     )}
                     <span className='ml-1' />

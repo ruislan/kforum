@@ -95,7 +95,7 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
                         <Link href={`/u/${session.user?.name}`} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{session.user?.name}</Link>
                         <span className='w-4 h-4'><ArrowRight /></span>
                         <div className='flex items-center text-gray-100'>
-                            <span className='whitespace-nowrap'>回复&nbsp;</span>
+                            <span className='whitespace-nowrap'>回贴&nbsp;</span>
                             {!replyToPost || replyToPost?.isFirst ? '主贴' : <PostDetailPopover post={replyToPost} />}
                         </div>
                     </div>

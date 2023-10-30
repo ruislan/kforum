@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 
-import DateUtils from '@/lib/date-utils';
+import dateUtils from '@/lib/date-utils';
 import { runIfFn } from '@/lib/fn';
 import Box from '../ui/box';
 import SplitBall from '../ui/split-ball';
@@ -90,7 +90,7 @@ function PostItem({ item, onReplyClick }) {
                     <div className='flex items-center text-gray-300'>
                         <Link href={`/u/${post.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{post.user.name}</Link>
                         <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                        <span className='text-xs'>{DateUtils.fromNow(post.createdAt)}</span>
+                        <span className='text-xs'>{dateUtils.fromNow(post.createdAt)}</span>
                     </div>
                     <PostReplyContent replyPost={post.replyPost} />
                     {isEditMode ?
@@ -140,7 +140,7 @@ function PostItem({ item, onReplyClick }) {
     line 3: actions: reply, edit, delete, share, follow, favorite, report
 */
 export default function PostList({ isLoading, posts, hasMore, onMoreClick, onReplyClick }) {
-    if (!isLoading && (!posts || posts.length === 0)) return <NoContent text='还没有内容，就等你来回帖啦' />;
+    if (!isLoading && (!posts || posts.length === 0)) return <NoContent text='还没有内容，就等你来回复啦' />;
     return (
         <>
             {posts.length > 0 &&

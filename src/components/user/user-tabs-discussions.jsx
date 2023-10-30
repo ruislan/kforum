@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 import toast from 'react-hot-toast';
-import DateUtils from '@/lib/date-utils';
+import dateUtils from '@/lib/date-utils';
 
 import Box from '../ui/box';
 import NoContent from '../ui/no-content';
@@ -54,7 +54,7 @@ export default function UserTabsDiscussions({ user }) {
                         <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                         <Link className='text-xs text-gray-400 hover:underline underline-offset-2 cursor-pointer' href={`/u/${user.name}`}>u/{user.name}</Link>
                         <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                        <span className='text-xs text-gray-400'>{DateUtils.fromNow(item.createdAt)}</span>
+                        <span className='text-xs text-gray-400'>{dateUtils.fromNow(item.createdAt)}</span>
                     </div>
                     <div className='text-xs inline-flex items-center text-gray-300 mt-1'>
                         <div className='flex items-center'><span>参与 {item.userCount}</span></div>

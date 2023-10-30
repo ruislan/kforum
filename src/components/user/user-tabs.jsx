@@ -9,7 +9,7 @@ import UserTabsPosts from './user-tabs-posts';
 const tabs = [
     // { slug: 'overview', name: '活动（概览）', relativePath: '' }, // v0.7.0
     { slug: 'discussions', name: '话题', relativePath: '/' },
-    { slug: 'posts', name: '回帖', relativePath: '/posts' },
+    { slug: 'posts', name: '回复', relativePath: '/posts' },
 ];
 
 export default function UserTabs({ user, tab }) {

@@ -15,7 +15,7 @@ export default async function UserInfo({ user = null }) {
             <div className='text-gray-100 text-xl my-2'>{user.name}</div>
             <div className='grid grid-cols-3'>
                 <div className='flex flex-col text-sm'>
-                    <div className='text-gray-100'>发帖数</div>
+                    <div className='text-gray-100'>话题数</div>
                     <div className='text-gray-400'>{user.discussionCount || 0}</div>
                 </div>
                 <div className='flex flex-col text-sm'>

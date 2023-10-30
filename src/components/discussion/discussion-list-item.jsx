@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 
-import DateUtils from '@/lib/date-utils';
+import dateUtils from '@/lib/date-utils';
 
 import { Blank, Lock, Locked, Pin, Pined, Post as PostIcon } from '../icons';
 import Box from '../ui/box';
@@ -46,7 +46,7 @@ export default function DiscussionListItem({ discussion }) {
                         <Link href={`/u/${discussion.user?.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{discussion.user?.name}</Link>
                     </div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                    <span className='text-xs'>{DateUtils.fromNow(discussion.createdAt)}</span>
+                    <span className='text-xs'>{dateUtils.fromNow(discussion.createdAt)}</span>
                     <span className='ml-1' />
                     {discussion.isSticky && (<span className='h-4 w-4 ml-0.5 text-green-400'><Pined /></span>)}
                     {discussion.isLocked && (<span className='h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}

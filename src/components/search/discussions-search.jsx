@@ -8,7 +8,7 @@ import Spinner from '../ui/spinner';
 import Button from '../ui/button';
 import DiscussionListItem from '../discussion/discussion-list-item';
 
-export default function DiscussionSearch({ query }) {
+export default function DiscussionsSearch({ query }) {
     const [isLoading, setIsLoading] = useState(true);
     const [dataList, setDataList] = useState([]);
     const [page, setPage] = useState(1);

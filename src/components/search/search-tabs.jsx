@@ -3,11 +3,13 @@
 import clsx from 'clsx';
 import { Tab } from '@headlessui/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import DiscussionSearch from './discussion-search';
+import DiscussionsSearch from './discussions-search';
+import PostsSearch from './posts-search';
+import UsersSearch from './users-search';
 
 const tabs = [
     { type: 'default', name: '话题' },
-    { type: 'posts', name: '回帖' },
+    { type: 'posts', name: '回复' },
     { type: 'user', name: '用户' },
 ];
 
@@ -36,9 +38,9 @@ export default function SearchTabs() {
                 ))}
             </Tab.List>
             <Tab.Panels className='mt-2'>
-                <Tab.Panel><DiscussionSearch query={query} /></Tab.Panel>
-                {/* <Tab.Panel><PostSearch  query={query} /></Tab.Panel> */}
-                {/* <Tab.Panel><UserSearch query={query} /></Tab.Panel> */}
+                <Tab.Panel><DiscussionsSearch query={query} /></Tab.Panel>
+                <Tab.Panel><PostsSearch  query={query} /></Tab.Panel>
+                <Tab.Panel><UsersSearch query={query} /></Tab.Panel>
             </Tab.Panels>
         </Tab.Group>
     );
