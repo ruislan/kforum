@@ -1,6 +1,7 @@
 'use client';
 import Image from 'next/image';
 import Box from '../ui/box';
+import Stats from '../ui/stats';
 
 export default function CategoryInfo({ category }) {
     if (!category) return null;
@@ -16,14 +17,8 @@ export default function CategoryInfo({ category }) {
             <div className='text-gray-400 mt-1'>c/{category.slug}</div>
             <div className='text-gray-100 my-2'>{category.description}</div>
             <div className='grid grid-cols-3 mt-2'>
-                <div className='flex flex-col text-sm'>
-                    <div className='text-gray-100'>话题数</div>
-                    <div className='text-gray-400'>{category.discussionCount || 0}</div>
-                </div>
-                <div className='flex flex-col text-sm'>
-                    <div className='text-gray-100'>创建于</div>
-                    <div className='text-gray-400'>{new Date(category.createdAt).toLocaleDateString()}</div>
-                </div>
+                <Stats name='话题数' value={category.discussionCount || 0} />
+                <Stats name='创建于' value={new Date(category.createdAt).toLocaleDateString()} />
             </div>
         </Box>
     );

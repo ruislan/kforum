@@ -2,16 +2,16 @@ const proseCss = {
   css: {
     maxWidth: 'none',
     p: {
-      marginTop: '4px',
-      marginBottom: '4px',
+      marginTop: '2px',
+      marginBottom: '2px',
     },
     ul: {
-      marginTop: '4px',
-      marginBottom: '4px',
+      marginTop: '2px',
+      marginBottom: '2px',
     },
     'ul > li > *': {
-      marginTop: '4px',
-      marginBottom: '4px',
+      marginTop: '2px',
+      marginBottom: '2px',
     },
   }
 };

@@ -1,13 +1,18 @@
-'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { categoryModel } from '@/lib/models';
 import { Blank as BlankIcon } from '../icons';
 import Box from '../ui/box';
 
-export default function CategoryList({ categories }) {
-    if (!categories) return null;
+async function getCategories() {
+    return await categoryModel.getCategories();
+}
 
+// this is a server component
+export default async function CategoryList() {
+    const categories = await getCategories();
+    if (!categories) return null;
     return (
         <Box className='flex flex-col'>
             <h3 className='text-sm text-gray-400 font-bold mb-3'>讨论分类</h3>

@@ -1,6 +1,7 @@
 
 import Image from 'next/image';
 import Box from '../ui/box';
+import Stats from '../ui/stats';
 
 export default async function UserInfo({ user = null }) {
     if (!user) return null;
@@ -13,19 +14,10 @@ export default async function UserInfo({ user = null }) {
                     alt='user avatar' />
             </div>
             <div className='text-gray-100 text-xl my-2'>{user.name}</div>
-            <div className='grid grid-cols-3 mt-2'>
-                <div className='flex flex-col text-sm'>
-                    <div className='text-gray-100'>话题数</div>
-                    <div className='text-gray-400'>{user.discussionCount || 0}</div>
-                </div>
-                <div className='flex flex-col text-sm'>
-                    <div className='text-gray-100'>回复数</div>
-                    <div className='text-gray-400'>{user.postCount || 0}</div>
-                </div>
-                <div className='flex flex-col text-sm'>
-                    <div className='text-gray-100'>注册于</div>
-                    <div className='text-gray-400'>{new Date(user.createdAt).toLocaleDateString()}</div>
-                </div>
+            <div className='grid grid-cols-3 gap-2 mt-2'>
+                <Stats name='话题数' value={user.discussionCount || 0} />
+                <Stats name='回复数' value={user.postCount || 0} />
+                <Stats name='注册于' value={new Date(user.createdAt).toLocaleDateString()} />
             </div>
         </Box>
     );

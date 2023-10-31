@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { maxBy } from 'lodash';
 import Box from '../ui/box';
 import Reaction from '../ui/reaction';
+import Stats from '../ui/stats';
 
 export default function DiscussionStats({ discussion }) {
     const reaction = useMemo(() => maxBy(discussion.firstPost.reactions, 'count'), [discussion.firstPost.reactions]);
@@ -13,32 +14,12 @@ export default function DiscussionStats({ discussion }) {
             {/* trend ? */}
             {/* positive vs negative ? */}
             <div className='grid grid-cols-3 gap-2 mt-2'>
-                <div className='flex flex-col text-sm'>
-                    <div className='text-gray-100'>参与数</div>
-                    <div className='text-gray-400'>{discussion.userCount}</div>
-                </div>
-                <div className='flex flex-col text-sm'>
-                    <div className='text-gray-100'>回复数</div>
-                    <div className='text-gray-400'>{discussion.postCount}</div>
-                </div>
-                <div className='flex flex-col text-sm'>
-                    <div className='text-gray-100'>反馈数</div>
-                    <div className='text-gray-400'>{discussion.reactionCount}</div>
-                </div>
-                <div className='flex flex-col text-sm'>
-                    <div className='text-gray-100'>浏览数</div>
-                    <div className='text-gray-400'>{discussion.viewCount}</div>
-                </div>
-                <div className='flex flex-col text-sm'>
-                    <div className='text-gray-100'>最新回复</div>
-                    <div className='text-gray-400'>{new Date(discussion.lastPost?.createdAt).toLocaleDateString()}</div>
-                </div>
-                <div className='flex flex-col text-sm'>
-                    <div className='text-gray-100'>最多反馈</div>
-                    <div className='text-gray-400'>
-                        {reaction ? <Reaction data={reaction} /> : '-'}
-                    </div>
-                </div>
+                <Stats name='参与数' value={discussion.userCount} />
+                <Stats name='回复数' value={discussion.postCount} />
+                <Stats name='反馈数' value={discussion.reactionCount} />
+                <Stats name='浏览数' value={discussion.viewCount} />
+                <Stats name='最新回复' value={new Date(discussion.lastPost?.createdAt).toLocaleDateString()} />
+                <Stats name='最多反馈' value={reaction ? <Reaction data={reaction} /> : '-'} />
             </div>
         </Box>
     );

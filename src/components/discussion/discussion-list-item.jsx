@@ -25,7 +25,7 @@ export default function DiscussionListItem({ discussion }) {
             className='flex flex-col hover:border-neutral-500 cursor-pointer'
             onClick={() => location.href = '/d/' + discussion.id}>
             <div className='flex flex-col flex-1'>
-                <div className='flex items-center mb-3 text-gray-300'>
+                <div className='flex items-center mb-2 text-gray-300'>
                     {c && (
                         <>
                             <div className='flex items-center'>
