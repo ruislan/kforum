@@ -43,3 +43,4 @@ temp
 NOTE.md
 *.bak
 *.db
+*.db-journal

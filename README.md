@@ -1,6 +1,8 @@
 # KForum
 
-A Simple, Modern, Beautiful and Fast Forum. (under development)
+A Simple, Modern, Beautiful and Fast Forum.
+
+![screenshot](./docs/screenshot.png)
 
 * Framework: NextJS
 * Database: Sqlite
@@ -17,7 +19,15 @@ Rename .env.example to .env
 cd kforum
 pnpm install
 pnpm prisma db push
-pnpm dev:turbo
+pnpm prisma db seed
+pnpm dev
+```
+
+admin user:
+
+```text
+user: admin
+pass: 123123
 ```
 
 ## Other
