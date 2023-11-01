@@ -1,9 +1,10 @@
-import { categoryModel, discussionModel } from '@/lib/models';
+import dynamic from 'next/dynamic';
+import { discussionModel } from '@/lib/models';
 
-import CategoryList from '@/components/category/category-list';
-import DiscussionList from '@/components/discussion/discussion-list';
-import ActionCreate from '@/components/discussion/action-create';
 import Box from '@/components/ui/box';
+const DiscussionList = dynamic(() => import('@/components/discussion/discussion-list'));
+const CategoryList = dynamic(() => import('@/components/category/category-list'));
+const ActionCreate = dynamic(() => import('@/components/discussion/action-create'));
 
 async function getDiscussions() {
   return await discussionModel.getDiscussions({
@@ -33,13 +34,12 @@ export default async function Home() {
       </div>
       {/* right side */}
       <div className='flex flex-col w-80 gap-4'>
-        {/* TODO forum description and stats, like discussions, posts, users, */}
         <Box className='flex flex-col'>
           <h3 className='text-sm text-gray-400 font-bold mb-3'>关于</h3>
           <div className='text-sm text-gray-100'>
             KForum 是一个开源的在线论坛。基于 NextJS、Prisma 等技术。
-            秉承开源、简单、便捷、易用、易扩展和集成的理念，旨在帮助公司、组织或个人
-            快速建立一个现代且时尚的在线论坛。
+            秉承开源、简单、便捷、易用、易扩展和集成的理念，
+            旨在帮助公司、组织或个人快速建立一个现代且时尚的在线论坛。
           </div>
         </Box>
         <Box className='flex flex-col gap-3'><ActionCreate category={null} /></Box>

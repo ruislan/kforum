@@ -1,0 +1,16 @@
+.fleet
+.idea
+.vscode
+.git
+.gitignore
+.dockerignore
+.next
+node_modules
+docs
+prisma/*.db
+temp
+public/uploads
+NOTE.md
+Dockerfile
+build
+backup

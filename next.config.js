@@ -1,5 +1,3 @@
-const avatarHost = 'api.dicebear.com';
-
 const securityHeaders = [
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
     { key: 'Content-Security-Policy', value: `default-src 'self';script-src 'self' 'unsafe-eval' 'unsafe-inline';style-src 'self' 'unsafe-inline';img-src * blob: data:;` },
@@ -21,7 +19,9 @@ const nextConfig = {
     reactStrictMode: true,
     images: {
         dangerouslyAllowSVG: true,
-        domains: [avatarHost]
+        remotePatterns: [
+            { protocol: 'https', hostname: 'api.dicebear.com' }
+        ]
     },
     headers() {
         return [
@@ -39,7 +39,9 @@ const nextConfig = {
                 destination: '/settings/general'
             }
         ];
+    },
+    compiler: {
+        removeConsole: true,
     }
 };
-
 module.exports = nextConfig;

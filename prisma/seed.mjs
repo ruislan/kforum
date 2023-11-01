@@ -68,6 +68,7 @@ async function initDev() {
 }
 
 // 用于生成一堆漂亮的假数据
+// XXX 插入较慢，可以适当做一些优化
 async function initFaker() {
     await db.postReactionRef.deleteMany({});
     await db.post.deleteMany({});
@@ -160,6 +161,7 @@ async function initFaker() {
             });
         }
     }
+    console.log(`已完成初始化 2,000,000 个回帖`);
 }
 
 async function main() {
