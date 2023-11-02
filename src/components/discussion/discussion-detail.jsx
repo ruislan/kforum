@@ -50,6 +50,7 @@ export default function DiscussionDetail({ discussion }) {
             <PostList
                 posts={posts}
                 isLoading={isLoading}
+                isDiscussionLocked={isLocked}
                 hasMore={hasMore}
                 onMoreClick={() => setPage(prev => prev + 1)}
                 onReplyClick={({ post }) => changeReplyToPost(post)}

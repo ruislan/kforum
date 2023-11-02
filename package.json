@@ -8,7 +8,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed:faker": "node prisma/seed.mjs --environment faker"
+    "seed:dev": "node prisma/seed.mjs --cmd dev",
+    "seed:faker": "node prisma/seed.mjs --cmd faker",
+    "seed:clean": "node prisma/seed.mjs --cmd clean"
   },
   "prisma": {
     "seed": "node prisma/seed.mjs"

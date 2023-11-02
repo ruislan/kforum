@@ -5,16 +5,17 @@ import ActionCreate from '@/components/discussion/action-create';
 import DiscussionDetail from '@/components/discussion/discussion-detail';
 import DiscussionStats from '@/components/discussion/discussion-detail-stats';
 import CategoryList from '@/components/category/category-list';
+import { notFound } from 'next/navigation';
 
 export default async function Page({ params }) {
   const id = Number(params.id);
 
-  const [d, _] = await Promise.all([
-    discussionModel.getDiscussion({ id }),
-    discussionModel.incrementDiscussionView({ id })
-  ]);
+  const d = await discussionModel.getDiscussion({ id });
+  if (!d) notFound();
 
-  if (!d) return <div>not found</div>
+  // we must assure the discussion exists
+  await discussionModel.incrementDiscussionView({ id: d.id });
+
   return (
     <div className='flex w-full h-full gap-6'>
       {/* main container */}

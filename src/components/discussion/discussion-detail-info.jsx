@@ -122,7 +122,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                     <div className='text-xs inline-flex items-center justify-between text-gray-300'>
                         <ReactionGroup reactions={reactions} />
                         <div className='flex items-center gap-1'>
-                            <ActionButton onClick={() => runIfFn(onReplyClick)}><Reply /></ActionButton>
+                            {!isLocked && <ActionButton onClick={() => runIfFn(onReplyClick)}><Reply /></ActionButton>}
                             {/* give reaction  */}
                             <ActionReact post={firstPost} onReacted={handleUserReacted} />
                             {/* copy url to share  */}

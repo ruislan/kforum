@@ -3,19 +3,18 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
-  name     String  @unique
-  password String
-  phone    String?
-  bio      String?
-  avatar   String?
-  gender   String?
+  id       Int     @id @default(autoincrement()) @db.UnsignedInt
+  email    String  @unique @db.VarChar(256)
+  name     String  @unique @db.VarChar(64)
+  password String  @db.VarChar(256)
+  bio      String? @db.VarChar(512)
+  avatar   String? @db.VarChar(2048)
+  gender   String? @db.VarChar(16)
   isLocked Boolean @default(false) @map("is_locked")
   isAdmin  Boolean @default(false) @map("is_admin")
 
@@ -32,22 +31,22 @@ model User {
 }
 
 model Discussion {
-  id            Int     @id @default(autoincrement())
-  title         String // 标题
+  id            Int     @id @default(autoincrement()) @db.UnsignedInt
+  title         String  @db.VarChar(512) // 标题
   isSticky      Boolean @default(false) @map("is_sticky") // 是否置顶
   isLocked      Boolean @default(false) @map("is_locked") // 是否锁帖，锁帖之后就不能继续回复了
   isHidden      Boolean @default(false) @map("is_hidden") // 是否隐藏，隐藏了无法被找到
-  viewCount     Int     @default(1) @map("view_count") // 浏览统计
-  userCount     Int     @default(1) @map("user_count") // 不重复用户统计
-  shareCount    Int     @default(0) @map("share_count") // 分享链接的统计
-  reactionCount Int     @default(0) @map("reaction_count") // 全部帖子的反馈统计
+  viewCount     Int     @default(1) @map("view_count") @db.UnsignedInt // 浏览统计
+  userCount     Int     @default(1) @map("user_count") @db.UnsignedInt // 不重复用户统计
+  shareCount    Int     @default(0) @map("share_count") @db.UnsignedInt // 分享链接的统计
+  reactionCount Int     @default(0) @map("reaction_count") @db.UnsignedInt // 全部帖子的反馈统计
 
-  userId          Int       @map("user_id")
-  firstPostId     Int?      @unique @map("first_post_id")
-  lastPostId      Int?      @unique @map("last_post_id")
+  userId          Int       @map("user_id") @db.UnsignedInt
+  firstPostId     Int?      @unique @map("first_post_id") @db.UnsignedInt
+  lastPostId      Int?      @unique @map("last_post_id") @db.UnsignedInt
   lastPostedAt    DateTime? @map("last_posted_at") // 最后一个回复的
-  categoryId      Int       @map("category_id")
-  lastUpdatedUser Int?      @map("last_updated_user") // 最后一个编辑的用户（不一定是本人，也可能是版主）
+  categoryId      Int       @map("category_id") @db.UnsignedInt
+  lastUpdatedUser Int?      @map("last_updated_user") @db.UnsignedInt // 最后一个编辑的用户（不一定是本人，也可能是版主）
   lastUpdatedAt   DateTime? @map("last_updated_at") // 最后一次编辑的时间
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -64,16 +63,16 @@ model Discussion {
 }
 
 model Post {
-  id          Int     @id @default(autoincrement())
-  content     String // 内容，富文本框修饰之后的
-  text        String // 内容，去掉富文本框之后的只有文本的内容
-  type        String // 类型，有可能有投票之类的
-  ip          String? // 发布人的 IP 地址
-  replyPostId Int? // 回复哪一贴
+  id          Int     @id @default(autoincrement()) @db.UnsignedInt
+  content     String  @db.Text // 内容，富文本框修饰之后的
+  text        String  @db.Text // 内容，去掉富文本框之后的只有文本的内容
+  type        String  @db.VarChar(64) // 类型，有可能有投票之类的
+  ip          String? @db.VarChar(64) // 发布人的 IP 地址
+  replyPostId Int?    @db.UnsignedInt // 回复哪一贴
 
-  discussionId    Int       @map("discussion_id")
-  userId          Int       @map("user_id")
-  lastUpdatedUser Int?      @map("last_updated_user") // 最后一个编辑的用户（不一定是本人，也可能是版主）
+  discussionId    Int       @map("discussion_id") @db.UnsignedInt
+  userId          Int       @map("user_id") @db.UnsignedInt
+  lastUpdatedUser Int?      @map("last_updated_user") @db.UnsignedInt // 最后一个编辑的用户（不一定是本人，也可能是版主）
   lastUpdatedAt   DateTime? @map("last_updated_at") // 最后一次编辑的时间
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -90,10 +89,10 @@ model Post {
 }
 
 model Reaction {
-  id       Int    @id @default(autoincrement())
-  name     String @unique
-  icon     String
-  position Int    @default(100)
+  id       Int    @id @default(autoincrement()) @db.UnsignedInt
+  name     String @unique @db.VarChar(64)
+  icon     String @db.VarChar(2048)
+  position Int    @default(100) @db.UnsignedInt
 
   createdAt DateTime @default(now()) @map("created_at")
 
@@ -102,9 +101,9 @@ model Reaction {
 }
 
 model PostReactionRef {
-  postId     Int      @map("post_id")
-  reactionId Int      @map("reaction_id")
-  userId     Int      @map("user_id")
+  postId     Int      @map("post_id") @db.UnsignedInt
+  reactionId Int      @map("reaction_id") @db.UnsignedInt
+  userId     Int      @map("user_id") @db.UnsignedInt
   createdAt  DateTime @default(now()) @map("created_at")
 
   post     Post     @relation(fields: [postId], references: [id])
@@ -115,14 +114,14 @@ model PostReactionRef {
 }
 
 model Category {
-  id          Int      @id @default(autoincrement())
-  slug        String   @unique
-  name        String   @unique
-  sequence    Int      @default(0)
-  icon        String?
-  color       String?
-  description String?
-  parentId    Int?     @map("parent_id") // parent
+  id          Int      @id @default(autoincrement()) @db.UnsignedInt
+  slug        String   @unique @db.VarChar(64)
+  name        String   @unique @db.VarChar(64)
+  sequence    Int      @default(0) @db.UnsignedInt
+  icon        String?  @db.VarChar(512)
+  color       String?  @db.VarChar(16)
+  description String?  @db.VarChar(512)
+  parentId    Int?     @map("parent_id") @db.UnsignedInt // parent
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
@@ -132,24 +131,24 @@ model Category {
 
 // each discussion has no more than 5 tags
 model Tag {
-  name      String   @id
+  name      String   @id @db.VarChar(64)
   createdAt DateTime @default(now()) @map("created_at")
 }
 
 // Site Menu
 model SiteNavMenus {
-  name     String  @id
-  url      String  @default("#")
+  name     String  @id @db.VarChar(64)
+  url      String  @default("#") @db.VarChar(2048)
   isOpen   Boolean @default(false) @map("is_open") // open in another tab, taget="_blank"
-  sequence Int     @default(0)
+  sequence Int     @default(0) @db.UnsignedInt
 }
 
 // Site Settings
 model SiteSettings {
-  id        Int      @id @default(autoincrement())
-  dataType  String   @map("data_type") // boolean, string, number, json, html, xml, etc...
-  name      String   @unique
-  value     String?
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  dataType  String   @map("data_type") @db.VarChar(16) // boolean, string, number, json, html, xml, etc...
+  name      String   @unique @db.VarChar(256)
+  value     String?  @db.VarChar(256)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 }

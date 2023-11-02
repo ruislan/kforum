@@ -50,7 +50,7 @@ function PostReplyContent({ replyPost }) {
     );
 }
 
-function PostItem({ item, onReplyClick }) {
+function PostItem({ isDiscussionLocked, item, onReplyClick }) {
     const { data, status } = useSession();
     const isAuthenticated = status === 'authenticated';
     const isOwner = isAuthenticated && data.user.id === item.user.id;
@@ -109,7 +109,7 @@ function PostItem({ item, onReplyClick }) {
                             <ReactionGroup reactions={reactions} />
                             <div className='flex items-center gap-1'>
                                 {/* reply  */}
-                                <ActionButton onClick={() => runIfFn(onReplyClick, { post })}><Reply /></ActionButton>
+                                {!isDiscussionLocked && <ActionButton onClick={() => runIfFn(onReplyClick, { post })}><Reply /></ActionButton>}
                                 {/* give reaction  */}
                                 <ActionReact post={post} onReacted={handleUserReacted} />
                                 {/* copy url to share  */}
@@ -139,13 +139,13 @@ function PostItem({ item, onReplyClick }) {
     line 2: post content
     line 3: actions: reply, edit, delete, share, follow, favorite, report
 */
-export default function PostList({ isLoading, posts, hasMore, onMoreClick, onReplyClick }) {
+export default function PostList({ isDiscussionLocked, isLoading, posts, hasMore, onMoreClick, onReplyClick }) {
     if (!isLoading && (!posts || posts.length === 0)) return <NoContent text='还没有内容，就等你来回复啦' />;
     return (
         <>
             {posts.length > 0 &&
                 <Box className='flex flex-col gap-3 pb-2'>
-                    {posts?.map((post, i) => <PostItem key={i} item={post} onReplyClick={onReplyClick} />)}
+                    {posts?.map((post, i) => <PostItem key={i} isDiscussionLocked={isDiscussionLocked} item={post} onReplyClick={onReplyClick} />)}
                 </Box>
             }
             {isLoading && <div className='flex justify-center my-4'><LoadingIcon className='w-8 h-8' /></div>}

@@ -1,5 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 
+BigInt.prototype.toJSON = function () {
+    return this.toString();
+}; // bigint serialization in prisma client.
+
+
 const isProdEnv = process.env.NODE_ENV === 'production';
 
 const logOptions = ['error', 'warn'];

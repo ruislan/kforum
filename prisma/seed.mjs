@@ -12,7 +12,7 @@ const passwordHash = await bcrypt.hash('123123', 10);
 async function initBase() {
     // init admin
     const admin = {
-        id: 1, name: 'admin', email: 'admin@kforum.com', phone: '12345678901',
+        id: 1, name: 'admin', email: 'admin@kforum.com',
         password: passwordHash, isAdmin: true, gender: 'MAN',
         avatar: 'https://api.dicebear.com/7.x/notionists/svg?seed=admin&size=96',
         bio: 'I am the admin', createdAt: new Date(), updatedAt: new Date(),
@@ -80,20 +80,16 @@ async function initDev() {
 // 用于生成一堆漂亮的假数据
 // XXX 插入较慢，可以适当做一些优化
 async function initFaker() {
-    await db.postReactionRef.deleteMany({});
-    await db.post.deleteMany({});
-    await db.discussion.deleteMany({});
-    await db.user.deleteMany({ where: { id: { gt: 1 } } });
+    await cleanDb();
 
     const userCount = 1000;
-    for (let i = 2; i <= userCount; i++) { // avoid 0,1 starts from 2
+    const users = _.range(2, userCount + 1).map(id => {
         const gender = _.sample(['MAN', 'WOMAN']);
         const name = casual.username;
         const user = {
-            id: i,
+            id,
             name,
             email: casual.email,
-            phone: casual.phone,
             password: passwordHash,
             isAdmin: false,
             gender,
@@ -102,10 +98,10 @@ async function initFaker() {
             createdAt: new Date(),
             updatedAt: new Date(),
         };
-        await db.user.create({ data: user });
-    }
+        return user;
+    })
+    await db.user.createMany({ data: users });
     console.log(`已完成初始化 ${userCount} 个用户`);
-
     // 1000 个用户，每个生成 20 个话题，共20000个话题
     let totalDiscussion = 20000;
     let dIds = _.shuffle(_.range(1, 20001, 1));
@@ -174,12 +170,27 @@ async function initFaker() {
     console.log(`已完成初始化 2,000,000 个回帖`);
 }
 
+async function cleanDb() {
+    await db.postReactionRef.deleteMany({});
+    await db.post.deleteMany({});
+    await db.discussion.deleteMany({});
+    await db.user.deleteMany({ where: { id: { gt: 1 } } });
+}
+
 async function main() {
-    const { values } = parseArgs({ options: { environment: { type: 'string', }, } });
-    initBase();
-    switch (values.environment) {
-        case 'dev': initDev(); break;
-        case 'faker': initFaker(); break;
+    const { values } = parseArgs({ options: { cmd: { type: 'string', }, } });
+    switch (values.cmd) {
+        case 'clean': await cleanDb(); break;
+        case 'dev': {
+            await initBase();
+            await initDev();
+            break;
+        }
+        case 'faker': {
+            await initBase();
+            await initFaker();
+            break;
+        }
         default: break;
     }
 }
