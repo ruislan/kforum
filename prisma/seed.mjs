@@ -20,14 +20,24 @@ async function initBase() {
     await db.user.upsert({ where: { id: admin.id }, create: admin, update: admin });
     console.log('已完成管理员初始化. User: admin, Pass: 123123');
 
-    // init nav menus
+    // init site settings
+    const siteSettings = [
+        {
+            id: 1, dataType: 'text', name: 'site_about', value: 'KForum 是一个开源的在线论坛。基于 NextJS、Prisma 等技术。秉承开源、简单、便捷、易用、易扩展和集成的理念，旨在帮助公司、组织或个人快速建立一个现代且时尚的在线论坛。'
+        }
+    ];
+    for (const item of siteSettings) {
+        await db.siteSettings.upsert({ where: { id: item.id }, create: item, update: item });
+    }
+    console.log('已完成站点信息初始化.');
+    // init site nav menus
     const navMenus = [
         { name: '首页', url: '/', sequence: 0 },
     ];
     for (const item of navMenus) {
-        await db.webNavMenus.upsert({ where: { name: item.name }, create: item, update: item });
+        await db.siteNavMenus.upsert({ where: { name: item.name }, create: item, update: item });
     }
-    console.log('已完成菜单初始化.');
+    console.log('已完成站点菜单初始化.');
 
     // init categories
     const categories = [
@@ -40,7 +50,7 @@ async function initBase() {
     for (const item of categories) {
         await db.category.upsert({ where: { id: item.id }, create: item, update: item });
     }
-    console.log('已完成分类初始化.');
+    console.log('已完成站点分类初始化.');
 
     // init reactions
     const reactions = [

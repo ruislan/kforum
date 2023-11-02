@@ -136,10 +136,20 @@ model Tag {
   createdAt DateTime @default(now()) @map("created_at")
 }
 
-// WebSite Menu
-model WebNavMenus {
+// Site Menu
+model SiteNavMenus {
   name     String  @id
   url      String  @default("#")
   isOpen   Boolean @default(false) @map("is_open") // open in another tab, taget="_blank"
   sequence Int     @default(0)
+}
+
+// Site Settings
+model SiteSettings {
+  id        Int      @id @default(autoincrement())
+  dataType  String   @map("data_type") // boolean, string, number, json, html, xml, etc...
+  name      String   @unique
+  value     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 }

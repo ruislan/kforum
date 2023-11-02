@@ -262,3 +262,24 @@ export const discussionModel = {
         return d;
     }
 };
+
+export const siteSettingsModel = {
+    fields: {
+        siteAbout: 'site_about',
+    },
+    async getFieldValue(field, defaultValue) {
+        if (!field) return defaultValue;
+        const item = await prisma.siteSettings.findUnique({ where: { name: field } });
+        switch (item.dataType) {
+            case 'text':
+            case 'html':
+                return item.value;
+            case 'json':
+                return JSON.parse(item.value);
+            case 'number':
+                return new Number(item.value);
+            default:
+                return defaultValue;
+        }
+    }
+};
