@@ -1,10 +1,13 @@
+import { notFound } from 'next/navigation';
+
 import { userModel } from '@/lib/models';
 import UserInfo from '@/components/user/user-info';
 import UserTabs from '@/components/user/user-tabs';
 
 export default async function Page({ params, searchParams }) {
   const user = await userModel.getUserByName({ name: params.slug });
-  if (!user) return <div>User not found</div>;
+  if (!user) notFound();
+
   return (
     <div className='flex w-full h-full gap-6'>
       {/* main container*/}

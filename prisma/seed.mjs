@@ -78,7 +78,6 @@ async function initDev() {
 }
 
 // 用于生成一堆漂亮的假数据
-// XXX 插入较慢，可以适当做一些优化
 async function initFaker() {
     await cleanDb();
 
@@ -102,7 +101,9 @@ async function initFaker() {
     })
     await db.user.createMany({ data: users });
     console.log(`已完成初始化 ${userCount} 个用户`);
+
     // 1000 个用户，每个生成 20 个话题，共20000个话题
+    // XXX 插入较慢，可以适当做一些优化，例如拉平了做createMany，当然要注意外键约束
     let totalDiscussion = 20000;
     let dIds = _.shuffle(_.range(1, 20001, 1));
     let dIdIndex = 0;
