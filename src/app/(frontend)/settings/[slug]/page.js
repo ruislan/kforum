@@ -30,7 +30,7 @@ export default async function Page({ params }) {
         <SideNav menus={menus} />
       </div>
       {/* main container*/}
-      <div className='flex flex-col w-[680px]'>
+      <div className='flex flex-col flex-1'>
         <Box>
           {params.slug === 'general' && <GeneralForm user={user} />}
           {params.slug === 'profile' && (

@@ -3,7 +3,7 @@ import SearchTabs from '@/components/search/search-tabs';
 export default async function Page() {
     return (
         <div className='flex w-full h-full gap-6'>
-            <div className='flex flex-col flex-1 w-full'>
+            <div className='flex flex-col flex-1'>
                 <SearchTabs />
             </div>
             {/* right side filter */}

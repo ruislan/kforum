@@ -7,7 +7,7 @@ export default async function Page({ searchParams }) {
   return (
     <div className='flex w-full h-full gap-6'>
       {/* main container */}
-      <div className='flex flex-col flex-1 w-[680px] w-max-[680px] gap-2'>
+      <div className='flex flex-col flex-1 gap-2'>
         <DiscussionCreator categories={categories} initCategorySlug={searchParams.c} />
       </div>
       {/* right side */}

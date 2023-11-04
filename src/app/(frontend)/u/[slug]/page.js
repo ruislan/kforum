@@ -11,7 +11,7 @@ export default async function Page({ params, searchParams }) {
   return (
     <div className='flex w-full h-full gap-6'>
       {/* main container*/}
-      <div className='flex flex-col flex-1 w-max-[680px]'>
+      <div className='flex flex-col flex-1'>
         {/* user tabs
             1. overview(activities) v3
             2. discussions v1

@@ -18,7 +18,7 @@ export default function UserMenus() {
                     <span onClick={() => registerModal.open()} className='cursor-pointer whitespace-nowrap transition-all text-neutral-400 hover:text-neutral-50 no-underline'>注册</span>
                 </>
             )}
-            <UserMenusDropdown />
+            <UserMenusDropdown user={data?.user} />
         </div>
     );
 }

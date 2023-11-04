@@ -21,6 +21,7 @@ import ActionLock from './action-lock';
 import ActionReact from './action-react';
 import ReactionGroup from '../ui/reaction-group';
 import PostUpdater from './post-updater';
+import ActionReply from './action-reply';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -122,7 +123,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                     <div className='text-xs inline-flex items-center justify-between text-gray-300'>
                         <ReactionGroup reactions={reactions} />
                         <div className='flex items-center gap-1'>
-                            {!isLocked && <ActionButton onClick={() => runIfFn(onReplyClick)}><Reply /></ActionButton>}
+                            {!isLocked && <ActionReply onClick={() => runIfFn(onReplyClick)} />}
                             {/* give reaction  */}
                             <ActionReact post={firstPost} onReacted={handleUserReacted} />
                             {/* copy url to share  */}

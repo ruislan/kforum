@@ -31,7 +31,7 @@ export default async function Home() {
                 center: summary / activity / badge / notification  (user himself) / settings (user himself)
               4) ...
            */}
-      <div className='flex flex-col flex-1 w-[680px] w-max-[680px]'>
+      <div className='flex flex-col flex-1'>
         <DiscussionList discussions={discussions} hasMore={hasMore} isStickyFirst={false} categoryId={null} />
       </div>
       {/* right side */}

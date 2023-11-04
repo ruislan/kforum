@@ -13,11 +13,12 @@ import ProseContent from '../ui/prose-content';
 import ActionButton from '../ui/action-button';
 import ReactionGroup from '../ui/reaction-group';
 import NoContent from '../ui/no-content';
+import Button from '../ui/button';
 import { Link as LinkIcon, Flag, Markup, Edit, DeleteBin, Reply, ArrowDownS, ArrowUpS, LoadingIcon } from '../icons';
 import ActionDelete from './action-delete';
 import ActionReact from './action-react';
+import ActionReply from './action-reply';
 import PostUpdater from './post-updater';
-import Button from '../ui/button';
 
 function PostReplyContent({ replyPost }) {
     const limit = 100;
@@ -109,7 +110,7 @@ function PostItem({ isDiscussionLocked, item, onReplyClick }) {
                             <ReactionGroup reactions={reactions} />
                             <div className='flex items-center gap-1'>
                                 {/* reply  */}
-                                {!isDiscussionLocked && <ActionButton onClick={() => runIfFn(onReplyClick, { post })}><Reply /></ActionButton>}
+                                {!isDiscussionLocked && <ActionReply onClick={() => runIfFn(onReplyClick, { post })} />}
                                 {/* give reaction  */}
                                 <ActionReact post={post} onReacted={handleUserReacted} />
                                 {/* copy url to share  */}

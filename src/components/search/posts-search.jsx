@@ -46,7 +46,7 @@ export default function PostsSearch({ query }) {
             {dataList.map((item, i) => (
                 <Box key={i} className='flex flex-col text-sm pl-0 pr-0 pt-0 pb-0'>
                     <div className='flex items-center p-2 border-b border-neutral-700'>
-                        <span className='text-xs text-gray-400 mr-1.5 mt-0.5'>回复</span>
+                        <span className='text-xs whitespace-nowrap text-gray-400 mr-1.5 mt-0.5'>回复</span>
                         <Link href={`/d/${item.discussion.id}`} className='hover:underline underline-offset-2 cursor-pointer'>{item.discussion.title}</Link>
                         {item.discussion.isSticky && (<span className='h-4 w-4 ml-1.5 text-green-400'><Pined /></span>)}
                         {item.discussion.isLocked && (<span className='h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}
@@ -58,7 +58,7 @@ export default function PostsSearch({ query }) {
                                 <span className='w-5 h-5 rounded mr-1.5' style={{ backgroundColor: `${item.discussion.category.color || 'bg-gray-300'}`, }}></span>
                             }
                             <Link href={`/c/${item.discussion.category.slug}`} onClick={e => e.stopPropagation()}
-                                className='text-xs text-gray-400 hover:underline underline-offset-2 cursor-pointer'>c/{item.discussion.category.name}</Link>
+                                className='text-xs text-gray-400 whitespace-nowrap hover:underline underline-offset-2 cursor-pointer'>c/{item.discussion.category.name}</Link>
                         </div>
                         <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
 
@@ -70,7 +70,7 @@ export default function PostsSearch({ query }) {
                         </div>
                         <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
 
-                        <span className='text-xs text-gray-400'>{dateUtils.fromNow(item.discussion.createdAt)}</span>
+                        <span className='text-xs text-gray-400 whitespace-nowrap'>{dateUtils.fromNow(item.discussion.createdAt)}</span>
                     </div>
                     <div className='flex flex-col p-2'>
                         <div className='flex items-center mb-1'>
