@@ -1,11 +1,13 @@
 # KForum
 
-A Simple, Modern, Beautiful and Fast Forum.
+A Simple, Modern and Beautiful Forum.
 
 ![screenshot](./docs/screenshot.png)
 
+## Build With
+
 * Framework: NextJS
-* Database: Sqlite
+* Database: Sqlite(v0.5.0) MySQL(^v0.6.0)
 * ORM: Prisma
 * Auth: Next Auth
 * State: Zustand
@@ -32,4 +34,4 @@ pass: 123123
 
 ## Other
 
-NextJS is amazing, you can build a website instantly. And if your website is growing big, you can easily rewrite your backend logic in any other languages(Java, Go, Rust).
+NextJS is amazing, you can build a website instantly. And if your website is growing big, you can easily rewrite your backend in any other languages(Java, Go, Rust, etc...).

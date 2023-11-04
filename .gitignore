@@ -40,6 +40,7 @@ next-env.d.ts
 public/uploads
 backup
 temp
+runtime
 NOTE.md
 *.bak
 *.db

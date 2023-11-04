@@ -5,6 +5,7 @@
 .gitignore
 .dockerignore
 .next
+.env
 node_modules
 docs
 prisma/*.db

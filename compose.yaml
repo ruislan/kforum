@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  db:
+    image: mysql:latest
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./runtime/database:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=passwd
+    restart: always
+    networks:
+      - kforum
+
+  kforum:
+    image: kforum:latest
+    build: ./
+    ports:
+      - 3001:3000
+    env_file:
+      - ./.env
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=mysql://root:passwd@db:3306/kforum?useUnicode=true&autoReconnect=true
+    depends_on:
+      wait-for-db:
+        condition: service_completed_successfully
+    volumes:
+      - ./runtime/public/uploads:/app/public/uploads:rw
+    networks:
+      - kforum
+
+  wait-for-db:
+    image: atkrad/wait4x
+    depends_on:
+      - db
+    command: tcp db:3306 -t 15s -i 500ms
+    networks:
+      - kforum
+
+networks:
+  kforum:
+    driver: bridge
