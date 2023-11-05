@@ -15,7 +15,7 @@ A Simple, Modern and Beautiful Forum.
 
 ## Running Locally
 
-Rename .env.example to .env
+Running MySQL first. Rename .env.example to .env. Set DATABASE_URL.
 
 ```shell
 cd kforum
@@ -31,6 +31,14 @@ admin user:
 user: admin
 pass: 123123
 ```
+
+## Running Docker
+
+```shell
+docker-compose up -d
+```
+
+that's all, enjoy.
 
 ## Other
 
