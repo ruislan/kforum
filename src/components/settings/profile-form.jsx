@@ -56,7 +56,7 @@ export default function ProfileForm({ user }) {
             }}
         >
             <div className='flex flex-col gap-1'>
-                <h3 className='font-bold'>性别</h3>
+                <h2 className='font-bold'>性别</h2>
                 <Select
                     value={gender}
                     onChange={e => setGender(e.target.value)}
@@ -67,7 +67,7 @@ export default function ProfileForm({ user }) {
                 </Select>
             </div>
             <div className='flex flex-col gap-1'>
-                <h3 className='font-bold'>自我介绍</h3>
+                <h2 className='font-bold'>自我介绍</h2>
                 <textarea
                     value={bio}
                     onChange={e => setBio(e.target.value)}

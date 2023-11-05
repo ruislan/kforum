@@ -22,6 +22,7 @@ import ActionReact from './action-react';
 import ReactionGroup from '../ui/reaction-group';
 import PostUpdater from './post-updater';
 import ActionReply from './action-reply';
+import Tag from '../ui/tag';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -97,7 +98,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                     {isSticky && (<span className='h-4 w-4 ml-0.5 text-green-400'><Pined /></span>)}
                     {isLocked && (<span className='h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}
                 </div>
-                <h3 className='inline text-xl font-bold break-words text-neutral-200'>{discussion.title}</h3>
+                <h2 className='inline text-xl font-bold break-words text-gray-50'>{discussion.title}</h2>
                 {/* <div className='flex flex-wrap gap-1 my-2'>
                     <Tag>News</Tag>
                     <Tag>Help</Tag>

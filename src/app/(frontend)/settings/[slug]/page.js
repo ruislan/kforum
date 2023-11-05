@@ -9,6 +9,7 @@ import ProfileForm from '@/components/settings/profile-form';
 import SecurityForm from '@/components/settings/security-form';
 import AvatarUploader from '@/components/settings/avatar-uploader';
 import { userModel } from '@/lib/models';
+import { HeadingSmall } from '@/components/ui/heading';
 
 const menus = [
   { label: '基本', path: '/settings' },
@@ -31,16 +32,29 @@ export default async function Page({ params }) {
       </div>
       {/* main container*/}
       <div className='flex flex-col flex-1'>
-        <Box>
-          {params.slug === 'general' && <GeneralForm user={user} />}
-          {params.slug === 'profile' && (
-            <div className='flex flex-col gap-4'>
+        {params.slug === 'general' && (
+          <Box className='flex flex-col'>
+            <HeadingSmall>账号信息</HeadingSmall>
+            <GeneralForm user={user} />
+          </Box>)}
+        {params.slug === 'profile' && (
+          <div className='flex flex-col gap-4'>
+            <Box className='flex flex-col'>
+              <HeadingSmall>图形图像</HeadingSmall>
               <AvatarUploader user={user} />
+            </Box>
+            <Box className='flex flex-col'>
+              <HeadingSmall>概要信息</HeadingSmall>
               <ProfileForm user={user} />
-            </div>
-          )}
-          {params.slug === 'security' && <SecurityForm />}
-        </Box>
+            </Box>
+          </div>
+        )}
+        {params.slug === 'security' &&
+          <Box className='flex flex-col'>
+            <HeadingSmall>更改密码</HeadingSmall>
+            <SecurityForm />
+          </Box>
+        }
       </div>
     </div>
   )

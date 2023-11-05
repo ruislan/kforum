@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { categoryModel } from '@/lib/models';
 import { Blank as BlankIcon } from '../icons';
 import Box from '../ui/box';
+import { HeadingSmall } from '../ui/heading';
 
 async function getCategories() {
     return await categoryModel.getCategories();
@@ -15,7 +16,7 @@ export default async function CategoryList() {
     if (!categories) return null;
     return (
         <Box className='flex flex-col'>
-            <h3 className='text-sm text-gray-400 font-bold mb-3'>讨论分类</h3>
+            <HeadingSmall>讨论分类</HeadingSmall>
             <div className='flex flex-col gap-1'>
                 {categories.map(c =>
                     <Link key={c.slug} href={`/c/${c.slug}`} className='hover:underline underline-offset-2'>

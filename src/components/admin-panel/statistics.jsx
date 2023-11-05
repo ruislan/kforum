@@ -6,6 +6,7 @@ import Box from '../ui/box';
 import Stats from '../ui/stats';
 import Spinner from '../ui/spinner';
 import { Refresh } from '../icons';
+import { HeadingSmall } from '../ui/heading';
 
 export default function Statistics() {
     const [stats, setStats] = useState({});
@@ -33,7 +34,7 @@ export default function Statistics() {
     return (
         <Box className='flex flex-col'>
             <div className='flex items-center text-gray-400 gap-2 mb-3'>
-                <h3 className='text-sm font-bold'>数据统计</h3>
+                <HeadingSmall tight>数据统计</HeadingSmall>
                 <span className='w-4 h-4 cursor-pointer' onClick={e => {
                     e.preventDefault();
                     if (isLoading) return;

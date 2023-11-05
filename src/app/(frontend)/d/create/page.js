@@ -1,6 +1,7 @@
 import { categoryModel } from '@/lib/models';
 import Box from '@/components/ui/box';
 import DiscussionCreator from '@/components/discussion/discussion-creator';
+import { HeadingSmall } from '@/components/ui/heading';
 
 export default async function Page({ searchParams }) {
   const categories = await categoryModel.getCategories();
@@ -14,7 +15,7 @@ export default async function Page({ searchParams }) {
       <div className='flex flex-col w-80 gap-4'>
         {/* step list */}
         <Box className='flex flex-col text-sm font-mono'>
-          <h3 className='text-sm text-gray-400 font-bold mb-3'>建议</h3>
+          <HeadingSmall>建议</HeadingSmall>
           <span>1.阅读我们的社区规则</span>
           <span>2.请使用文明用语</span>
           <span>3.做真实率真的自己</span>

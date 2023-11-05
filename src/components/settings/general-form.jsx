@@ -60,11 +60,11 @@ export default function GeneralForm({ user }) {
             className='flex flex-col gap-4 text-neutral-200'
         >
             <div className='flex flex-col gap-1'>
-                <h3 className='font-bold'>用户名</h3>
+                <h2 className='font-bold'>用户名</h2>
                 <span>{user.name}</span>
             </div>
             <div className='flex flex-col gap-1'>
-                <h3 className='font-bold'>邮箱</h3>
+                <h2 className='font-bold'>邮箱</h2>
                 <Input
                     type='email'
                     name='email'

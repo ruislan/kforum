@@ -71,7 +71,7 @@ export default function SecurityForm() {
             className='flex flex-col gap-4 text-neutral-200'
         >
             <div className='flex flex-col gap-1'>
-                <h3 className='font-bold'>当前密码</h3>
+                <h2 className='font-bold'>当前密码</h2>
                 <Input
                     type='password'
                     name='password'
@@ -82,7 +82,7 @@ export default function SecurityForm() {
                 />
             </div>
             <div className='flex flex-col gap-1'>
-                <h3 className='font-bold'>新设密码</h3>
+                <h2 className='font-bold'>新设密码</h2>
                 <Input
                     type='password'
                     name='newPassword'
@@ -92,7 +92,7 @@ export default function SecurityForm() {
                 />
             </div>
             <div className='flex flex-col gap-1'>
-                <h3 className='font-bold'>新密码确认</h3>
+                <h2 className='font-bold'>新密码确认</h2>
                 <Input
                     type='password'
                     name='confirmPassword'

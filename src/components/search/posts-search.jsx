@@ -13,6 +13,7 @@ import SplitBall from '../ui/split-ball';
 import ProseContent from '../ui/prose-content';
 import { Locked, Pined } from '../icons';
 import Image from 'next/image';
+import clsx from 'clsx';
 
 export default function PostsSearch({ query }) {
     const [isLoading, setIsLoading] = useState(true);
@@ -45,14 +46,19 @@ export default function PostsSearch({ query }) {
         <div className='text-sm text-neutral-100 flex flex-col gap-2'>
             {dataList.map((item, i) => (
                 <Box key={i} className='flex flex-col text-sm pl-0 pr-0 pt-0 pb-0'>
-                    <div className='flex items-center p-2 border-b border-neutral-700'>
-                        <span className='text-xs whitespace-nowrap text-gray-400 mr-1.5 mt-0.5'>回复</span>
-                        <Link href={`/d/${item.discussion.id}`} className='hover:underline underline-offset-2 cursor-pointer'>{item.discussion.title}</Link>
-                        {item.discussion.isSticky && (<span className='h-4 w-4 ml-1.5 text-green-400'><Pined /></span>)}
-                        {item.discussion.isLocked && (<span className='h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}
-                        <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-
-                        <div className='flex items-center'>
+                    <div className='inline align-middle p-2 border-b border-neutral-700'>
+                        <span className='inline align-middle text-xs whitespace-nowrap text-gray-400 mr-1.5 mt-0.5'>回复</span>
+                        <Link
+                            href={`/d/${item.discussion.id}`}
+                            className={clsx(
+                                'inline align-middle hover:underline underline-offset-2 cursor-pointer',
+                            )}>
+                            {item.discussion.title}
+                        </Link>
+                        {item.discussion.isSticky && (<span className='inline-block align-middle h-4 w-4 ml-1.5 text-green-400'><Pined /></span>)}
+                        {item.discussion.isLocked && (<span className='inline-block align-middle h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}
+                        <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />
+                        <div className='inline-flex align-middle items-center'>
                             {item.discussion.category.icon ?
                                 <span className='mr-1.5'><Image alt={item.discussion.category.name} src={item.discussion.category.icon} className='w-4 h-4 rounded' /></span> :
                                 <span className='w-5 h-5 rounded mr-1.5' style={{ backgroundColor: `${item.discussion.category.color || 'bg-gray-300'}`, }}></span>
@@ -60,17 +66,16 @@ export default function PostsSearch({ query }) {
                             <Link href={`/c/${item.discussion.category.slug}`} onClick={e => e.stopPropagation()}
                                 className='text-xs text-gray-400 whitespace-nowrap hover:underline underline-offset-2 cursor-pointer'>c/{item.discussion.category.name}</Link>
                         </div>
-                        <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
+                        <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />
 
-                        <div className='flex items-center'>
+                        <div className='inline-flex align-middle items-center'>
                             <div className='w-5 h-5 mr-1.5 bg-gray-300 rounded'>
                                 <Image className='rounded' width={20} height={20} src={item.discussion.user.avatar} alt={item.discussion.user.name} />
                             </div>
                             <Link href={`/u/${item.discussion.user?.name}`} onClick={e => e.stopPropagation()} className='text-xs text-gray-400 hover:underline underline-offset-2 cursor-pointer'>u/{item.discussion.user.name}</Link>
                         </div>
-                        <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-
-                        <span className='text-xs text-gray-400 whitespace-nowrap'>{dateUtils.fromNow(item.discussion.createdAt)}</span>
+                        <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />
+                        <span className='inline-block align-middle text-xs text-gray-400 whitespace-nowrap'>{dateUtils.fromNow(item.discussion.createdAt)}</span>
                     </div>
                     <div className='flex flex-col p-2'>
                         <div className='flex items-center mb-1'>

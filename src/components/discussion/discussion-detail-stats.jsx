@@ -2,15 +2,17 @@
 
 import { useMemo } from 'react';
 import { maxBy } from 'lodash';
+
 import Box from '../ui/box';
 import Reaction from '../ui/reaction';
 import Stats from '../ui/stats';
+import { HeadingSmall } from '../ui/heading';
 
 export default function DiscussionStats({ discussion }) {
     const reaction = useMemo(() => maxBy(discussion.firstPost.reactions, 'count'), [discussion.firstPost.reactions]);
     return (
         <Box className='flex flex-col'>
-            <h3 className='text-sm text-gray-400 font-bold mb-3'>话题分析</h3>
+            <HeadingSmall>话题分析</HeadingSmall>
             {/* trend ? */}
             {/* positive vs negative ? */}
             <div className='grid grid-cols-3 gap-2 mt-2'>

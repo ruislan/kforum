@@ -6,6 +6,7 @@ import Spinner from '../ui/spinner';
 import Button from '../ui/button';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
+import { HeadingSmall } from '../ui/heading';
 
 const IMAGE_UPLOAD_SIZE_LIMIT = 1024 * 1024 * 2; // 2MB
 
@@ -67,9 +68,10 @@ export default function AvatarUploader({ user }) {
     if (!user) return null;
     return (
         <div className='flex flex-col'>
-            <h3 className='font-bold mb-1'>头像</h3>
-            <div className='w-32 h-32 bg-gray-300 rounded shadow-lg mb-3'>
-                <Image width={128} height={128} src={avatar} alt={user?.name} />
+            <h2 className='font-bold mb-1'>头像</h2>
+            <span className='text-xs text-gray-400 mb-3'>只支持PNG、JPG、JPEG格式的图片</span>
+            <div className='w-32 h-32 bg-gray-300 rounded-lg shadow-lg mb-3'>
+                <Image className='rounded-lg' width={128} height={128} src={avatar} alt={user?.name} />
             </div>
             <div className='flex items-center gap-2'>
                 <input
@@ -84,12 +86,11 @@ export default function AvatarUploader({ user }) {
                 />
                 <Button
                     type='button'
-                    size='xs'
                     isLoading={isSubmitting}
                     disabled={isSubmitting}
                     onClick={() => avatarInput.current.click()}
                 >
-                    换新头像
+                    更新
                 </Button>
                 {error && <span className='text-sm text-red-500'>{error}</span>}
             </div>

@@ -46,16 +46,16 @@ export default function UserTabsDiscussions({ user }) {
         <div className='text-sm text-neutral-100 flex flex-col gap-2'>
             {dataList.map((item, i) => (
                 <Box key={i} className='flex flex-col'>
-                    <div className='flex items-center'>
-                        <Link href={`/d/${item.id}`} className='hover:underline underline-offset-2 cursor-pointer'>{item.title}</Link>
-                        {item.isSticky && (<span className='h-4 w-4 ml-1.5 text-green-400'><Pined /></span>)}
-                        {item.isLocked && (<span className='h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}
-                        <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                        <Link href={`/c/${item.category.slug}`} className='text-xs text-gray-200 hover:underline underline-offset-2 cursor-pointer'>c/{item.category.name}</Link>
-                        <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                        <Link className='text-xs text-gray-400 hover:underline underline-offset-2 cursor-pointer' href={`/u/${user.name}`}>u/{user.name}</Link>
-                        <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                        <span className='text-xs text-gray-400'>{dateUtils.fromNow(item.createdAt)}</span>
+                    <div className='inline align-middle'>
+                        <Link href={`/d/${item.id}`} className='inline align-middle hover:underline underline-offset-2 cursor-pointer'>{item.title}</Link>
+                        {item.isSticky && (<span className='inline-flex align-middle h-4 w-4 ml-1.5 text-green-400'><Pined /></span>)}
+                        {item.isLocked && (<span className='inline-flex align-middle h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}
+                        <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />
+                        <Link href={`/c/${item.category.slug}`} className='inline-block align-middle text-xs text-gray-200 hover:underline underline-offset-2 cursor-pointer'>c/{item.category.name}</Link>
+                        <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />
+                        <Link className='inline-block align-middle text-xs text-gray-400 hover:underline underline-offset-2 cursor-pointer' href={`/u/${user.name}`}>u/{user.name}</Link>
+                        <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />
+                        <span className='inline-flex align-middle text-xs text-gray-400'>{dateUtils.fromNow(item.createdAt)}</span>
                     </div>
                     <div className='text-xs inline-flex items-center text-gray-300 mt-1'>
                         <div className='flex items-center'><span>参与 {item.userCount}</span></div>

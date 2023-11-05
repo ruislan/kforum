@@ -51,10 +51,12 @@ export default function DiscussionListItem({ discussion }) {
                     {discussion.isSticky && (<span className='h-4 w-4 ml-0.5 text-green-400'><Pined /></span>)}
                     {discussion.isLocked && (<span className='h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}
                 </div>
-                <div className='inline-block relative'>
-                    <div className='inline text-lg font-bold break-words'>{discussion.title}</div>
-                    {/* <Tag className='ml-1'>News</Tag>
-                    <Tag className='ml-1'>Great</Tag> */}
+                <div className='inline-block relative mb-1'>
+                    <div className='inline text-gray-50 text-lg font-bold break-words'>{discussion.title}</div>
+                    {/* <div className='inline-flex flex-wrap ml-2 gap-1'>
+                        <Tag>News</Tag>
+                        <Tag>Great</Tag>
+                    </div> */}
                 </div>
                 <ProseContent className='max-h-64 overflow-hidden content-mask-b' content={discussion.firstPost?.content} />
                 <div className='text-xs inline-flex items-center text-gray-300 mt-3'>
