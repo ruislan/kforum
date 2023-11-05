@@ -87,7 +87,7 @@ export default function PostsSearch({ query }) {
                     </div>
                 </Box>
             ))}
-            {isLoading && <Spinner />}
+            {isLoading && <Spinner center />}
             {hasMore && (
                 <div className='self-center py-2'>
                     <Button kind='ghost' onClick={() => setPage(prev => prev + 1)}>查看更多</Button>

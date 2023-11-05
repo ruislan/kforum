@@ -1,6 +1,9 @@
 const jsonHeaders = { 'Content-Type': 'application/json' };
 
 const rest = {
+    notFound() {
+        return new Response(null, { status: 404, headers: jsonHeaders });
+    },
     unauthorized() {
         return new Response(null, { status: 401, headers: jsonHeaders });
     },

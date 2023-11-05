@@ -63,7 +63,7 @@ export default function UsersSearch({ query }) {
                     </div>
                 </Box>
             ))}
-            {isLoading && <Spinner />}
+            {isLoading && <Spinner center />}
             {
                 hasMore && (
                     <div className='self-center py-2'>

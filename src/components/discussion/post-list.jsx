@@ -19,6 +19,7 @@ import ActionDelete from './action-delete';
 import ActionReact from './action-react';
 import ActionReply from './action-reply';
 import PostUpdater from './post-updater';
+import Spinner from '../ui/spinner';
 
 function PostReplyContent({ replyPost }) {
     const limit = 100;
@@ -149,7 +150,7 @@ export default function PostList({ isDiscussionLocked, isLoading, posts, hasMore
                     {posts?.map((post, i) => <PostItem key={i} isDiscussionLocked={isDiscussionLocked} item={post} onReplyClick={onReplyClick} />)}
                 </Box>
             }
-            {isLoading && <div className='flex justify-center my-4'><LoadingIcon className='w-8 h-8' /></div>}
+            {isLoading && <Spinner center />}
             {hasMore && (
                 <div className='self-center py-2'>
                     <Button kind='ghost' disabled={isLoading} onClick={onMoreClick}>查看更多</Button>

@@ -38,7 +38,7 @@ export default function DiscussionsSearch({ query }) {
     return (
         <div className='flex flex-col gap-2'>
             {dataList.map((item, i) => <DiscussionListItem key={i} discussion={item} />)}
-            {isLoading && <Spinner />}
+            {isLoading && <Spinner center />}
             {
                 hasMore && (
                     <div className='self-center py-2'>

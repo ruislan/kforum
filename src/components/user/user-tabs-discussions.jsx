@@ -11,6 +11,7 @@ import NoContent from '../ui/no-content';
 import Button from '../ui/button';
 import SplitBall from '../ui/split-ball';
 import { LoadingIcon, Locked, Pined } from '../icons';
+import Spinner from '../ui/spinner';
 
 // 只列出用户的讨论主题（含首贴）
 export default function UserTabsDiscussions({ user }) {
@@ -67,7 +68,7 @@ export default function UserTabsDiscussions({ user }) {
                     </div>
                 </Box>
             ))}
-            {isLoading && <div className='flex justify-center mt-4'><LoadingIcon className='w-8 h-8' /></div>}
+            {isLoading && <Spinner center />}
             {hasMore && (
                 <div className='self-center py-2'>
                     <Button kind='ghost' onClick={() => setPage(prev => prev + 1)}>查看更多</Button>

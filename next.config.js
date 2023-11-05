@@ -37,7 +37,7 @@ const nextConfig = {
             {
                 source: '/settings',
                 destination: '/settings/general'
-            }
+            },
         ];
     },
     compiler: {

@@ -3,10 +3,7 @@ import { withAuth } from 'next-auth/middleware';
 export default withAuth({
     callbacks: {
         authorized({ req, token }) {
-            // check role?
-
-            // others
-            return !!token;
+            return Boolean(token);
         }
     }
 });
