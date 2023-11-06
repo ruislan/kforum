@@ -267,9 +267,20 @@ export const siteSettingsModel = {
     fields: {
         siteAbout: 'site_about',
     },
+    async updateSettings(settings) {
+        await prisma.$transaction(
+            settings.map(s => prisma.siteSettings.update({
+                where: { id: s.id },
+                data: { value: s.value }
+            }))
+        );
+    },
+    async getSettings() {
+        return await prisma.siteSettings.findMany();
+    },
     async getFieldValue(field, defaultValue) {
         if (!field) return defaultValue;
-        const item = await prisma.siteSettings.findUnique({ where: { name: field } });
+        const item = await prisma.siteSettings.findUnique({ where: { key: field } });
         switch (item.dataType) {
             case 'text':
             case 'html':

@@ -23,7 +23,12 @@ async function initBase() {
     // init site settings
     const siteSettings = [
         {
-            id: 1, dataType: 'text', name: 'site_about', value: 'KForum 是一个开源的在线论坛。基于 NextJS、Prisma 等技术。秉承开源、简单、便捷、易用、易扩展和集成的理念，旨在帮助公司、组织或个人快速建立一个现代且时尚的在线论坛。'
+            id: 1,
+            dataType: 'text',
+            key: 'site_about',
+            name: '关于本站',
+            description: '用简单的一句话描述本站，对所有用户都可见。',
+            value: 'KForum 是一个开源的在线论坛。基于 NextJS、Prisma 等技术。秉承开源、简单、便捷、易用、易扩展和集成的理念，旨在帮助公司、组织或个人快速建立一个现代且时尚的在线论坛。'
         }
     ];
     for (const item of siteSettings) {

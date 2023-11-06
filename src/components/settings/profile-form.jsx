@@ -1,7 +1,6 @@
 'use client';
 import { useState } from 'react';
 
-import Spinner from '../ui/spinner';
 import Button from '../ui/button';
 import Select from '../ui/select';
 import toast from 'react-hot-toast';
@@ -44,12 +43,13 @@ export default function ProfileForm({ user }) {
         } finally {
             setIsSubmitting(false);
         }
-    }
+    };
+
     if (!user) return null;
 
     return (
         <form
-            className='flex flex-col gap-4 text-neutral-200'
+            className='flex flex-col gap-4 text-gray-100'
             onSubmit={e => {
                 e.preventDefault();
                 handleSubmit();

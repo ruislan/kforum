@@ -69,7 +69,7 @@ export default function AvatarUploader({ user }) {
     return (
         <div className='flex flex-col'>
             <h2 className='font-bold mb-1'>头像</h2>
-            <span className='text-xs text-gray-400 mb-3'>只支持PNG、JPG、JPEG格式的图片</span>
+            <span className='text-xs font-semibold text-gray-400 mb-3'>只支持PNG、JPG、JPEG格式的图片</span>
             <div className='w-32 h-32 bg-gray-300 rounded-lg shadow-lg mb-3'>
                 <Image className='rounded-lg' width={128} height={128} src={avatar} alt={user?.name} />
             </div>

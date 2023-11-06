@@ -145,10 +145,12 @@ model SiteNavMenus {
 
 // Site Settings
 model SiteSettings {
-  id        Int      @id @default(autoincrement()) @db.UnsignedInt
-  dataType  String   @map("data_type") @db.VarChar(16) // boolean, string, number, json, html, xml, etc...
-  name      String   @unique @db.VarChar(256)
-  value     String?  @db.VarChar(256)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id          Int      @id @default(autoincrement()) @db.UnsignedInt
+  dataType    String   @map("data_type") @db.VarChar(16) // string(input), text(textarea), number, json, html, xml, etc...
+  key         String   @unique @db.VarChar(64)
+  description String?  @db.VarChar(128)
+  name        String   @db.VarChar(64)
+  value       String   @db.VarChar(256)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 }

@@ -35,7 +35,7 @@ pass: 123123
 ## Running Docker
 
 ```shell
-docker-compose up -d
+docker compose up -d
 ```
 
 that's all, enjoy.
