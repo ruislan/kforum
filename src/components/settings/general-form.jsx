@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import Spinner from '../ui/spinner';
 import Button from '../ui/button';
 import Input from '../ui/input';
+import FormControl from '../ui/form-control';
 
 export default function GeneralForm({ user }) {
     const { status, update } = useSession();
@@ -57,14 +58,12 @@ export default function GeneralForm({ user }) {
                 e.preventDefault();
                 handleSubmit();
             }}
-            className='flex flex-col gap-4 text-neutral-200'
+            className='flex flex-col gap-4 text-gray-100'
         >
-            <div className='flex flex-col gap-1'>
-                <h2 className='font-bold'>用户名</h2>
+            <FormControl title='用户名'>
                 <span>{user.name}</span>
-            </div>
-            <div className='flex flex-col gap-1'>
-                <h2 className='font-bold'>邮箱</h2>
+            </FormControl>
+            <FormControl title='邮箱' subtitle='请谨慎修改邮箱'>
                 <Input
                     type='email'
                     name='email'
@@ -74,7 +73,7 @@ export default function GeneralForm({ user }) {
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                 />
-            </div>
+            </FormControl>
             {error && <span className='text-sm text-red-500'>{error}</span>}
             <div>
                 <Button isLoading={isSubmitting} disabled={isSubmitting}>保存</Button>

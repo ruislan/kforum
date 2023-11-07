@@ -4,6 +4,7 @@ import { useState } from "react";
 import Input from "../ui/input";
 import Button from "../ui/button";
 import toast from "react-hot-toast";
+import FormControl from "../ui/form-control";
 
 export default function SiteForm({ settings: initSettings }) {
     const [settings, setSettings] = useState(initSettings);
@@ -55,9 +56,7 @@ export default function SiteForm({ settings: initSettings }) {
             }}
         >
             {settings.map(setting =>
-                <div key={setting.key} className='flex flex-col gap-1'>
-                    <h2 className='font-bold'>{setting.name}</h2>
-                    {setting.description && <span className='text-xs font-semibold text-gray-400'>{setting.description}</span>}
+                <FormControl key={setting.key} title={setting.name} subtitle={setting.description}>
                     <Input
                         value={setting.value}
                         name={setting.key}
@@ -66,7 +65,7 @@ export default function SiteForm({ settings: initSettings }) {
                             setSettings([...settings]);
                         }}
                     />
-                </div>
+                </FormControl>
             )}
             {error && <span className='text-sm text-red-500'>{error}</span>}
             <div>

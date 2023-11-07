@@ -6,7 +6,7 @@ import Spinner from '../ui/spinner';
 import Button from '../ui/button';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
-import { HeadingSmall } from '../ui/heading';
+import FormControl from '../ui/form-control';
 
 const IMAGE_UPLOAD_SIZE_LIMIT = 1024 * 1024 * 2; // 2MB
 
@@ -67,10 +67,8 @@ export default function AvatarUploader({ user }) {
     if (status === 'loading') return <Spinner />;
     if (!user) return null;
     return (
-        <div className='flex flex-col'>
-            <h2 className='font-bold mb-1'>头像</h2>
-            <span className='text-xs font-semibold text-gray-400 mb-3'>只支持PNG、JPG、JPEG格式的图片</span>
-            <div className='w-32 h-32 bg-gray-300 rounded-lg shadow-lg mb-3'>
+        <FormControl title='头像' subtitle='只支持PNG、JPG、JPEG格式的图片'>
+            <div className='w-32 h-32 bg-gray-300 rounded-lg shadow-lg my-3'>
                 <Image className='rounded-lg' width={128} height={128} src={avatar} alt={user?.name} />
             </div>
             <div className='flex items-center gap-2'>
@@ -90,10 +88,10 @@ export default function AvatarUploader({ user }) {
                     disabled={isSubmitting}
                     onClick={() => avatarInput.current.click()}
                 >
-                    更新
+                    换新头像
                 </Button>
                 {error && <span className='text-sm text-red-500'>{error}</span>}
             </div>
-        </div>
+        </FormControl>
     );
 }

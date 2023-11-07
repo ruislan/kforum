@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic';
 
 import { categoryModel, discussionModel } from '@/lib/models';
+import { notFound } from 'next/navigation';
 import Box from '@/components/ui/box';
 
 const CategoryInfo = dynamic(() => import('@/components/category/category-info'));
@@ -22,6 +23,7 @@ async function getDiscussions(categoryId) {
 
 export default async function Page({ params }) {
   const category = await getCategory(params.slug);
+  if (!category) notFound();
   const { discussions, hasMore } = await getDiscussions(category.id);
   return (
     <div className='flex w-full h-full gap-6'>

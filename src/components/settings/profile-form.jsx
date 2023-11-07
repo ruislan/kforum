@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Button from '../ui/button';
 import Select from '../ui/select';
 import toast from 'react-hot-toast';
+import FormControl from '../ui/form-control';
 
 export default function ProfileForm({ user }) {
     const [gender, setGender] = useState(user?.gender);
@@ -55,8 +56,7 @@ export default function ProfileForm({ user }) {
                 handleSubmit();
             }}
         >
-            <div className='flex flex-col gap-1'>
-                <h2 className='font-bold'>性别</h2>
+            <FormControl title='性别'>
                 <Select
                     value={gender}
                     onChange={e => setGender(e.target.value)}
@@ -65,18 +65,17 @@ export default function ProfileForm({ user }) {
                     <option value='WOMAN'>女</option>
                     <option value='UNKNOWN'>保密</option>
                 </Select>
-            </div>
-            <div className='flex flex-col gap-1'>
-                <h2 className='font-bold'>自我介绍</h2>
+            </FormControl>
+            <FormControl title='自我介绍'>
                 <textarea
                     value={bio}
                     onChange={e => setBio(e.target.value)}
                     maxLength={300}
                     placeholder='请输入自我介绍'
                     name='bio'
-                    className='w-full text-sm h-32 py-2 px-3 min-h-[40px] rounded-md bg-transparent border border-neutral-700 outline-none'
+                    className='w-full text-sm h-32 py-2 px-3 min-h-[40px] rounded-md bg-transparent border border-neutral-700 outline-none focus-within:border-neutral-400'
                 />
-            </div>
+            </FormControl>
             {error && <span className='text-sm text-red-500'>{error}</span>}
             <div>
                 <Button isLoading={isSubmitting} disabled={isSubmitting}>保存</Button>

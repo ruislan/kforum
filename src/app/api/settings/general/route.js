@@ -14,10 +14,8 @@ export async function PUT(request, { params }) {
 
     const existsEmailCount = await prisma.user.count({
         where: {
-            AND: [
-                { email },
-                { id: { not: session.user.id } } // 忽略掉自己的email
-            ]
+            email,
+            id: { not: session.user.id }  // 忽略掉自己的email
         }
     });
     if (existsEmailCount > 0) return rest.badRequest({ message: '该邮箱已经存在' });

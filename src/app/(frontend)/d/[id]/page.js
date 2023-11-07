@@ -5,7 +5,7 @@ import Box from '@/components/ui/box';
 
 const DiscussionDetail = dynamic(() => import('@/components/discussion/discussion-detail'));
 const DiscussionStats = dynamic(() => import('@/components/discussion/discussion-detail-stats'));
-const CategoryList = dynamic(() => import('@/components/category/category-list'));
+const CategoryBox = dynamic(() => import('@/components/category/category-box'));
 const ActionCreate = dynamic(() => import('@/components/discussion/action-create'));
 
 export default async function Page({ params }) {
@@ -27,7 +27,7 @@ export default async function Page({ params }) {
       <div className='flex flex-col w-80 gap-4'>
         <DiscussionStats discussion={d} />
         <Box className='flex flex-col gap-3'><ActionCreate /></Box>
-        <CategoryList />
+        <CategoryBox />
       </div>
     </div>
   )

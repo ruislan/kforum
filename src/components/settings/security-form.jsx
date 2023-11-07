@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Button from '../ui/button';
 import Input from '../ui/input';
 import toast from 'react-hot-toast';
+import FormControl from '../ui/form-control';
 
 export default function SecurityForm() {
     const [password, setPassword] = useState('');
@@ -68,11 +69,11 @@ export default function SecurityForm() {
                 e.preventDefault();
                 handleSubmit();
             }}
-            className='flex flex-col gap-4 text-neutral-200'
+            className='flex flex-col gap-4 text-gray-100'
         >
-            <div className='flex flex-col gap-1'>
-                <h2 className='font-bold'>当前密码</h2>
+            <FormControl title='当前密码'>
                 <Input
+                    minLength={6}
                     type='password'
                     name='password'
                     autoComplete='current-password'
@@ -80,27 +81,27 @@ export default function SecurityForm() {
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                 />
-            </div>
-            <div className='flex flex-col gap-1'>
-                <h2 className='font-bold'>新设密码</h2>
+            </FormControl>
+            <FormControl title='新设密码'>
                 <Input
+                    minLength={6}
                     type='password'
                     name='newPassword'
                     required
                     value={newPassword}
                     onChange={e => setNewPassword(e.target.value)}
                 />
-            </div>
-            <div className='flex flex-col gap-1'>
-                <h2 className='font-bold'>新密码确认</h2>
+            </FormControl>
+            <FormControl title='新密码确认'>
                 <Input
+                    minLength={6}
                     type='password'
                     name='confirmPassword'
                     required
                     value={confirmPassword}
                     onChange={e => setConfirmPassword(e.target.value)}
                 />
-            </div>
+            </FormControl>
             {error && <span className='text-sm text-red-500'>{error}</span>}
             <div>
                 <Button isLoading={isSubmitting} disabled={isSubmitting}>保存</Button>
