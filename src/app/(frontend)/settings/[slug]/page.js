@@ -1,15 +1,17 @@
+import dynamicImport from 'next/dynamic';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 
-import SideNav from '@/components/settings/side-nav';
 import authOptions from '@/lib/auth';
-import GeneralForm from '@/components/settings/general-form';
-import Box from '@/components/ui/box';
-import ProfileForm from '@/components/settings/profile-form';
-import SecurityForm from '@/components/settings/security-form';
-import AvatarUploader from '@/components/settings/avatar-uploader';
 import { userModel } from '@/lib/models';
+import Box from '@/components/ui/box';
 import { HeadingSmall } from '@/components/ui/heading';
+
+const SideNav = dynamicImport(() => import('@/components/settings/side-nav'));
+const GeneralForm = dynamicImport(() => import('@/components/settings/general-form'));
+const ProfileForm = dynamicImport(() => import('@/components/settings/profile-form'));
+const SecurityForm = dynamicImport(() => import('@/components/settings/security-form'));
+const AvatarUploader = dynamicImport(() => import('@/components/settings/avatar-uploader'));
 
 const menus = [
   { label: '基本', path: '/settings' },

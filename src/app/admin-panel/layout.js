@@ -11,7 +11,6 @@ import SideNav from '@/components/settings/side-nav';
 const menus = [
   { label: '概览', path: '/admin-panel' },
   { label: '设置', path: '/admin-panel/site' },
-  { label: '分类', path: '/admin-panel/categories' },
   { label: '用户', path: '/admin-panel/users' },
 ];
 

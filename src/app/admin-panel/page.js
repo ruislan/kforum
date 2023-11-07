@@ -1,4 +1,6 @@
-import Statistics from '@/components/admin-panel/statistics';
+import dynamic from 'next/dynamic';
+
+const Statistics = dynamic(() => import('@/components/admin-panel/statistics'));
 
 export default async function Page() {
 

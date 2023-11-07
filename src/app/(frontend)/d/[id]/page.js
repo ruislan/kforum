@@ -1,11 +1,12 @@
-import { discussionModel } from '@/lib/models';
-
-import Box from '@/components/ui/box';
-import ActionCreate from '@/components/discussion/action-create';
-import DiscussionDetail from '@/components/discussion/discussion-detail';
-import DiscussionStats from '@/components/discussion/discussion-detail-stats';
-import CategoryList from '@/components/category/category-list';
+import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
+import { discussionModel } from '@/lib/models';
+import Box from '@/components/ui/box';
+
+const DiscussionDetail = dynamic(() => import('@/components/discussion/discussion-detail'));
+const DiscussionStats = dynamic(() => import('@/components/discussion/discussion-detail-stats'));
+const CategoryList = dynamic(() => import('@/components/category/category-list'));
+const ActionCreate = dynamic(() => import('@/components/discussion/action-create'));
 
 export default async function Page({ params }) {
   const id = Number(params.id);

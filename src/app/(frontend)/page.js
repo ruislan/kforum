@@ -1,10 +1,11 @@
 import dynamic from 'next/dynamic';
-import { discussionModel } from '@/lib/models';
 
+import { discussionModel } from '@/lib/models';
 import Box from '@/components/ui/box';
+
 const About = dynamic(() => import('@/components/about'));
 const DiscussionList = dynamic(() => import('@/components/discussion/discussion-list'));
-const CategoryList = dynamic(() => import('@/components/category/category-list'));
+const CategoryBox = dynamic(() => import('@/components/category/category-box'));
 const ActionCreate = dynamic(() => import('@/components/discussion/action-create'));
 
 async function getDiscussions() {
@@ -38,7 +39,7 @@ export default async function Home() {
       <div className='flex flex-col w-80 gap-4'>
         <About />
         <Box className='flex flex-col gap-3'><ActionCreate category={null} /></Box>
-        <CategoryList />
+        <CategoryBox />
       </div>
     </div>
   )

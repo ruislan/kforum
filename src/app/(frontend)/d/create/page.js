@@ -1,7 +1,8 @@
 import { categoryModel } from '@/lib/models';
-import Box from '@/components/ui/box';
-import DiscussionCreator from '@/components/discussion/discussion-creator';
 import { HeadingSmall } from '@/components/ui/heading';
+import Box from '@/components/ui/box';
+
+const DiscussionCreator = dynamic(() => import('@/components/discussion/discussion-creator'));
 
 export default async function Page({ searchParams }) {
   const categories = await categoryModel.getCategories();

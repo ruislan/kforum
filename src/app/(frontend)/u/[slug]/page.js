@@ -1,8 +1,10 @@
+import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 
 import { userModel } from '@/lib/models';
-import UserInfo from '@/components/user/user-info';
-import UserTabs from '@/components/user/user-tabs';
+
+const UserInfo = dynamic(() => import('@/components/user/user-info'));
+const UserTabs = dynamic(() => import('@/components/user/user-tabs'));
 
 export default async function Page({ params, searchParams }) {
   const user = await userModel.getUserByName({ name: params.slug });

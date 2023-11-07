@@ -1,9 +1,12 @@
+import dynamic from 'next/dynamic';
+
 import { categoryModel, discussionModel } from '@/lib/models';
-import CategoryInfo from '@/components/category/category-info';
-import CategoryList from '@/components/category/category-list';
-import DiscussionList from '@/components/discussion/discussion-list';
-import ActionCreate from '@/components/discussion/action-create';
 import Box from '@/components/ui/box';
+
+const CategoryInfo = dynamic(() => import('@/components/category/category-info'));
+const DiscussionList = dynamic(() => import('@/components/discussion/discussion-list'));
+const CategoryBox = dynamic(() => import('@/components/category/category-box'));
+const ActionCreate = dynamic(() => import('@/components/discussion/action-create'));
 
 async function getCategory(slug) {
   return await categoryModel.getCategory({ slug, withStats: true });
@@ -35,7 +38,7 @@ export default async function Page({ params }) {
       <div className='flex flex-col w-80 gap-4'>
         <CategoryInfo category={category} />
         <Box className='flex flex-col gap-3'><ActionCreate category={category} /></Box>
-        <CategoryList />
+        <CategoryBox />
       </div>
     </div>
   )
