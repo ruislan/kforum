@@ -62,7 +62,7 @@ export default function DiscussionListItem({ discussion }) {
                 <div className='text-xs inline-flex items-center text-gray-300 mt-3'>
                     <div className='flex items-center'><span>参与 {discussion.userCount}</span></div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                    <div className='flex items-center'><span>回复 {discussion.postCount || 0}</span></div>
+                    <div className='flex items-center'><span>帖子 {discussion.postCount}</span></div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                     <div className='flex items-center'><span>反馈 {discussion.reactionCount}</span></div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />

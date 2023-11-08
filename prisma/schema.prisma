@@ -40,6 +40,7 @@ model Discussion {
   userCount     Int     @default(1) @map("user_count") @db.UnsignedInt // 不重复用户统计
   shareCount    Int     @default(0) @map("share_count") @db.UnsignedInt // 分享链接的统计
   reactionCount Int     @default(0) @map("reaction_count") @db.UnsignedInt // 全部帖子的反馈统计
+  postCount     Int     @default(1) @map("post_count") // 帖子统计
 
   userId          Int       @map("user_id") @db.UnsignedInt
   firstPostId     Int?      @unique @map("first_post_id") @db.UnsignedInt
@@ -59,7 +60,7 @@ model Discussion {
   firstPost Post?    @relation(name: "first_post", fields: [firstPostId], references: [id])
   posts     Post[]   @relation(name: "posts")
 
-  @@index([isSticky])
+  @@index([createdAt, isSticky])
 }
 
 model Post {
@@ -68,7 +69,7 @@ model Post {
   text        String  @db.Text // 内容，去掉富文本框之后的只有文本的内容
   type        String  @db.VarChar(64) // 类型，有可能有投票之类的
   ip          String? @db.VarChar(64) // 发布人的 IP 地址
-  replyPostId Int?    @db.UnsignedInt // 回复哪一贴
+  replyPostId Int?    @map("reply_post_id") @db.UnsignedInt // 回复哪一贴
 
   discussionId    Int       @map("discussion_id") @db.UnsignedInt
   userId          Int       @map("user_id") @db.UnsignedInt
@@ -86,6 +87,10 @@ model Post {
   lastPostDiscussion  Discussion?       @relation(name: "last_post")
   reactions           PostReactionRef[]
   replies             Post[]            @relation(name: "replies")
+
+  @@index([id, discussionId])
+  @@index([discussionId, createdAt])
+  @@index([userId, createdAt])
 }
 
 model Reaction {

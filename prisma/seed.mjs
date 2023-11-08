@@ -84,6 +84,8 @@ async function initDev() {
 
 // 用于生成一堆漂亮的假数据
 async function initFaker() {
+    console.log('开始进行faker数据填充，这会会花费一些时间：');
+    const time = Date.now();
     await cleanDb();
 
     const userCount = 1000;
@@ -112,68 +114,75 @@ async function initFaker() {
     let totalDiscussion = 20000;
     let dIds = _.shuffle(_.range(1, 20001, 1));
     let dIdIndex = 0;
+    let postId = 1;
     for (let userId = 1; userId <= userCount; userId++) {
         for (let j = 0; j < 20; j++) {
             const dId = dIds[dIdIndex];
             const category = _.sample([1, 2, 3, 4, 5]); // 5 categories
             const content = casual.sentences(10);
-            const d = await db.discussion.create({
-                data: {
-                    id: dId,
-                    title: casual.title,
-                    categoryId: category,
-                    userId,
-                }
+            await db.$transaction(async tx => {
+                await tx.discussion.create({
+                    data: {
+                        id: dId,
+                        title: casual.title,
+                        categoryId: category,
+                        userId,
+                    }
+                });
+                await tx.post.create({
+                    data: {
+                        id: postId,
+                        discussionId: dId,
+                        content: content,
+                        text: content,
+                        type: 'text',
+                        userId,
+                        ip: casual.ip,
+                    }
+                });
+                await tx.discussion.update({
+                    where: { id: dId },
+                    data: {
+                        firstPostId: postId,
+                        lastPostId: postId,
+                        lastPostedAt: new Date(),
+                    }
+                });
             });
-            const p = await db.post.create({
-                data: {
-                    discussionId: d.id,
-                    content: content,
-                    text: content,
-                    type: 'text',
-                    userId,
-                    ip: casual.ip,
-                }
-            });
-            await db.discussion.update({
-                where: { id: d.id },
-                data: {
-                    firstPostId: p.id,
-                    lastPostId: p.id,
-                    lastPostedAt: new Date(),
-                }
-            });
-
             dIdIndex += 1;
+            postId += 1;
         }
     };
     console.log(`已完成初始化 ${totalDiscussion} 个话题`);
 
     // 每个话题下面 随机选择 100 个用户，每个生成 1 个回帖（单个话题 100 个回帖），最大总帖数 100 * 20000 = 2,000,000 (200万条回帖)
     for (let dId = 1; dId <= totalDiscussion; dId++) {
-        for (let j = 0; j < 100; j++) {
+        const posts = _.range(0, 100).map(i => {
             const uId = _.random(1, 1000, false);
             const content = casual.sentences(10);
-            const p = await db.post.create({
-                data: {
-                    discussionId: dId,
-                    content: content,
-                    text: content,
-                    type: 'text',
-                    userId: uId,
-                    ip: casual.ip,
-                }
-            });
-            await db.discussion.update({
-                where: { id: dId },
-                data: {
-                    lastPostId: p.id,
-                    lastPostedAt: new Date(),
-                }
-            });
-        }
+            const post = {
+                id: postId,
+                discussionId: dId,
+                content: content,
+                text: content,
+                type: 'text',
+                userId: uId,
+                ip: casual.ip,
+            };
+            postId += 1;
+            return post;
+        });
+        await db.post.createMany({ data: posts });
+        await db.discussion.update({
+            where: { id: dId },
+            data: {
+                lastPostId: postId - 1,
+                lastPostedAt: new Date(),
+            }
+        });
     }
     console.log(`已完成初始化 2,000,000 个回帖`);
+    console.log(`全部Faker初始化完成，总耗时：${(Date.now() - time) / 1000} 秒`);
 }
 
 async function cleanDb() {

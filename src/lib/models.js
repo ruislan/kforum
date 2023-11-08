@@ -128,6 +128,113 @@ export const categoryModel = {
 };
 
 export const postModel = {
+    errors: {
+        SCHEMA_CONTENT: '内容是必须的，不小于 2 个字符。',
+        DISCUSSION_NOT_FOUND: '请指定要回复的话题',
+        DISCUSSION_IS_LOCKED: '话题已经被锁定',
+        REPLY_TO_POST_NOT_FOUND: '回复的帖子已经删除或不存在',
+        POST_NOT_FOUND: '请指定要更新的帖子',
+        NO_PERMISSION: '没有操作权限',
+    },
+    validate({ text, content }) {
+        if (!content || content.length < 2) return { error: true, message: this.errors.SCHEMA_CONTENT };
+        if (!text || text.length < 2) return { error: true, message: this.errors.SCHEMA_CONTENT };
+        return { error: false };
+    },
+    checkPermission(user, post) {
+        const isAdmin = user.isAdmin;
+        const isOwner = post.userId === user.id;
+        // isModerator ...
+        if (!isAdmin && !isOwner) return false;
+        return true;
+    },
+    async count({ condition }) {
+        const whereClause = {
+            discussionId: { gt: 0 },
+        };
+        await prisma.post.count();
+    },
+    async create({ user, content, text, discussionId, replyPostId, ip }) {
+        const discussion = await prisma.discussion.findUnique({ where: { id: discussionId } });
+        if (!discussion) throw new ModelError(this.errors.DISCUSSION_NOT_FOUND);
+        if (discussion.isLocked) throw new ModelError(this.errors.DISCUSSION_IS_LOCKED);
+
+        // does it reply to a post?
+        let replyPost;
+        if (replyPostId) {
+            replyPost = await prisma.post.findUnique({
+                where: { id: replyPostId },
+                include: {
+                    user: { select: userModel.fields.simple }
+                }
+            });
+            if (!replyPost) throw new ModelError(this.errors.REPLY_TO_POST_NOT_FOUND);
+        }
+
+
+        // 检查用户是否已经发过帖子，没有则增加一次参与人计数
+        const sessionUserPosted = await prisma.post.findFirst({
+            where: {
+                discussionId,
+                userId: user.id
+            }
+        });
+
+        const data = await prisma.$transaction(async tx => {
+            const post = await tx.post.create({
+                data: {
+                    content,
+                    text,
+                    discussionId,
+                    type: 'text',
+                    userId: user.id,
+                    ip,
+                    replyPostId
+                }
+            });
+            const updateData = {
+                lastPostId: post.id,
+                lastPostedAt: new Date(),
+                postCount: { increment: 1 },
+            };
+            if (!sessionUserPosted) updateData.userCount = { increment: 1 };
+            await tx.discussion.update({
+                where: { id: discussion.id },
+                data: updateData
+            });
+            return post;
+        });
+
+        // add ref
+        data.user = user;
+        data.replyPost = replyPost;
+
+        return data;
+    },
+    async update({ user, id, content, text }) {
+        const post = await prisma.post.findUnique({ where: { id } });
+        if (!post) throw new ModelError(this.errors.POST_NOT_FOUND);
+        if (!this.checkPermission(user, post)) throw new ModelError(this.errors.NO_PERMISSION);
+
+        await prisma.post.update({ where: { id }, data: { content, text } });
+    },
+    async delete({ user, id }) {
+        const post = await prisma.post.findUnique({ where: { id }, include: { discussion: true } });
+        if (!post) throw new ModelError(this.errors.POST_NOT_FOUND);
+        if (!this.checkPermission(user, post)) throw new ModelError(this.errors.NO_PERMISSION);
+
+        const isFirstPost = post.discussion.firstPostId === post.id;
+        await prisma.$transaction(async tx => {
+            await tx.PostReactionRef.deleteMany({ where: { postId: post.id } });// delete reactions
+            // 不用更新所有回复这贴的引用为null, 外键约束会自动设置为null
+            if (isFirstPost) { // delete all
+                await tx.post.deleteMany({ where: { discussionId: post.discussion.id } });
+                await tx.discussion.delete({ where: { id: post.discussion.id } });
+            } else {
+                await tx.post.delete({ where: { id: post.id } }); // delete one
+            }
+        });
+    },
     async getPosts({
         discussionId, // 如果有discussionId说明是某个话题下面的回帖
         isOldFirst = false,
@@ -135,10 +242,9 @@ export const postModel = {
     }) {
         const countCondition = {};
         if (discussionId) {
-            countCondition.where = {
-                discussionId,
-                firstPostDiscussion: null,
-            }
+            countCondition.where = { discussionId, firstPostDiscussion: null }; // 去掉首贴，XXX 后面如果追加字段post_number可以直接用post_number > 1
+        } else {
+            countCondition.where = { discussionId: { gt: 0 } }; // 使用discussionId 作为index
         };
         const fetchCount = prisma.post.count(countCondition);
 
@@ -146,7 +252,7 @@ export const postModel = {
         if (discussionId) {
             queryCondition.where = {
                 discussionId,
-                firstPostDiscussion: null,
+                firstPostDiscussion: null, // 去掉首贴，XXX 后面如果追加字段post_number可以直接用post_number > 1
             };
         }
 
@@ -216,10 +322,7 @@ export const discussionModel = {
         const queryCondition = {
             orderBy,
             include: {
-                user: true,
-                _count: {
-                    select: { posts: true },
-                }
+                user: true
             }
         };
         if (withFirstPost) queryCondition.include.firstPost = true;
@@ -240,11 +343,6 @@ export const discussionModel = {
         const countFetch = prisma.discussion.count(countCondition);
         const discussionsFetch = prisma.discussion.findMany(queryCondition);
         const [discussions, count] = await Promise.all([discussionsFetch, countFetch]);
-        discussions.forEach(d => {
-            d.postCount = d._count.posts - 1; // sub first posts
-            delete d._count;
-        });
-
         return { discussions, hasMore: count > skip + take };
     },
     async incrementDiscussionView({ id }) {

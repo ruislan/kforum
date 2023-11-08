@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth';
 
 import authOptions from '@/lib/auth';
 import rest from '@/lib/rest';
-import prisma from '@/lib/prisma';
+import { ModelError, postModel } from '@/lib/models';
 
 const handler = async function (request, params, method) {
     // require user
@@ -10,31 +10,26 @@ const handler = async function (request, params, method) {
     if (!session.user?.id) return rest.unauthorized();
 
     const postId = Number(params.id) || 0;
-    const post = await prisma.post.findUnique({ where: { id: postId }, include: { discussion: true } });
-    if (!post) return rest.badRequest({ message: '帖子不存在' });
 
-    // check if user is admin or is owner
-    const isAdmin = session.user.isAdmin;
-    const isOwner = post.userId === session.user.id;
-    if (!isAdmin && !isOwner) return rest.badRequest({ message: '帖子不存在' }); // 非正常调用，隐藏真实原因
-
-    if (method === 'DELETE') {
-        const isFirstPost = post.discussion.firstPostId === post.id;
-        await prisma.$transaction(async tx => {
-            await tx.$queryRaw`DELETE FROM PostReactionRef WHERE post_id = ${post.id}`; // delete reactions
-            if (isFirstPost) { // delete all
-                await tx.$queryRaw`DELETE FROM Post WHERE discussion_id = ${post.discussion.id}`;
-                await tx.discussion.delete({ where: { id: post.discussion.id } });
-            } else {
-                await tx.post.delete({ where: { id: postId } }); // just delete one
-            }
-        });
-        return rest.deleted();
-    }
-    if (method === 'PUT') {
-        const { content, text } = await request.json();
-        await prisma.post.update({ where: { id: postId }, data: { content, text } });
-        return rest.updated();
+    try {
+        if (method === 'DELETE') {
+            await postModel.delete({ user: session.user, id: postId });
+            return rest.deleted();
+        }
+        if (method === 'PUT') {
+            const { content, text } = await request.json();
+            const validateResult = postModel.validate({ text, content });
+            if (validateResult.error) return rest.badRequest({ message: validateResult.error.message });
+            await postModel.update({ user: session.user, id: postId, text, content });
+            return rest.updated();
+        }
+    } catch (err) {
+        if (err instanceof ModelError)
+            return rest.badRequest({ message: err.message });
+        else {
+            logger.warn(err);
+            return rest.badRequest();
+        }
     }
 }
 
