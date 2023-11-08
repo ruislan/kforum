@@ -50,7 +50,7 @@ export default function Statistics() {
                         <Stats name='管理员' value={stats.admins || '-'} />
                         <Stats name='用户' value={stats.users || '-'} />
                         <Stats name='话题' value={stats.discussions || '-'} />
-                        <Stats name='回帖' value={stats.posts || '-'} />
+                        <Stats name='帖子' value={stats.posts || '-'} />
                         <Stats name='反馈' value={stats.reactions || '-'} />
                     </>
                 }

@@ -11,7 +11,7 @@ export async function GET(request, { params }) {
     const fetchStatsAdmins = prisma.user.count({ where: { isAdmin: true } });
     const fetchStatsUsers = prisma.user.count();
     const fetchStatsDiscussions = prisma.discussion.count();
-    const fetchStatsPosts = prisma.post.count({ where: { firstPostDiscussion: null } });
+    const fetchStatsPosts = prisma.post.count();
     const fetchStatsReactions = prisma.postReactionRef.count();
     const [admins, users, discussions, posts, reactions] = await Promise.all([
         fetchStatsAdmins,
