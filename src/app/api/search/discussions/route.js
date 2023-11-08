@@ -12,6 +12,7 @@ export async function GET(request, { params }) {
     if (!q) return rest.ok({ data: [] });
     const condition = {
         title: { contains: q },
+        id: { gt: 0 },
     };
     const fetchCount = prisma.discussion.count({ where: condition });
     const fetchDiscussions = prisma.discussion.findMany({

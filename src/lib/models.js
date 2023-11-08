@@ -366,9 +366,6 @@ export const discussionModel = {
             include: {
                 category: withCategory,
                 firstPost: withFirstPost,
-                _count: {
-                    select: { posts: true },
-                }
             }
         };
         if (withUser) queryCondition.include.user = { select: userModel.fields.simple };
@@ -379,8 +376,6 @@ export const discussionModel = {
         };
         const d = await prisma.discussion.findUnique(queryCondition);
         if (!d) return null;
-        d.postCount = d._count.posts - 1; // sub first posts
-        delete d._count;
 
         // avoid n+1, load first post reactions and stats
         const refs = await prisma.PostReactionRef.groupBy({

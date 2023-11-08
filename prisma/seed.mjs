@@ -110,7 +110,6 @@ async function initFaker() {
     console.log(`已完成初始化 ${userCount} 个用户`);
 
     // 1000 个用户，每个生成 20 个话题，共20000个话题
-    // XXX 插入较慢，可以适当做一些优化，例如拉平了做createMany，当然要注意外键约束
     let totalDiscussion = 20000;
     let dIds = _.shuffle(_.range(1, 20001, 1));
     let dIdIndex = 0;
@@ -155,8 +154,8 @@ async function initFaker() {
     };
     console.log(`已完成初始化 ${totalDiscussion} 个话题`);
 
-    // 每个话题下面 随机选择 100 个用户，每个生成 1 个回帖（单个话题 100 个回帖），最大总帖数 100 * 20000 = 2,000,000 (200万条回帖)
-    for (let dId = 1; dId <= totalDiscussion; dId++) {
+    // 选择前 2000 个话题，每个话题随机选择 100 个用户，每个用户产生 1 个回帖，单个话题 100 个回帖，最大回贴数 100 * 2000 = 200,000(20万)
+    for (let dId = 1; dId <= 2000; dId++) {
         const posts = _.range(0, 100).map(i => {
             const uId = _.random(1, 1000, false);
             const content = casual.sentences(10);
@@ -176,12 +175,13 @@ async function initFaker() {
         await db.discussion.update({
             where: { id: dId },
             data: {
+                postCount: { increment: posts.length },
                 lastPostId: postId - 1,
                 lastPostedAt: new Date(),
             }
         });
     }
-    console.log(`已完成初始化 2,000,000 个回帖`);
+    console.log(`已完成初始化 200,000 个回帖`);
     console.log(`全部Faker初始化完成，总耗时：${(Date.now() - time) / 1000} 秒`);
 }
 

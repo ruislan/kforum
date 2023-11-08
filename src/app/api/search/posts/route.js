@@ -12,14 +12,10 @@ export async function GET(request, { params }) {
     if (!q) return rest.ok({ data: [] });
     const condition = {
         text: { contains: q }, // text字段存储的是纯内容，content包含json的字段
-        firstPostDiscussion: null, // just reply post
+        id: { gt: 0 },
+        // firstPostDiscussion: null, // all post, not just reply post
     };
-    const fetchCount = prisma.post.count({
-        where: {
-            ...condition,
-            id: { gt: 0 },
-        }
-    });
+    const fetchCount = prisma.post.count({ where: condition });
     const fetchPosts = prisma.post.findMany({
         where: condition,
         include: {
