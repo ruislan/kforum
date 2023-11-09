@@ -3,29 +3,29 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 import { runIfFn } from '@/lib/fn';
+import ActionButton from '@/components/ui/action-button';
+import { LoadingIcon, Lock, Locked } from '@/components/icons';
 
-import { LoadingIcon, Pin, Pined } from '../icons';
-import ActionButton from '../ui/action-button';
 
-export default function ActionSticky({ discussion, onSticky }) {
-    const [isSticky, setIsSticky] = useState(discussion.isSticky);
+export default function ActionLock({ user, onLocked }) {
+    const [isLocked, setIsLocked] = useState(user.isLocked);
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleSticky = async () => {
+    const handleLock = async () => {
         if (isLoading) return;
         setIsLoading(true);
         try {
-            const newStickyState = !isSticky;
-            const res = await fetch(`/api/discussions/${discussion.id}/sticky`,
+            const newLockState = !isLocked;
+            const res = await fetch(`/api/admin/users/${user.id}/lock`,
                 {
                     method: 'PUT',
-                    body: JSON.stringify({ newStickyState }),
+                    body: JSON.stringify({ isLocked: newLockState }),
                     headers: { 'Content-Type': 'application/json' }
                 });
             if (res.ok) {
-                toast.success(newStickyState ? '置顶成功' : '取消置顶成功');
-                setIsSticky(newStickyState);
-                runIfFn(onSticky, newStickyState);
+                toast.success(newLockState ? '已经成功锁定' : '已经成功解锁');
+                setIsLocked(newLockState);
+                runIfFn(onLocked, newLockState);
             } else {
                 if (res.status === 400) {
                     const json = await res.json();
@@ -45,11 +45,10 @@ export default function ActionSticky({ discussion, onSticky }) {
     return (
         <ActionButton onClick={e => {
             e.preventDefault();
-            handleSticky();
+            handleLock();
         }}>
-            {isLoading ?
-                <LoadingIcon /> :
-                (isSticky ? <Pined /> : <Pin />)
+            {isLoading ? <LoadingIcon /> :
+                (isLocked ? <Locked /> : <Lock />)
             }
         </ActionButton>
     );

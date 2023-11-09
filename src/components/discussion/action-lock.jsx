@@ -4,26 +4,28 @@ import toast from 'react-hot-toast';
 
 import { runIfFn } from '@/lib/fn';
 
-import { LoadingIcon, Lock } from '../icons';
+import { LoadingIcon, Lock, Locked } from '../icons';
 import ActionButton from '../ui/action-button';
 
 export default function ActionLock({ discussion, onLocked }) {
+    const [isLocked, setIsLocked] = useState(discussion.isLocked);
     const [isLoading, setIsLoading] = useState(false);
 
     const handleLock = async () => {
         if (isLoading) return;
         setIsLoading(true);
         try {
-            const isLocked = !discussion.isLocked;
+            const newLockState = !isLocked;
             const res = await fetch(`/api/discussions/${discussion.id}/lock`,
                 {
                     method: 'PUT',
-                    body: JSON.stringify({ isLocked }),
+                    body: JSON.stringify({ isLocked: newLockState }),
                     headers: { 'Content-Type': 'application/json' }
                 });
             if (res.ok) {
-                toast.success(isLocked ? '已经成功锁定' : '已经成功解锁');
-                runIfFn(onLocked, isLocked);
+                toast.success(newLockState ? '已经成功锁定' : '已经成功解锁');
+                setIsLocked(newLockState);
+                runIfFn(onLocked, newLockState);
             } else {
                 if (res.status === 400) {
                     const json = await res.json();
@@ -45,7 +47,9 @@ export default function ActionLock({ discussion, onLocked }) {
             e.preventDefault();
             handleLock();
         }}>
-            {isLoading ? <LoadingIcon /> : <Lock />}
+            {isLoading ? <LoadingIcon /> :
+                (isLocked ? <Locked /> : <Lock />)
+            }
         </ActionButton>
     );
 }

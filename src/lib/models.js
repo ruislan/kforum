@@ -7,9 +7,19 @@ import pageUtils from './page-utils';
 export class ModelError extends Error { }
 
 export const userModel = {
+    errors: {
+        USER_NOT_FOUND: '没有找到该用户',
+        CAN_NOT_LOCK_ADMIN: '管理员不能被封锁'
+    },
     fields: {
         simple: { id: true, name: true, email: true, gender: true, avatar: true },
         passport: { id: true, name: true, email: true, gender: true, avatar: true, isAdmin: true }
+    },
+    hashPassword(pwd) {
+        return bcrypt.hashSync(pwd, 10);
+    },
+    comparePassword(plainPwd, hashedPwd) {
+        return bcrypt.compareSync(plainPwd, hashedPwd);
     },
     async getUser({ id, fields, ignoreSensitive = true }) {
         const queryCondition = { where: { id } };
@@ -26,7 +36,8 @@ export const userModel = {
     },
     async getUsers({
         page = 1,
-        ignoreSensitive = true
+        ignoreSensitive = true,
+        query
     }) {
         const countCondition = {};
         const fetchCount = prisma.user.count(countCondition);
@@ -35,9 +46,11 @@ export const userModel = {
         const { limit: take, skip } = pageUtils.getDefaultLimitAndSkip(page);
         queryCondition.take = take;
         queryCondition.skip = skip;
+        if (query) queryCondition.where = query;
+        console.log(queryCondition);
+
         const fetchUsers = prisma.user.findMany(queryCondition);
         const [users, count] = await Promise.all([fetchUsers, fetchCount]);
-
         for (const user of users) {
             if (ignoreSensitive) {
                 delete user.password;
@@ -74,11 +87,14 @@ export const userModel = {
         }
         return user;
     },
-    hashPassword(pwd) {
-        return bcrypt.hashSync(pwd, 10);
-    },
-    comparePassword(plainPwd, hashedPwd) {
-        return bcrypt.compareSync(plainPwd, hashedPwd);
+    async lock({ userId, isLocked }) {
+        const user = await prisma.user.findUnique({ where: { id: userId } });
+        if (!user) throw new ModelError(this.errors.USER_NOT_FOUND);
+        if (isLocked && user.isAdmin) throw new ModelError(this.errors.CAN_NOT_LOCK_ADMIN);
+        await prisma.user.update({
+            where: { id: userId, },
+            data: { isLocked }
+        });
     }
 };
 
