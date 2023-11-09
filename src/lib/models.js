@@ -24,6 +24,29 @@ export const userModel = {
 
         return user;
     },
+    async getUsers({
+        page = 1,
+        ignoreSensitive = true
+    }) {
+        const countCondition = {};
+        const fetchCount = prisma.user.count(countCondition);
+
+        const queryCondition = {};
+        const { limit: take, skip } = pageUtils.getDefaultLimitAndSkip(page);
+        queryCondition.take = take;
+        queryCondition.skip = skip;
+        const fetchUsers = prisma.user.findMany(queryCondition);
+        const [users, count] = await Promise.all([fetchUsers, fetchCount]);
+
+        for (const user of users) {
+            if (ignoreSensitive) {
+                delete user.password;
+                delete user.phone;
+            }
+        }
+
+        return { users, hasMore: count > skip + take };
+    },
     async getUserByName({
         name,
         withStats = true,
@@ -147,12 +170,6 @@ export const postModel = {
         // isModerator ...
         if (!isAdmin && !isOwner) return false;
         return true;
-    },
-    async count({ condition }) {
-        const whereClause = {
-            discussionId: { gt: 0 },
-        };
-        await prisma.post.count();
     },
     async create({ user, content, text, discussionId, replyPostId, ip }) {
         const discussion = await prisma.discussion.findUnique({ where: { id: discussionId } });

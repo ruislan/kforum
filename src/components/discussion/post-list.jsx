@@ -20,6 +20,7 @@ import ActionReact from './action-react';
 import ActionReply from './action-reply';
 import PostUpdater from './post-updater';
 import Spinner from '../ui/spinner';
+import UserAvatar from '../ui/user-avatar';
 
 function PostReplyContent({ replyPost }) {
     const limit = 100;
@@ -32,9 +33,12 @@ function PostReplyContent({ replyPost }) {
             <div className='p-2 w-full'>
                 <div className='flex items-center justify-between mb-2 text-gray-300'>
                     <div className='flex items-center'>
-                        <div className='w-5 h-5 mr-1.5 bg-gray-300 rounded'>
-                            <Image width={20} height={20} className='rounded' src={replyPost.user.avatar} alt={replyPost.user.name} />
-                        </div>
+                        <UserAvatar
+                            className='mr-1.5'
+                            size='xs'
+                            name={replyPost.user.name}
+                            avatar={replyPost.user.avatar}
+                        />
                         <Link href={`/u/${replyPost.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{replyPost.user.name}</Link>
                     </div>
                     {replyPost.text.length > limit && <div className='flex items-center'>
@@ -81,9 +85,7 @@ function PostItem({ isDiscussionLocked, item, onReplyClick }) {
     return (
         <div className='flex'>
             <div className='flex flex-col items-center mr-2'>
-                <div className='w-9 h-9 bg-gray-300 rounded'>
-                    <Image width={36} height={36} className='rounded' src={post.user.avatar} alt={post.user.name} />
-                </div>
+                <UserAvatar name={post.user.name} avatar={post.user.avatar} />
                 {/* click line to collapse post replies */}
                 {!isDeleted && <div className='mt-2 my-1 border-l-2 border-neutral-600 h-full cursor-pointer hover:border-neutral-300' />}
             </div>

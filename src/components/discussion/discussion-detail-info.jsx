@@ -23,6 +23,7 @@ import ReactionGroup from '../ui/reaction-group';
 import PostUpdater from './post-updater';
 import ActionReply from './action-reply';
 import Tag from '../ui/tag';
+import UserAvatar from '../ui/user-avatar';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -83,7 +84,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                     </div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                     <div className='flex items-center'>
-                        <div className='w-5 h-5 mr-1.5 bg-gray-300 rounded'><Image width={20} height={20} className='rounded' src={discussion.user.avatar} alt={discussion.user.name} /></div>
+                        <UserAvatar className='mr-1.5' size='xs' name={discussion.user.name} avatar={discussion.user.avatar} />
                         <Link href={`/u/${discussion.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{discussion.user.name}</Link>
                     </div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />

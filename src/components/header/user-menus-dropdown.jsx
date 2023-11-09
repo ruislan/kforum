@@ -1,13 +1,13 @@
 'use client';
 
 import { Fragment, useMemo } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { signOut, } from 'next-auth/react';
 import { Menu, Transition } from '@headlessui/react';
 
 import Box from '../ui/box';
 import { LogoutIcon, UserIcon } from '../icons';
+import UserAvatar from '../ui/user-avatar';
 
 
 export default function UserMenusDropdown({ user }) {
@@ -39,13 +39,10 @@ export default function UserMenusDropdown({ user }) {
         <Menu as='div' className='relative inline-flex text-left'>
             <Menu.Button className='flex justify-end gap-1.5 items-center py-0.5 px-1 rounded hover:bg-neutral-700'>
                 <span className='text-base text-neutral-200'>{user?.name}</span>
-                <div className='w-9 h-9 bg-gray-300 rounded'>
-                    {user?.avatar && (
-                        <Image width='36' height='36' className='w-full h-full rounded'
-                            src={user?.avatar} alt={user?.name}
-                        />
-                    )}
-                </div>
+                <UserAvatar
+                    name={user.name}
+                    avatar={user.avatar}
+                />
             </Menu.Button>
             <Transition as={Fragment}
                 enter='transition ease-out duration-100' enterFrom='transform opacity-0 scale-95' enterTo='transform opacity-100 scale-100'

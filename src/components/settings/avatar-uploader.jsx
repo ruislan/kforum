@@ -7,6 +7,7 @@ import Button from '../ui/button';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
 import FormControl from '../ui/form-control';
+import UserAvatar from '../ui/user-avatar';
 
 const IMAGE_UPLOAD_SIZE_LIMIT = 1024 * 1024 * 2; // 2MB
 
@@ -68,9 +69,12 @@ export default function AvatarUploader({ user }) {
     if (!user) return null;
     return (
         <FormControl title='头像' subtitle='只支持PNG、JPG、JPEG格式的图片'>
-            <div className='w-32 h-32 bg-gray-300 rounded-lg shadow-lg my-3'>
-                <Image className='rounded-lg' width={128} height={128} src={avatar} alt={user?.name} />
-            </div>
+            <UserAvatar
+                className='shadow-lg mb-3'
+                size='2xl'
+                avatar={avatar}
+                name={user.name}
+            />
             <div className='flex items-center gap-2'>
                 <input
                     ref={avatarInput}

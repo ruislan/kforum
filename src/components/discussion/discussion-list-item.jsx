@@ -9,6 +9,7 @@ import Box from '../ui/box';
 import SplitBall from '../ui/split-ball';
 import Tag from '../ui/tag';
 import ProseContent from '../ui/prose-content';
+import UserAvatar from '../ui/user-avatar';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -40,9 +41,12 @@ export default function DiscussionListItem({ discussion }) {
                         </>
                     )}
                     <div className='flex items-center'>
-                        <div className='w-5 h-5 mr-1.5 bg-gray-300 rounded'>
-                            <Image className='rounded' width={20} height={20} src={discussion.user?.avatar} alt={discussion.user?.name} />
-                        </div>
+                        <UserAvatar
+                            size='xs'
+                            className='mr-1.5'
+                            name={discussion.user?.name}
+                            avatar={discussion.user?.avatar}
+                        />
                         <Link href={`/u/${discussion.user?.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{discussion.user?.name}</Link>
                     </div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />

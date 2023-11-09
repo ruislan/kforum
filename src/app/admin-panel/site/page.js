@@ -17,5 +17,5 @@ export default async function Page() {
             <HeadingSmall>站点设置</HeadingSmall>
             <SiteForm settings={settings}></SiteForm>
         </Box>
-    )
+    );
 }
