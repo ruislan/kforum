@@ -1,5 +1,4 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
-import prisma from '@/lib/prisma';
 import { userModel } from './models';
 
 const authOptions = {
@@ -12,22 +11,7 @@ const authOptions = {
             },
             async authorize(credentials) {
                 const { username, password } = credentials;
-                if (!username || !password) return null;
-
-                const user = await prisma.user.findFirst({
-                    where: {
-                        OR: [
-                            { email: username },
-                            { name: username }
-                        ]
-                    },
-                    select: { ...userModel.fields.passport, password: true }
-                });
-                if (!user) return null;
-
-                const isPasswordMatched = userModel.comparePassword(password, user.password);
-                if (!isPasswordMatched) return null;
-
+                const user = await userModel.authorize({ username, password });
                 return user;
             },
         }),

@@ -39,7 +39,7 @@ export default function LoginForm() {
                 setIsSuccess(true);
                 router.replace(callbackUrl || '/');
             } else {
-                setError('用户名或者密码错误');
+                setError(res.error || '用户名或者密码错误');
             }
         } catch (err) {
             setError('未知错误，请稍后再试');

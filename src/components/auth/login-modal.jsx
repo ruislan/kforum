@@ -46,7 +46,7 @@ export default function LoginModal() {
                 loginModal.close();
                 toast.success('您已经成功登录，欢迎回来');
             } else {
-                setError('用户名或者密码错误');
+                setError(res.error || '用户名或者密码错误');
             }
         } catch (err) {
             setError('未知错误，请稍后再试');

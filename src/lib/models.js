@@ -9,7 +9,9 @@ export class ModelError extends Error { }
 export const userModel = {
     errors: {
         USER_NOT_FOUND: '没有找到该用户',
-        CAN_NOT_LOCK_ADMIN: '管理员不能被封锁'
+        CAN_NOT_LOCK_ADMIN: '管理员不能被封锁',
+        USER_WAS_LOCKED: '用户已经被封禁',
+        CREDENTIAL_NOT_VALID: '用户名或密码不正确',
     },
     fields: {
         simple: { id: true, name: true, email: true, gender: true, avatar: true },
@@ -34,6 +36,26 @@ export const userModel = {
 
         return user;
     },
+    async authorize({ username, password }) {
+        if (!username || !password) throw new ModelError(this.errors.CREDENTIAL_NOT_VALID);
+
+        const user = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { email: username },
+                    { name: username }
+                ]
+            },
+            select: { ...userModel.fields.passport, isLocked: true, password: true }
+        });
+        if (user.isLocked) throw new ModelError(this.errors.USER_WAS_LOCKED);
+        if (!user) throw new ModelError(this.errors.CREDENTIAL_NOT_VALID);
+
+        const isPasswordMatched = userModel.comparePassword(password, user.password);
+        if (!isPasswordMatched) throw new ModelError(this.errors.CREDENTIAL_NOT_VALID);
+
+        return user;
+    },
     async getUsers({
         page = 1,
         ignoreSensitive = true,
@@ -47,7 +69,6 @@ export const userModel = {
         queryCondition.take = take;
         queryCondition.skip = skip;
         if (query) queryCondition.where = query;
-        console.log(queryCondition);
 
         const fetchUsers = prisma.user.findMany(queryCondition);
         const [users, count] = await Promise.all([fetchUsers, fetchCount]);
