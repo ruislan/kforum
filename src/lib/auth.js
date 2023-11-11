@@ -34,9 +34,11 @@ const authOptions = {
             return token;
         },
         async session({ session, token }) {
+            session.user.isLocked = await userModel.isLocked(token.id);
             session.user.id = token.id;
             session.user.avatar = token.avatar;
             session.user.isAdmin = token.isAdmin;
+
             return session;
         }
     },

@@ -30,7 +30,7 @@ export async function GET(request, { params }) {
 export async function PUT(request, { params }) {
     // require user
     const session = await getServerSession(authOptions);
-    if (!session.user?.id) return rest.unauthorized();
+    if (!session.user?.id || session.user?.isLocked) return rest.unauthorized();
 
     const postId = Number(params.id) || 0;
     const { id: reactionId, isReact } = await request.json();

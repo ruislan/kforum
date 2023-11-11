@@ -7,7 +7,7 @@ import rest from '@/lib/rest';
 export async function PUT(request, { params }) {
     // require user
     const session = await getServerSession(authOptions);
-    if (!session.user?.id) return rest.unauthorized();
+    if (!session.user?.id || session.user?.isLocked) return rest.unauthorized();
 
     const { email } = await request.json();
     if (!email || !/@/.test(email)) return rest.badRequest({ message: '邮件格式不正确' });

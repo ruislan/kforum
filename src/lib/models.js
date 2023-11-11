@@ -10,7 +10,7 @@ export const userModel = {
     errors: {
         USER_NOT_FOUND: '没有找到该用户',
         CAN_NOT_LOCK_ADMIN: '管理员不能被封锁',
-        USER_WAS_LOCKED: '用户已经被封禁',
+        USER_WAS_LOCKED: '你已经被管理员封禁',
         CREDENTIAL_NOT_VALID: '用户名或密码不正确',
     },
     fields: {
@@ -107,6 +107,14 @@ export const userModel = {
             delete user._count;
         }
         return user;
+    },
+    async isLocked(id) {
+        // xxx return lock expired time
+        const user = await prisma.user.findUnique({
+            where: { id },
+            select: { id: true, isLocked: true }
+        });
+        return user.isLocked;
     },
     async lock({ userId, isLocked }) {
         const user = await prisma.user.findUnique({ where: { id: userId } });

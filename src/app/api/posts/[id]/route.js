@@ -7,7 +7,7 @@ import { ModelError, postModel } from '@/lib/models';
 const handler = async function (request, params, method) {
     // require user
     const session = await getServerSession(authOptions);
-    if (!session.user?.id) return rest.unauthorized();
+    if (!session.user?.id || session.user?.isLocked) return rest.unauthorized();
 
     const postId = Number(params.id) || 0;
 

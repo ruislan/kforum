@@ -5,9 +5,8 @@ export default withAuth({
         authorized({ req, token }) {
             return Boolean(token);
         }
-    }
+    },
 });
-
 export const config = {
     matcher: [
         '/d/create',
