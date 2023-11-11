@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 
 import Button from "./button";

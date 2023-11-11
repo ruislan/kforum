@@ -5,7 +5,8 @@ import { categoryModel } from '@/lib/models';
 
 import Box from '../ui/box';
 import { HeadingSmall } from '../ui/heading';
-import { Blank as BlankIcon, Plus } from '../icons';
+import { Blank as BlankIcon } from '../icons';
+import ActionPlus from './action-plus';
 
 async function getCategories() {
     return await categoryModel.getCategories();
@@ -19,10 +20,7 @@ export default async function CategoryBox() {
         <Box className='flex flex-col'>
             <div className='flex items-center gap-4 mb-3'>
                 <HeadingSmall tight>讨论分类</HeadingSmall>
-                <Link href='/admin-panel/category'
-                    className='w-4 h-4 cursor-pointer text-gray-400 hover:text-gray-50 transition-all'>
-                    <Plus />
-                </Link>
+                <ActionPlus />
             </div>
             <div className='flex flex-col gap-1'>
                 {categories.map(c =>
