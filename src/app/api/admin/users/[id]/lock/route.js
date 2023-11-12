@@ -12,10 +12,7 @@ export async function PUT(request, { params }) {
     const { isLocked } = await request.json();
     try {
         await userModel.lock({ userId, isLocked });
-        // if someone isLocked, then destroy the session or keep it in lock list?
-        // XXX 如果已经被封禁了，是否清理掉登录信息？
         // XXX 封禁次数是否需要记录
-        // XXX 封禁的时候，如果用户正处于登录情况，该如何处理？
         return rest.updated();
     } catch (err) {
         if (err instanceof ModelError)

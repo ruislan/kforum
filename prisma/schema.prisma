@@ -93,6 +93,17 @@ model Post {
   @@index([userId, createdAt])
 }
 
+model Uploads {
+  id               Int    @id @default(autoincrement()) @db.UnsignedInt
+  userId           Int    @map("user_id") @db.UnsignedInt
+  originalFileName String @map("original_file_name") @db.VarChar(256)
+  fileSize         BigInt @map("file_size") @db.BigInt
+  checksum         String @unique @db.VarChar(256)
+  url              String @db.VarChar(2048)
+
+  createdAt DateTime @default(now()) @map("created_at")
+}
+
 model Reaction {
   id       Int    @id @default(autoincrement()) @db.UnsignedInt
   name     String @unique @db.VarChar(64)

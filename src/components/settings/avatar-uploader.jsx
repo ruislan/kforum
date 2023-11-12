@@ -4,7 +4,6 @@ import { useSession } from 'next-auth/react';
 
 import Spinner from '../ui/spinner';
 import Button from '../ui/button';
-import Image from 'next/image';
 import toast from 'react-hot-toast';
 import FormControl from '../ui/form-control';
 import UserAvatar from '../ui/user-avatar';
@@ -26,7 +25,7 @@ export default function AvatarUploader({ user }) {
         }
         if (file.size > IMAGE_UPLOAD_SIZE_LIMIT) {
             setError('图片大小不能超过2MB');
-            return;
+            return false;
         }
         return true;
     };
@@ -61,6 +60,7 @@ export default function AvatarUploader({ user }) {
         } catch (err) {
             setError('未知错误，请稍后再试');
         } finally {
+            avatarInput.current.value = null;
             setIsSubmitting(false);
         }
     }

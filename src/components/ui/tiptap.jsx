@@ -1,4 +1,7 @@
 'use client';
+import { useRef, useState } from 'react';
+import toast from 'react-hot-toast';
+import sha1 from 'crypto-js/sha1';
 
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -7,9 +10,88 @@ import Image from '@tiptap/extension-image'
 import ListItem from '@tiptap/extension-list-item';
 import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
+import { generateHTML } from '@tiptap/html';
+
 import Button from './button';
 import { Bold, Italic, Underline as UnderlineIcon, Strike, Heading1, Heading2, Heading3, BulletList, OrderedList, BlockQuote, Link as LinkIcon, Image as ImageIcon } from '../icons';
-import { generateHTML } from '@tiptap/html';
+import { runIfFn } from '@/lib/fn';
+
+const IMAGE_UPLOAD_SIZE_LIMIT = 1024 * 1024 * 10; // 10MB
+
+function ImageActionButton({ isActive, onUploaded }) {
+  const imageInput = useRef();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const validateFields = (file) => {
+    console.log(file);
+    if (!file || file.size === 0) {
+      toast.error('你还没准备好，请先选择图片');
+      return false;
+    }
+    if (file.size > IMAGE_UPLOAD_SIZE_LIMIT) {
+      toast.error('图片大小不能超过10MB');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (file) => {
+    if (isSubmitting) return;
+    if (!validateFields(file)) return;
+    setIsSubmitting(true);
+    try {
+      const checksum = await new Promise((resolve,) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = reader.result;
+          const hash = sha1(result).toString();
+          resolve(hash);
+        }
+        reader.readAsArrayBuffer(file);
+      });
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('checksum', checksum);
+
+      const res = await fetch('/api/uploads', { method: 'POST', body: formData });
+
+      if (res.ok) {
+        const json = await res.json();
+        runIfFn(onUploaded, { ...json.data });
+      } else {
+        if (res.status === 400) {
+          const json = await res.json();
+          toast.error(json.message);
+        } else if (res.status === 401) {
+          toast.error('您的登录以过期，请重新登录');
+        } else {
+          throw new Error();
+        }
+      }
+    } catch (err) {
+      toast.error('未知错误，请稍后再试');
+    } finally {
+      imageInput.current.value = null;
+      setIsSubmitting(false);
+    }
+  }
+
+  return (
+    <>
+      <ActionButton onClick={() => imageInput.current.click()} disabled={!isActive}>
+        <ImageIcon />
+      </ActionButton>
+      <input ref={imageInput}
+        type='file'
+        hidden
+        accept='image/*'
+        onChange={e => {
+          e.preventDefault();
+          handleSubmit(e.target.files[0]);
+        }} />
+    </>
+  );
+}
 
 function ActionButton({ isActive, onClick, ...rest }) {
   return <Button kind='ghost' shape='square' size='sm'
@@ -19,7 +101,6 @@ function ActionButton({ isActive, onClick, ...rest }) {
 }
 
 function MenuBar({ editor, endActionEnhancer }) {
-  // const [imageURL, setImageURL] = useState('');
   const limit = 500;
   if (!editor) return null;
   return (
@@ -79,16 +160,13 @@ function MenuBar({ editor, endActionEnhancer }) {
           isActive={editor.isActive('blockquote')}>
           <BlockQuote />
         </ActionButton>
-        {/* <ActionButton
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          isActive={editor.isActive('blockquote')}>
-          <LinkIcon />
-        </ActionButton>
-        <ActionButton
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          isActive={editor.isActive('blockquote')}>
-          <ImageIcon />
-        </ActionButton> */}
+        <ImageActionButton
+          onUploaded={(data) => {
+            console.log(data);
+            editor.chain().focus().setImage({ src: data.url }).run()
+          }}
+          isActive={true}
+        />
       </div>
       {endActionEnhancer}
     </div>
