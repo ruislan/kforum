@@ -37,7 +37,7 @@ function PostReplyContent({ replyPost }) {
                             className='mr-1.5'
                             size='xs'
                             name={replyPost.user.name}
-                            avatar={replyPost.user.avatar}
+                            avatar={replyPost.user.avatarUrl}
                         />
                         <Link href={`/u/${replyPost.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{replyPost.user.name}</Link>
                     </div>
@@ -85,7 +85,7 @@ function PostItem({ isDiscussionLocked, item, onReplyClick }) {
     return (
         <div className='flex'>
             <div className='flex flex-col items-center mr-2'>
-                <UserAvatar name={post.user.name} avatar={post.user.avatar} />
+                <UserAvatar name={post.user.name} avatar={post.user.avatarUrl} />
                 {/* click line to collapse post replies */}
                 {!isDeleted && <div className='mt-2 my-1 border-l-2 border-neutral-600 h-full cursor-pointer hover:border-neutral-300' />}
             </div>

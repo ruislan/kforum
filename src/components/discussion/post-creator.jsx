@@ -90,7 +90,7 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
                     <UserAvatar
                         className='mr-1.5'
                         name={session.user?.name}
-                        avatar={session.user?.avatar}
+                        avatar={session.user?.avatarUrl}
                     />
                 </div>
                 <div className='flex flex-col w-full'>

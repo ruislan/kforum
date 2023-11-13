@@ -93,7 +93,7 @@ export default function UserList() {
                             <UserAvatar
                                 className='mr-1.5'
                                 name={user.name}
-                                avatar={user.avatar}
+                                avatar={user.avatarUrl}
                             />
                             <div className='flex flex-col'>
                                 <div className='flex items-center'>

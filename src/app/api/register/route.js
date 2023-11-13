@@ -20,7 +20,7 @@ export async function POST(request, { params }) {
         const newUser = await prisma.user.create({
             data: {
                 email, name, password: hashedPassword,
-                avatar: `https://api.dicebear.com/7.x/notionists/svg?seed=${name}&size=96`,
+                avatarUrl: `https://api.dicebear.com/7.x/notionists/svg?seed=${name}&size=96`,
             }
         });
         delete newUser.password;

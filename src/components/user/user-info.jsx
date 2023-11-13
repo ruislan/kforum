@@ -11,7 +11,7 @@ export default async function UserInfo({ user = null }) {
                 size='2xl'
                 className='shadow-lg z-10'
                 name={user.name}
-                avatar={user.avatar}
+                avatar={user.avatarUrl}
             />
             <div className='text-gray-100 text-xl my-2'>{user.name}</div>
             <div className='grid grid-cols-3 gap-2 mt-2'>

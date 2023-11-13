@@ -70,7 +70,7 @@ export default function PostsSearch({ query }) {
                         <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />
 
                         <div className='inline-flex align-middle items-center'>
-                            <UserAvatar className='mr-1.5' size='xs' name={item.discussion.user.name} avatar={item.discussion.user.avatar} />
+                            <UserAvatar className='mr-1.5' size='xs' name={item.discussion.user.name} avatar={item.discussion.user.avatarUrl} />
                             <Link href={`/u/${item.discussion.user?.name}`} onClick={e => e.stopPropagation()} className='text-xs text-gray-400 hover:underline underline-offset-2 cursor-pointer'>u/{item.discussion.user.name}</Link>
                         </div>
                         <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />
@@ -79,7 +79,7 @@ export default function PostsSearch({ query }) {
                     <div className='flex flex-col p-2'>
                         <div className='flex items-center mb-1'>
                             <div className='flex items-center'>
-                                <UserAvatar className='mr-1.5' size='xs' name={item.user.name} avatar={item.user.avatar} />
+                                <UserAvatar className='mr-1.5' size='xs' name={item.user.name} avatar={item.user.avatarUrl} />
                                 <Link href={`/u/${item.user.name}`} onClick={e => e.stopPropagation()} className='text-xs text-gray-400 hover:underline underline-offset-2 cursor-pointer'>u/{item.user.name}</Link>
                             </div>
                             <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />

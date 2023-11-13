@@ -23,12 +23,12 @@ const authOptions = {
         async jwt({ token, user, trigger, session }) {
             if (user) {
                 token.id = user.id;
-                token.avatar = user.avatar;
+                token.avatarUrl = user.avatarUrl;
                 token.isAdmin = user.isAdmin;
             }
             if (trigger === 'update') {
                 if (session?.email) token.email = session.email;
-                if (session?.avatar) token.avatar = session.avatar;
+                if (session?.avatarUrl) token.avatarUrl = session.avatarUrl;
                 if (session?.gender) token.gender = session.gender;
             }
             return token;
@@ -36,7 +36,7 @@ const authOptions = {
         async session({ session, token }) {
             session.user.isLocked = await userModel.isLocked(token.id);
             session.user.id = token.id;
-            session.user.avatar = token.avatar;
+            session.user.avatarUrl = token.avatarUrl;
             session.user.isAdmin = token.isAdmin;
 
             return session;

@@ -23,7 +23,6 @@ function ImageActionButton({ isActive, onUploaded }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateFields = (file) => {
-    console.log(file);
     if (!file || file.size === 0) {
       toast.error('你还没准备好，请先选择图片');
       return false;
@@ -42,9 +41,9 @@ function ImageActionButton({ isActive, onUploaded }) {
     try {
       const checksum = await new Promise((resolve,) => {
         const reader = new FileReader();
-        reader.onload = () => {
-          const result = reader.result;
-          const hash = sha1(result).toString();
+        reader.onload = (e) => {
+          const result = e.target.result;
+          const hash = sha1(result.toString()).toString();
           resolve(hash);
         }
         reader.readAsArrayBuffer(file);
@@ -162,7 +161,6 @@ function MenuBar({ editor, endActionEnhancer }) {
         </ActionButton>
         <ImageActionButton
           onUploaded={(data) => {
-            console.log(data);
             editor.chain().focus().setImage({ src: data.url }).run()
           }}
           isActive={true}

@@ -1,6 +1,5 @@
 'use strict';
 import fs from 'fs';
-import { v4 as uuid } from 'uuid';
 
 // XXX maybe we can try a cloud storage like qiniu, superbase, s3, etc.
 class LocalStorage {
@@ -9,11 +8,9 @@ class LocalStorage {
         this.relativePathBase = relativePathBase || '/uploads';
         this.isDebug = isDebug;
     }
-    async store(filename, buffer) {
+    async store(filename, bytes) {
+        const buffer = Buffer.from(bytes);
         const date = new Date();
-        let localFilename = uuid().replace(/-/g, '');
-        const extIndex = filename?.lastIndexOf('.') || -1;
-        if (extIndex !== -1) localFilename = localFilename + filename.substring(extIndex);
 
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -21,8 +18,8 @@ class LocalStorage {
         const dir = `${this.storeBase}/${year}/${month}/${day}`;
 
         if (!fs.existsSync(dir)) await fs.promises.mkdir(dir, { recursive: true });
-        await fs.promises.writeFile(`${dir}/${localFilename}`, buffer);
-        const filePath = `${this.relativePathBase}/${year}/${month}/${day}/${localFilename}`;
+        await fs.promises.writeFile(`${dir}/${filename}`, buffer);
+        const filePath = `${this.relativePathBase}/${year}/${month}/${day}/${filename}`;
         if (this.isDebug) console.log(`storage:local File ${filename} is store to dir ${dir}, relative path is ${filePath} .`);
         return filePath;
     }

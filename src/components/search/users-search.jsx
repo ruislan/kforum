@@ -45,7 +45,7 @@ export default function UsersSearch({ query }) {
                 <Box key={i} className='flex items-center gap-2'>
                     <div className='flex justify-center items-center'>
                         <Image className='rounded'
-                            src={item.avatar}
+                            src={item.avatarUrl}
                             width={36}
                             height={36}
                             alt={item.name}

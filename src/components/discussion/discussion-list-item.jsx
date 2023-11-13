@@ -45,7 +45,7 @@ export default function DiscussionListItem({ discussion }) {
                             size='xs'
                             className='mr-1.5'
                             name={discussion.user?.name}
-                            avatar={discussion.user?.avatar}
+                            avatar={discussion.user?.avatarUrl}
                         />
                         <Link href={`/u/${discussion.user?.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{discussion.user?.name}</Link>
                     </div>

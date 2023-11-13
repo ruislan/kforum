@@ -8,15 +8,15 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement()) @db.UnsignedInt
-  email    String  @unique @db.VarChar(256)
-  name     String  @unique @db.VarChar(64)
-  password String  @db.VarChar(256)
-  bio      String? @db.VarChar(512)
-  avatar   String? @db.VarChar(2048)
-  gender   String? @db.VarChar(16)
-  isLocked Boolean @default(false) @map("is_locked")
-  isAdmin  Boolean @default(false) @map("is_admin")
+  id        Int     @id @default(autoincrement()) @db.UnsignedInt
+  email     String  @unique @db.VarChar(256)
+  name      String  @unique @db.VarChar(64)
+  password  String  @db.VarChar(256)
+  avatarUrl String? @map("avatar_url") @db.VarChar(2048) // 通常是 UploadAvatarRef 对应的 Upload 的 Url，但是也有可能是一个 Avatar 服务的地址呢？
+  bio       String? @db.VarChar(512)
+  gender    String? @db.VarChar(16)
+  isLocked  Boolean @default(false) @map("is_locked")
+  isAdmin   Boolean @default(false) @map("is_admin")
 
   lastLoginAt DateTime? @map("last_login_at")
   lastLoginIp String?   @map("last_login_ip")
@@ -28,6 +28,7 @@ model User {
   discussions Discussion[]
   posts       Post[]
   reactions   PostReactionRef[]
+  avatar      UploadAvatarRef?
 }
 
 model Discussion {
@@ -87,21 +88,50 @@ model Post {
   lastPostDiscussion  Discussion?       @relation(name: "last_post")
   reactions           PostReactionRef[]
   replies             Post[]            @relation(name: "replies")
+  images              UploadPostRef[]
 
   @@index([id, discussionId])
   @@index([discussionId, createdAt])
   @@index([userId, createdAt])
 }
 
-model Uploads {
+model Upload {
   id               Int    @id @default(autoincrement()) @db.UnsignedInt
-  userId           Int    @map("user_id") @db.UnsignedInt
+  userId           Int    @map("user_id") @db.UnsignedInt // who uploaded first
   originalFileName String @map("original_file_name") @db.VarChar(256)
   fileSize         BigInt @map("file_size") @db.BigInt
   checksum         String @unique @db.VarChar(256)
   url              String @db.VarChar(2048)
 
   createdAt DateTime @default(now()) @map("created_at")
+
+  //ref
+  posts   UploadPostRef[]
+  avatars UploadAvatarRef[]
+}
+
+// 图片头像引用
+model UploadAvatarRef {
+  userId    Int      @id @map("user_id") @db.UnsignedInt
+  uploadId  Int      @map("upload_id") @db.UnsignedInt
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // ref
+  upload Upload @relation(fields: [uploadId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+// 图片帖子引用
+model UploadPostRef {
+  postId    Int      @map("post_id") @db.UnsignedInt
+  uploadId  Int      @map("upload_id") @db.UnsignedInt
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // ref
+  upload Upload @relation(fields: [uploadId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id])
+
+  @@id([uploadId, postId])
 }
 
 model Reaction {

@@ -41,7 +41,7 @@ export default function UserMenusDropdown({ user }) {
                 <span className='text-base text-neutral-200'>{user?.name}</span>
                 <UserAvatar
                     name={user.name}
-                    avatar={user.avatar}
+                    avatar={user.avatarUrl}
                 />
             </Menu.Button>
             <Transition as={Fragment}

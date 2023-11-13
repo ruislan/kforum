@@ -30,7 +30,7 @@ export default function UserAvatar({
                 className='rounded w-full h-full'
                 width={40}
                 height={40}
-                src={avatar}
+                src={avatar || ''}
                 alt={name} />
         </div>
     );

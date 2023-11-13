@@ -84,7 +84,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                     </div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                     <div className='flex items-center'>
-                        <UserAvatar className='mr-1.5' size='xs' name={discussion.user.name} avatar={discussion.user.avatar} />
+                        <UserAvatar className='mr-1.5' size='xs' name={discussion.user.name} avatar={discussion.user.avatarUrl} />
                         <Link href={`/u/${discussion.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{discussion.user.name}</Link>
                     </div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />

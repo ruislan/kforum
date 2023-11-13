@@ -1,9 +1,9 @@
 import { getServerSession } from 'next-auth';
 
 import authOptions from '@/lib/auth';
-import prisma from '@/lib/prisma';
 import rest from '@/lib/rest';
-import storage from '@/lib/storage';
+import { ModelError, userModel } from '@/lib/models';
+import logger from '@/lib/logger';
 
 export async function POST(request, { params }) {
     // require user
@@ -12,17 +12,21 @@ export async function POST(request, { params }) {
 
     const data = await request.formData();
     const file = data.get('file');
+    const checksum = data.get('checksum');
 
-    if (!file) return rest.badRequest({ message: 'no image' });
-
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const avatar = await storage.store(file.name, buffer);
-
-    await prisma.user.update({
-        where: { id: session.user.id, },
-        data: { avatar }
-    });
-
-    return rest.created({ data: avatar });
+    try {
+        const user = await userModel.updateAvatar({
+            userId: session.user.id,
+            file,
+            checksum
+        });
+        return rest.created({ data: user.avatarUrl });
+    } catch (err) {
+        if (err instanceof ModelError)
+            return rest.badRequest({ message: err.message });
+        else {
+            logger.warn(err);
+            return rest.badRequest();
+        }
+    }
 }

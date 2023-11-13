@@ -1,8 +1,10 @@
 import bcrypt from 'bcrypt';
 import _ from 'lodash';
+import sha1 from 'crypto-js/sha1';
 
 import prisma from './prisma';
 import pageUtils from './page-utils';
+import storage from './storage';
 
 export class ModelError extends Error { }
 
@@ -14,27 +16,14 @@ export const userModel = {
         CREDENTIAL_NOT_VALID: '用户名或密码不正确',
     },
     fields: {
-        simple: { id: true, name: true, email: true, gender: true, avatar: true },
-        passport: { id: true, name: true, email: true, gender: true, avatar: true, isAdmin: true }
+        simple: { id: true, name: true, email: true, gender: true, avatarUrl: true },
+        passport: { id: true, name: true, email: true, gender: true, avatarUrl: true, isAdmin: true }
     },
     hashPassword(pwd) {
         return bcrypt.hashSync(pwd, 10);
     },
     comparePassword(plainPwd, hashedPwd) {
         return bcrypt.compareSync(plainPwd, hashedPwd);
-    },
-    async getUser({ id, fields, ignoreSensitive = true }) {
-        const queryCondition = { where: { id } };
-        if (fields) queryCondition.select = fields;
-
-        const user = await prisma.user.findUnique(queryCondition);
-
-        if (ignoreSensitive) {
-            delete user.password;
-            delete user.phone;
-        }
-
-        return user;
     },
     async authorize({ username, password }) {
         if (!username || !password) throw new ModelError(this.errors.CREDENTIAL_NOT_VALID);
@@ -53,6 +42,19 @@ export const userModel = {
 
         const isPasswordMatched = userModel.comparePassword(password, user.password);
         if (!isPasswordMatched) throw new ModelError(this.errors.CREDENTIAL_NOT_VALID);
+
+        return user;
+    },
+    async getUser({ id, fields, ignoreSensitive = true }) {
+        const queryCondition = { where: { id } };
+        if (fields) queryCondition.select = fields;
+
+        const user = await prisma.user.findUnique(queryCondition);
+
+        if (ignoreSensitive) {
+            delete user.password;
+            delete user.phone;
+        }
 
         return user;
     },
@@ -124,6 +126,31 @@ export const userModel = {
             where: { id: userId, },
             data: { isLocked }
         });
+    },
+    async updateAvatar({ userId, file, checksum }) {
+        const savedFile = await uploadModel.create({
+            userId,
+            file,
+            checksum,
+        });
+        const result = await prisma.$transaction(async tx => {
+            await tx.uploadAvatarRef.upsert({
+                where: { userId },
+                create: {
+                    user: { connect: { id: userId } },
+                    upload: { connect: { id: savedFile.id } }
+                },
+                update: {
+                    upload: { connect: { id: savedFile.id } }
+                },
+            })
+            const user = await tx.user.update({
+                where: { id: userId, },
+                data: { avatarUrl: savedFile.url }
+            });
+            return user;
+        });
+        return result;
     }
 };
 
@@ -498,3 +525,37 @@ export const siteSettingsModel = {
         }
     }
 };
+
+export const uploadModel = {
+    errors: {
+        FILE_NOT_FOUND: '没有找到上传的文件，或者文件不完整，请重新上传',
+        FILE_IS_BROKEN: '文件已经被破坏，请重新上传',
+    },
+    async create({ userId, file, checksum }) {
+        if (!file || file.size === 0) throw new ModelError(this.errors.FILE_NOT_FOUND);
+        const uploadBytes = await file.arrayBuffer();
+        const uploadChecksum = sha1(uploadBytes.toString()).toString();
+        if (checksum !== uploadChecksum) throw new ModelError(this.errors.FILE_IS_BROKEN);
+
+        // 相同的checksum的文件，就不用存储了，节约点空间
+        let savedFile = await prisma.upload.findUnique({ where: { checksum } });
+        if (!savedFile) {
+            const originalFileName = file.name;
+            const extension = originalFileName.split('.').pop();
+            // xxx check extension?
+            const filename = `${uploadChecksum}.${extension}`;
+            const url = await storage.store(filename, uploadBytes);
+
+            savedFile = await prisma.upload.create({
+                data: {
+                    url,
+                    fileSize: file.size,
+                    userId,
+                    originalFileName,
+                    checksum: uploadChecksum
+                }
+            });
+        }
+        return savedFile;
+    },
+}

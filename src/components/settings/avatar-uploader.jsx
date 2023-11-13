@@ -1,10 +1,12 @@
 'use client';
+
 import { useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
+import sha1 from 'crypto-js/sha1';
 
 import Spinner from '../ui/spinner';
 import Button from '../ui/button';
-import toast from 'react-hot-toast';
 import FormControl from '../ui/form-control';
 import UserAvatar from '../ui/user-avatar';
 
@@ -12,7 +14,7 @@ const IMAGE_UPLOAD_SIZE_LIMIT = 1024 * 1024 * 2; // 2MB
 
 export default function AvatarUploader({ user }) {
     const { status, update } = useSession();
-    const [avatar, setAvatar] = useState(user?.avatar);
+    const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const avatarInput = useRef();
@@ -36,17 +38,28 @@ export default function AvatarUploader({ user }) {
         if (!validateFields(file)) return;
         setIsSubmitting(true);
         try {
+            const checksum = await new Promise((resolve,) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const result = e.target.result;
+                    const hash = sha1(result.toString()).toString();
+                    resolve(hash);
+                }
+                reader.readAsArrayBuffer(file);
+            });
             const formData = new FormData();
             formData.append('file', file);
+            formData.append('checksum', checksum);
+
             const res = await fetch('/api/settings/avatar', {
                 method: 'POST',
                 body: formData,
             });
             if (res.ok) {
                 const json = await res.json();
-                setAvatar(json.data);
+                setAvatarUrl(json.data);
                 toast.success('保存成功');
-                update({ avatar: json.data }); // update user session
+                update({ avatarUrl: json.data }); // update user session
             } else {
                 if (res.status === 400) {
                     const json = await res.json();
@@ -72,7 +85,7 @@ export default function AvatarUploader({ user }) {
             <UserAvatar
                 className='shadow-lg mb-3'
                 size='2xl'
-                avatar={avatar}
+                avatar={avatarUrl}
                 name={user.name}
             />
             <div className='flex items-center gap-2'>

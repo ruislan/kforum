@@ -14,8 +14,8 @@ async function initBase() {
     const admin = {
         id: 1, name: 'admin', email: 'admin@kforum.com',
         password: passwordHash, isAdmin: true, gender: 'MAN',
-        avatar: 'https://api.dicebear.com/7.x/notionists/svg?seed=admin&size=96',
         bio: 'I am the admin', createdAt: new Date(), updatedAt: new Date(),
+        avatarUrl: 'https://api.dicebear.com/7.x/notionists/svg?seed=admin&size=96',
     };
     await db.user.upsert({ where: { id: admin.id }, create: admin, update: admin });
     console.log('已完成管理员初始化. User: admin, Pass: 123123');
@@ -99,7 +99,7 @@ async function initFaker() {
             password: passwordHash,
             isAdmin: false,
             gender,
-            avatar: `https://api.dicebear.com/7.x/notionists/svg?seed=${name}&size=96`,
+            avatarUrl: `https://api.dicebear.com/7.x/notionists/svg?seed=${name}&size=96`,
             bio: casual.words(6),
             createdAt: new Date(),
             updatedAt: new Date(),
