@@ -108,6 +108,8 @@ model Upload {
   //ref
   posts   UploadPostRef[]
   avatars UploadAvatarRef[]
+
+  @@index([url])
 }
 
 // 图片头像引用

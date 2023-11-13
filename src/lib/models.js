@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import _ from 'lodash';
-import sha1 from 'crypto-js/sha1';
+import CryptoJS from 'crypto-js';
 
 import prisma from './prisma';
 import pageUtils from './page-utils';
@@ -156,8 +156,8 @@ export const userModel = {
 
 export const categoryModel = {
     errors: {
-        SCHEMA_NAME: '名称是必须的，不小于 2 个字符，不大于 20 个字符',
-        SCHEMA_SLUG: 'slug是必须的，只能为小写或数字，不小于 2 个字符，不大于 20 个字符',
+        SCHEMA_NAME: '名称是必填的，不小于 2 个字符，不大于 20 个字符',
+        SCHEMA_SLUG: 'slug是必填的，只能为小写或数字，不小于 2 个字符，不大于 20 个字符',
         SCHEMA_SEQUENCE: '顺序只能是大于 0 的数字',
         UNIQUE_SLUG: 'slug 已经在使用中',
         CATEGORY_NOT_EMPTY: '该分类下还有话题',
@@ -224,7 +224,7 @@ export const categoryModel = {
 
 export const postModel = {
     errors: {
-        SCHEMA_CONTENT: '内容是必须的，不小于 2 个字符。',
+        SCHEMA_CONTENT: '内容是必填的，不小于 2 个字符。',
         DISCUSSION_NOT_FOUND: '请指定要回复的话题',
         DISCUSSION_IS_LOCKED: '话题已经被锁定',
         REPLY_TO_POST_NOT_FOUND: '回复的帖子已经删除或不存在',
@@ -305,7 +305,21 @@ export const postModel = {
         if (!post) throw new ModelError(this.errors.POST_NOT_FOUND);
         if (!this.checkPermission(user, post)) throw new ModelError(this.errors.NO_PERMISSION);
 
-        await prisma.post.update({ where: { id }, data: { content, text } });
+        // 检查 upload 的引用情况
+        const images = uploadModel.getImageUrls(content);
+        await prisma.$transaction(async tx => {
+            await tx.uploadPostRef.deleteMany({ where: { postId: post.id } });
+            if (images?.length > 0) {
+                const uploads = await tx.upload.findMany({ where: { url: { in: images } } });
+                await tx.uploadPostRef.createMany({
+                    data: uploads.map(u => ({
+                        uploadId: u.id,
+                        postId: post.id
+                    }))
+                });
+            }
+            await tx.post.update({ where: { id }, data: { content, text } });
+        });
     },
     async delete({ user, id }) {
         const post = await prisma.post.findUnique({ where: { id }, include: { discussion: true } });
@@ -317,10 +331,13 @@ export const postModel = {
             await tx.PostReactionRef.deleteMany({ where: { postId: post.id } });// delete reactions
             // 不用更新所有回复这贴的引用为null, 外键约束会自动设置为null
             if (isFirstPost) { // delete all
+                // TODO 处理删除所有该讨论 POST 的 Image 脱钩（用数据库级联试试？）
                 await tx.post.deleteMany({ where: { discussionId: post.discussion.id } });
                 await tx.discussion.delete({ where: { id: post.discussion.id } });
             } else {
                 await tx.post.delete({ where: { id: post.id } }); // delete one
+                // 删除此贴的图片引用
+                await tx.uploadPostRef.deleteMany({ where: { postId: post.id } });
             }
         });
     },
@@ -397,6 +414,11 @@ export const postModel = {
 };
 
 export const discussionModel = {
+    errors: {
+        SCHEMA_TITLE: '标题是必填的，不小于 2 个字符。',
+        SCHEMA_CONTENT: '内容是必填的，不小于 2 个字符。',
+        SCHEMA_CATEGORY: '分类是必填的，请选择一个分类',
+    },
     async getDiscussions({
         categoryId = null, // 如果有categoryId说明是某个分类下面的全部话题，则无需在每个话题上携带自己的分类
         page = 1,
@@ -491,6 +513,54 @@ export const discussionModel = {
         });
         d.firstPost.reactions.sort((a, b) => b.count - a.count);
         return d;
+    },
+    validate({ title, text, content, categorySlug }) {
+        if (!title || title.length < 2) return { error: true, message: this.errors.SCHEMA_TITLE };
+        if (!content || content.length < 2) return { error: true, message: this.errors.SCHEMA_CONTENT };
+        if (!text || text.length < 2) return { error: true, message: this.errors.SCHEMA_CONTENT };
+        if (!categorySlug) return { error: true, message: this.errors.SCHEMA_CATEGORY };
+        return { error: false };
+    },
+    async create({ user, title, text, content, categorySlug, ip }) {
+        const cat = await prisma.category.findUnique({ where: { slug: categorySlug } });
+        if (!cat) throw new ModelError(this.errors.SCHEMA_CATEGORY);
+
+        const images = uploadModel.getImageUrls(content);
+
+        const data = await prisma.$transaction(async tx => {
+            let discussion = await tx.discussion.create({
+                data: {
+                    title, categoryId: cat.id, userId: user.id,
+                }
+            });
+            const post = await tx.post.create({
+                data: {
+                    content, text, discussionId: discussion.id, type: 'text',
+                    userId: user.id, ip,
+                }
+            });
+
+            // connect upload to post
+            if (images?.length > 0) {
+                const uploads = await tx.upload.findMany({ where: { url: { in: images } } });
+                await tx.uploadPostRef.createMany({
+                    data: uploads.map(u => ({
+                        uploadId: u.id,
+                        postId: post.id
+                    }))
+                });
+            }
+
+            discussion = await tx.discussion.update({
+                where: { id: discussion.id },
+                data: { firstPostId: post.id, lastPostId: post.id }
+            });
+
+            discussion.posts = [{ ...post }];
+            return discussion;
+        });
+
+        return data;
     }
 };
 
@@ -531,10 +601,15 @@ export const uploadModel = {
         FILE_NOT_FOUND: '没有找到上传的文件，或者文件不完整，请重新上传',
         FILE_IS_BROKEN: '文件已经被破坏，请重新上传',
     },
+    getImageUrls(content) {
+        if (!content) return [];
+        return content.match(/\/uploads\/[^"]+/g);
+    },
     async create({ userId, file, checksum }) {
         if (!file || file.size === 0) throw new ModelError(this.errors.FILE_NOT_FOUND);
         const uploadBytes = await file.arrayBuffer();
-        const uploadChecksum = sha1(uploadBytes.toString()).toString();
+        const wordArray = CryptoJS.lib.WordArray.create(uploadBytes);
+        const uploadChecksum = CryptoJS.SHA1(wordArray).toString();
         if (checksum !== uploadChecksum) throw new ModelError(this.errors.FILE_IS_BROKEN);
 
         // 相同的checksum的文件，就不用存储了，节约点空间

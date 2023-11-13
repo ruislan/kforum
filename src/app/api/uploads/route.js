@@ -20,7 +20,9 @@ export async function POST(request, { params }) {
         });
         return rest.created({
             data: {
-                userId: session.user?.id,
+                id: savedFile.id,
+                userId: savedFile.userId,
+                originalFileName: savedFile.originalFileName,
                 url: savedFile.url,
                 fileSize: savedFile.fileSize
             }

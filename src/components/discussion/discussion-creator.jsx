@@ -52,7 +52,12 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
         try {
             const res = await fetch('/api/discussions', {
                 method: 'POST',
-                body: JSON.stringify({ title, content: JSON.stringify(contentJson), text: contentText, categorySlug }),
+                body: JSON.stringify({
+                    title,
+                    content: JSON.stringify(contentJson),
+                    text: contentText,
+                    categorySlug,
+                }),
                 headers: { 'Content-Type': 'application/json' },
             });
             if (res.ok) {
@@ -99,10 +104,14 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
                         minLength={2}
                         endEnhancer={<span className='text-xs ml-2 text-neutral-500'>{title?.length || 0}/300</span>}
                     />
-                    <Tiptap kind='default' content={''} onUpdate={({ editor }) => {
-                        setContentJson(editor.getJSON());
-                        setContentText(editor.getText());
-                    }} />
+                    <Tiptap
+                        kind='default'
+                        content={''}
+                        onUpdate={({ editor }) => {
+                            setContentJson(editor.getJSON());
+                            setContentText(editor.getText());
+                        }}
+                    />
                     {error && <span className='text-sm text-red-500'>{error}</span>}
                     <div className='flex justify-end'>
                         <Button type='submit' isLoading={isSubmitting} disabled={contentText?.length <= 0}>发布</Button>

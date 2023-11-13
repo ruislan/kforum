@@ -1,7 +1,7 @@
 'use client';
 import { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import sha1 from 'crypto-js/sha1';
+import CryptoJS from 'crypto-js';
 
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -43,7 +43,8 @@ function ImageActionButton({ isActive, onUploaded }) {
         const reader = new FileReader();
         reader.onload = (e) => {
           const result = e.target.result;
-          const hash = sha1(result.toString()).toString();
+          const wordArray = CryptoJS.lib.WordArray.create(result);
+          const hash = CryptoJS.SHA1(wordArray).toString();
           resolve(hash);
         }
         reader.readAsArrayBuffer(file);
@@ -100,7 +101,6 @@ function ActionButton({ isActive, onClick, ...rest }) {
 }
 
 function MenuBar({ editor, endActionEnhancer }) {
-  const limit = 500;
   if (!editor) return null;
   return (
     <div className='flex items-center justify-between p-2'>
@@ -160,8 +160,17 @@ function MenuBar({ editor, endActionEnhancer }) {
           <BlockQuote />
         </ActionButton>
         <ImageActionButton
+          // 如果我传了两个相同图片，该如何处理？
           onUploaded={(data) => {
-            editor.chain().focus().setImage({ src: data.url }).run()
+            editor
+              .chain()
+              .focus()
+              .setImage({
+                src: data.url,
+                alt: data.originalFileName,
+                title: data.originalFileName
+              })
+              .run();
           }}
           isActive={true}
         />
@@ -192,7 +201,7 @@ export function toHTML(stringContent) {
   }
 }
 
-export default function Tiptap({ content, endActionEnhancer, onCreate = () => { }, onUpdate = () => { } }) {
+export default function Tiptap({ content, endActionEnhancer, onCreate, onUpdate }) {
   const editor = useEditor({
     extensions,
     editorProps: {
@@ -201,14 +210,21 @@ export default function Tiptap({ content, endActionEnhancer, onCreate = () => { 
       },
     },
     content,
-    onCreate,
-    onUpdate
+    onCreate: onCreate ?? (() => { }),
+    onUpdate: onUpdate ?? (() => { }),
   });
 
   return (
     <div className='flex flex-col p-0 border border-solid border-neutral-700 bg-neutral-800 rounded-md focus-within:border-neutral-400'>
-      <EditorContent editor={editor} />
-      <MenuBar editor={editor} endActionEnhancer={endActionEnhancer} />
+      {editor ?
+        <>
+          <EditorContent editor={editor} />
+          <MenuBar editor={editor} endActionEnhancer={endActionEnhancer} />
+        </> : <>
+          {/* <textarea></textarea> XXX 在editor加载出来之前，显示textarea，让用户可以输入内容*/}
+        </>
+      }
+
     </div>
   );
 };
