@@ -27,7 +27,7 @@ model User {
   // ref
   discussions Discussion[]
   posts       Post[]
-  reactions   PostReactionRef[]
+  reactions   ReactionPostRef[]
   avatar      UploadAvatarRef?
 }
 
@@ -86,9 +86,9 @@ model Post {
   discussion          Discussion        @relation(name: "posts", fields: [discussionId], references: [id])
   firstPostDiscussion Discussion?       @relation(name: "first_post")
   lastPostDiscussion  Discussion?       @relation(name: "last_post")
-  reactions           PostReactionRef[]
+  reactions           ReactionPostRef[]
   replies             Post[]            @relation(name: "replies")
-  images              UploadPostRef[]
+  uploads             UploadPostRef[]
 
   @@index([id, discussionId])
   @@index([discussionId, createdAt])
@@ -101,7 +101,7 @@ model Upload {
   originalFileName String @map("original_file_name") @db.VarChar(256)
   fileSize         BigInt @map("file_size") @db.BigInt
   checksum         String @unique @db.VarChar(256)
-  url              String @db.VarChar(2048)
+  url              String @db.VarChar(512) // 这个URL 通常是'/upload'开头
 
   createdAt DateTime @default(now()) @map("created_at")
 
@@ -120,7 +120,7 @@ model UploadAvatarRef {
 
   // ref
   upload Upload @relation(fields: [uploadId], references: [id])
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade) // deleting user will also delete all uploads refs
 }
 
 // 图片帖子引用
@@ -131,7 +131,7 @@ model UploadPostRef {
 
   // ref
   upload Upload @relation(fields: [uploadId], references: [id])
-  post   Post   @relation(fields: [postId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade) // deleting post will also delete all uploads refs
 
   @@id([uploadId, postId])
 }
@@ -145,12 +145,13 @@ model Reaction {
   createdAt DateTime @default(now()) @map("created_at")
 
   // ref
-  posts PostReactionRef[]
+  posts ReactionPostRef[]
 }
 
-model PostReactionRef {
-  postId     Int      @map("post_id") @db.UnsignedInt
+// 反馈帖子引用
+model ReactionPostRef {
   reactionId Int      @map("reaction_id") @db.UnsignedInt
+  postId     Int      @map("post_id") @db.UnsignedInt
   userId     Int      @map("user_id") @db.UnsignedInt
   createdAt  DateTime @default(now()) @map("created_at")
 
@@ -158,7 +159,7 @@ model PostReactionRef {
   reaction Reaction @relation(fields: [reactionId], references: [id])
   user     User     @relation(fields: [userId], references: [id])
 
-  @@id([postId, reactionId, userId])
+  @@id([reactionId, postId, userId])
 }
 
 model Category {
@@ -183,16 +184,14 @@ model Tag {
   createdAt DateTime @default(now()) @map("created_at")
 }
 
-// Site Menu
-model SiteNavMenus {
-  name     String  @id @db.VarChar(64)
-  url      String  @default("#") @db.VarChar(2048)
-  isOpen   Boolean @default(false) @map("is_open") // open in another tab, taget="_blank"
-  sequence Int     @default(0) @db.UnsignedInt
+model SiteNavMenu {
+  name          String  @id @db.VarChar(64)
+  url           String  @default("#") @db.VarChar(2048)
+  isTargetBlank Boolean @default(false) @map("is_target_blank") // open in another tab, taget="_blank"
+  sequence      Int     @default(0) @db.UnsignedInt
 }
 
-// Site Settings
-model SiteSettings {
+model SiteSetting {
   id          Int      @id @default(autoincrement()) @db.UnsignedInt
   dataType    String   @map("data_type") @db.VarChar(16) // string(input), text(textarea), number, json, html, xml, etc...
   key         String   @unique @db.VarChar(64)

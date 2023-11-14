@@ -1,9 +1,9 @@
-import { siteSettingsModel } from '@/lib/models';
+import { siteSettingModel } from '@/lib/models';
 import Box from './ui/box';
 import { HeadingSmall } from './ui/heading';
 
 async function getSiteAbout() {
-    return await siteSettingsModel.getFieldValue(siteSettingsModel.fields.siteAbout);
+    return await siteSettingModel.getFieldValue(siteSettingModel.fields.siteAbout);
 }
 
 export default async function About() {

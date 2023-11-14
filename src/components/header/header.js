@@ -8,7 +8,7 @@ import UserMenus from './user-menus';
 import { Plus } from '../icons';
 
 async function getMenus() {
-    return await prisma.siteNavMenus.findMany({ orderBy: { sequence: 'asc' } });
+    return await prisma.siteNavMenu.findMany({ orderBy: { sequence: 'asc' } });
 }
 
 export default async function Header() {

@@ -32,7 +32,7 @@ async function initBase() {
         }
     ];
     for (const item of siteSettings) {
-        await db.siteSettings.upsert({ where: { id: item.id }, create: item, update: item });
+        await db.siteSetting.upsert({ where: { id: item.id }, create: item, update: item });
     }
     console.log('已完成站点信息初始化.');
     // init site nav menus
@@ -40,7 +40,7 @@ async function initBase() {
         { name: '首页', url: '/', sequence: 0 },
     ];
     for (const item of navMenus) {
-        await db.siteNavMenus.upsert({ where: { name: item.name }, create: item, update: item });
+        await db.siteNavMenu.upsert({ where: { name: item.name }, create: item, update: item });
     }
     console.log('已完成站点菜单初始化.');
 
@@ -186,7 +186,7 @@ async function initFaker() {
 }
 
 async function cleanDb() {
-    await db.postReactionRef.deleteMany({});
+    await db.reactionPostRef.deleteMany({});
     await db.post.deleteMany({});
     await db.discussion.deleteMany({});
     await db.user.deleteMany({ where: { id: { gt: 1 } } });

@@ -1,13 +1,13 @@
 import dynamic from 'next/dynamic';
 
-import { siteSettingsModel } from '@/lib/models';
+import { siteSettingModel } from '@/lib/models';
 import Box from '@/components/ui/box';
 import { HeadingSmall } from '@/components/ui/heading';
 
 const SiteForm = dynamic(() => import('@/components/admin-panel/site-form'));
 
 async function getSiteSettings() {
-    return siteSettingsModel.getSettings();
+    return siteSettingModel.getSettings();
 }
 
 export default async function Page() {

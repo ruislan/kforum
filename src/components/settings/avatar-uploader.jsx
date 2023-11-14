@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
-import sha1 from 'crypto-js/sha1';
+import CryptoJS from 'crypto-js';
 
 import Spinner from '../ui/spinner';
 import Button from '../ui/button';
@@ -42,7 +42,8 @@ export default function AvatarUploader({ user }) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const result = e.target.result;
-                    const hash = sha1(result.toString()).toString();
+                    const wordArray = CryptoJS.lib.WordArray.create(result);
+                    const hash = CryptoJS.SHA1(wordArray).toString();
                     resolve(hash);
                 }
                 reader.readAsArrayBuffer(file);

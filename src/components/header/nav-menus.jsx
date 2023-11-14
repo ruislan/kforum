@@ -9,8 +9,8 @@ export default function NavMenus({ menus }) {
     const pathname = usePathname() || '/';
     return (
         <div className='flex flex-wrap items-center gap-4'>
-            {menus.map(({ url, name }) => {
-                return <Link key={url} href={url}
+            {menus.map(({ url, name, isTargetBlank }) => {
+                return <Link key={url} href={url} target={isTargetBlank ? '_blank' : '_self'}
                     className={clsx(
                         'font-semibold transition-all hover:text-neutral-100 no-underline',
                         pathname === url ? 'text-neutral-100' : 'text-neutral-400'

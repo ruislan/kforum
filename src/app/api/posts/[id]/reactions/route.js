@@ -18,7 +18,7 @@ export async function GET(request, { params }) {
         orderBy: { position: 'asc' }
     });
 
-    const userReactions = await prisma.postReactionRef.findMany({
+    const userReactions = await prisma.reactionPostRef.findMany({
         where: {
             postId, userId: session.user.id
         }
@@ -40,14 +40,14 @@ export async function PUT(request, { params }) {
     // update reaction
     await prisma.$transaction(async (tx) => {
         const data = { postId, reactionId, userId: session.user.id };
-        const ref = await tx.postReactionRef.findUnique({ where: { postId_reactionId_userId: data } });
+        const ref = await tx.reactionPostRef.findUnique({ where: { reactionId_postId_userId: data } });
         let inc = 0;
         if (isReact && !ref) {
-            await tx.postReactionRef.create({ data }); // 没有就创建一个
+            await tx.reactionPostRef.create({ data }); // 没有就创建一个
             inc = 1;
         }
         if (!isReact && ref) {
-            await tx.postReactionRef.delete({ where: { postId_reactionId_userId: data } }); // 有就删除
+            await tx.reactionPostRef.delete({ where: { reactionId_postId_userId: data } }); // 有就删除
             inc = -1;
         }
         // isReact && ref 和 !isReact && !ref 这两个情况不用处理

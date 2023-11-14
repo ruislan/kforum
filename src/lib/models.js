@@ -281,16 +281,31 @@ export const postModel = {
                     replyPostId
                 }
             });
+
+            // connect upload to post
+            const images = uploadModel.getImageUrls(content);
+            if (images?.length > 0) {
+                const uploads = await tx.upload.findMany({ where: { url: { in: images } } });
+                await tx.uploadPostRef.createMany({
+                    data: uploads.map(u => ({
+                        uploadId: u.id,
+                        postId: post.id
+                    }))
+                });
+            }
+
             const updateData = {
                 lastPostId: post.id,
                 lastPostedAt: new Date(),
                 postCount: { increment: 1 },
             };
             if (!sessionUserPosted) updateData.userCount = { increment: 1 };
+
             await tx.discussion.update({
                 where: { id: discussion.id },
                 data: updateData
             });
+
             return post;
         });
 
@@ -328,16 +343,15 @@ export const postModel = {
 
         const isFirstPost = post.discussion.firstPostId === post.id;
         await prisma.$transaction(async tx => {
-            await tx.PostReactionRef.deleteMany({ where: { postId: post.id } });// delete reactions
+            await tx.reactionPostRef.deleteMany({ where: { postId: post.id } });// delete reactions
             // 不用更新所有回复这贴的引用为null, 外键约束会自动设置为null
             if (isFirstPost) { // delete all
-                // TODO 处理删除所有该讨论 POST 的 Image 脱钩（用数据库级联试试？）
+                // XXX 所有讨论的帖子的图片引用会级联删除
                 await tx.post.deleteMany({ where: { discussionId: post.discussion.id } });
                 await tx.discussion.delete({ where: { id: post.discussion.id } });
             } else {
+                // XXX 此贴的图片引用会级联删除
                 await tx.post.delete({ where: { id: post.id } }); // delete one
-                // 删除此贴的图片引用
-                await tx.uploadPostRef.deleteMany({ where: { postId: post.id } });
             }
         });
     },
@@ -384,7 +398,7 @@ export const postModel = {
 
         // avoid n + 1, batch load Posts reactions and reaction stats;
         const postIds = posts.map(p => p.id);
-        const refs = await prisma.PostReactionRef.groupBy({
+        const refs = await prisma.reactionPostRef.groupBy({
             by: ['reactionId', 'postId'],
             where: {
                 postId: { in: postIds }
@@ -489,7 +503,7 @@ export const discussionModel = {
         if (!d) return null;
 
         // avoid n+1, load first post reactions and stats
-        const refs = await prisma.PostReactionRef.groupBy({
+        const refs = await prisma.reactionPostRef.groupBy({
             by: ['reactionId', 'postId'],
             where: {
                 postId: d.firstPost.id
@@ -564,24 +578,24 @@ export const discussionModel = {
     }
 };
 
-export const siteSettingsModel = {
+export const siteSettingModel = {
     fields: {
         siteAbout: 'site_about',
     },
     async updateSettings(settings) {
         await prisma.$transaction(
-            settings.map(s => prisma.siteSettings.update({
+            settings.map(s => prisma.siteSetting.update({
                 where: { id: s.id },
                 data: { value: s.value }
             }))
         );
     },
     async getSettings() {
-        return await prisma.siteSettings.findMany();
+        return await prisma.siteSetting.findMany();
     },
     async getFieldValue(field, defaultValue) {
         if (!field) return defaultValue;
-        const item = await prisma.siteSettings.findUnique({ where: { key: field } });
+        const item = await prisma.siteSetting.findUnique({ where: { key: field } });
         switch (item.dataType) {
             case 'text':
             case 'html':

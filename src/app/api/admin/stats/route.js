@@ -12,7 +12,7 @@ export async function GET(request, { params }) {
     const fetchStatsUsers = prisma.user.count();
     const fetchStatsDiscussions = prisma.discussion.count();
     const fetchStatsPosts = prisma.post.count();
-    const fetchStatsReactions = prisma.postReactionRef.count();
+    const fetchStatsReactions = prisma.reactionPostRef.count();
     const [admins, users, discussions, posts, reactions] = await Promise.all([
         fetchStatsAdmins,
         fetchStatsUsers,

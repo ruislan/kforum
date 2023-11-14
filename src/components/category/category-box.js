@@ -19,7 +19,7 @@ export default async function CategoryBox() {
     return (
         <Box className='flex flex-col'>
             <div className='flex items-center gap-4 mb-3'>
-                <HeadingSmall tight>讨论分类</HeadingSmall>
+                <HeadingSmall tight>分类</HeadingSmall>
                 <ActionPlus />
             </div>
             <div className='flex flex-col gap-1'>
