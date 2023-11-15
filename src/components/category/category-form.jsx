@@ -167,7 +167,7 @@ export default function CategoryForm({ category }) {
                     onChange={e => setName(e.target.value)}
                 />
             </FormControl>
-            <FormControl title='slug' subtitle='用于 URL ，只支持小写因为字符和数字'>
+            <FormControl title='slug' subtitle='用于 URL ，只支持小写英文字符和数字'>
                 <Input
                     value={slug}
                     minLength={2}

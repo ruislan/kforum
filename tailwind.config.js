@@ -13,6 +13,10 @@ const proseCss = {
       marginTop: '2px',
       marginBottom: '2px',
     },
+    img: {
+      maxHeight: '700px',
+      margin: '2px auto',
+    }
   }
 };
 module.exports = {

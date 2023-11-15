@@ -62,7 +62,7 @@ export default function DiscussionListItem({ discussion }) {
                 </div>
                 {discussion.poster ?
                     <div className='relative flex w-full justify-center'>
-                        <Image className='max-w-full' width='800' height='680' src={discussion.poster.url} alt={discussion.poster.originalFileName} />
+                        <img className='max-h-[496px]' src={discussion.poster.url} alt={discussion.poster.originalFileName} />
                     </div> :
                     <ProseContent className='max-h-64 overflow-hidden content-mask-b' content={discussion.firstPost?.text} />
                 }
