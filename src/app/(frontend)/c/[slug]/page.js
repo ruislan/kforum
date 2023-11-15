@@ -40,7 +40,7 @@ export default async function Page({ params }) {
       <div className='flex flex-col w-80 gap-4'>
         <CategoryInfo category={category} />
         <Box className='flex flex-col gap-3'><ActionCreate category={category} /></Box>
-        <CategoryBox />
+        <CategoryBox isSticky />
       </div>
     </div>
   )

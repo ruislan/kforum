@@ -7,17 +7,18 @@ import Box from '../ui/box';
 import { HeadingSmall } from '../ui/heading';
 import { Blank as BlankIcon } from '../icons';
 import ActionPlus from './action-plus';
+import clsx from 'clsx';
 
 async function getCategories() {
     return await categoryModel.getCategories();
 }
 
 // this is a server component
-export default async function CategoryBox() {
+export default async function CategoryBox({ isSticky }) {
     const categories = await getCategories();
     if (!categories) return null;
     return (
-        <Box className='flex flex-col'>
+        <Box className={clsx('flex flex-col', isSticky && 'sticky top-16')}>
             <div className='flex items-center gap-4 mb-3'>
                 <HeadingSmall tight>分类</HeadingSmall>
                 <ActionPlus />

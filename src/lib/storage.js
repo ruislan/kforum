@@ -1,5 +1,6 @@
 'use strict';
 import fs from 'fs';
+import logger from './logger';
 
 // XXX maybe we can try a cloud storage like qiniu, superbase, s3, etc.
 class LocalStorage {
@@ -20,14 +21,14 @@ class LocalStorage {
         if (!fs.existsSync(dir)) await fs.promises.mkdir(dir, { recursive: true });
         await fs.promises.writeFile(`${dir}/${filename}`, buffer);
         const filePath = `${this.relativePathBase}/${year}/${month}/${day}/${filename}`;
-        if (this.isDebug) console.log(`storage:local File ${filename} is store to dir ${dir}, relative path is ${filePath} .`);
+        if (this.isDebug) logger.info(`storage:local File ${filename} is store to dir ${dir}, relative path is ${filePath} .`);
         return filePath;
     }
     async delete(filename) {
         const path = filename.substring(this.relativePathBase.length);
         const dir = `${this.storeBase}${path}`;
         await fs.promises.unlink(dir);
-        if (this.isDebug) console.log(`storage:local File ${filename} is deleted`);
+        if (this.isDebug) logger.info(`storage:local File ${filename} is deleted`);
     }
 }
 

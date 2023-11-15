@@ -28,8 +28,7 @@ function ActionDelete({ id, onError}) {
                     const json = await res.json();
                     runIfFn(onError, json.message);
                 } else if (res.status === 401) {
-                    setError();
-                    runIfFn(onError, '您的登录以过期，请重新登录');
+                    runIfFn(onError, '您的登录已过期，请重新登录');
                 } else {
                     throw new Error();
                 }
@@ -114,7 +113,7 @@ export default function CategoryForm({ category }) {
                 const json = await res.json();
                 setError(json.message);
             } else if (res.status === 401) {
-                setError('您的登录以过期，请重新登录');
+                setError('您的登录已过期，请重新登录');
             } else {
                 throw new Error();
             }
@@ -134,7 +133,7 @@ export default function CategoryForm({ category }) {
                 const json = await res.json();
                 setError(json.message);
             } else if (res.status === 401) {
-                setError('您的登录以过期，请重新登录');
+                setError('您的登录已过期，请重新登录');
             } else {
                 throw new Error();
             }

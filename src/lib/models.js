@@ -658,4 +658,22 @@ export const uploadModel = {
         }
         return savedFile;
     },
+    async cleanup() {
+        // 清理的图片通常是不能 PostRef, AvatarRef，Discussion Poster 中没有的图片
+        // 清理掉数据库记录
+        // 清理掉文件
+        // 为了避免清理过大，我们一次最多只处理 1000 条记录
+        const uploads = await prisma.upload.findMany({
+            take: 1000,
+            where: {
+                discussion: { none: {} },
+                posts: { none: {} },
+                avatars: { none: {} },
+            }
+        });
+        const data = await prisma.upload.deleteMany({ where: { id: { in: uploads.map(u => u.id) } } });
+        if (data.count > 0) await Promise.all(uploads.map(u => u.url).map(url => storage.delete(url)));
+        data.size = uploads.reduce((prev, curr) => prev + (Number(curr.fileSize) || 0), 0);
+        return data;
+    }
 }

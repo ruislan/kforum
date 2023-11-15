@@ -108,9 +108,9 @@ model Upload {
   createdAt DateTime @default(now()) @map("created_at")
 
   //ref
-  posts      UploadPostRef[]
-  avatars    UploadAvatarRef[]
-  discussion Discussion[]
+  posts       UploadPostRef[]
+  avatars     UploadAvatarRef[]
+  discussions Discussion[]
 
   @@index([url])
 }
@@ -126,7 +126,7 @@ model UploadAvatarRef {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade) // deleting user will also delete all uploads refs
 }
 
-// 图片帖子引用
+// 图片帖子引用 多对多
 model UploadPostRef {
   uploadId  Int      @map("upload_id") @db.UnsignedInt
   postId    Int      @map("post_id") @db.UnsignedInt

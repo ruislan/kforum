@@ -61,7 +61,7 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
                     const json = await res.json();
                     setError(json.message);
                 } else if (res.status === 401) {
-                    setError('您的登录以过期，请重新登录');
+                    setError('您的登录已过期，请重新登录');
                 } else {
                     throw new Error();
                 }

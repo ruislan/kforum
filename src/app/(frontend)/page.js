@@ -39,7 +39,7 @@ export default async function Home() {
       <div className='flex flex-col w-80 gap-4'>
         <About />
         <Box className='flex flex-col gap-3'><ActionCreate category={null} /></Box>
-        <CategoryBox />
+        <CategoryBox isSticky />
       </div>
     </div>
   )

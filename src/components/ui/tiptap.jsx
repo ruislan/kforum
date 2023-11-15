@@ -63,7 +63,7 @@ function ImageActionButton({ isActive, onUploaded }) {
           const json = await res.json();
           toast.error(json.message);
         } else if (res.status === 401) {
-          toast.error('您的登录以过期，请重新登录');
+          toast.error('您的登录已过期，请重新登录');
         } else {
           throw new Error();
         }
