@@ -5,6 +5,7 @@ import CryptoJS from 'crypto-js';
 import prisma from './prisma';
 import pageUtils from './page-utils';
 import storage from './storage';
+import logger from './logger';
 
 export class ModelError extends Error { }
 
@@ -438,7 +439,8 @@ export const discussionModel = {
         page = 1,
         isStickyFirst = false,
         isOldFirst = true,
-        withFirstPost = false,
+        withPoster = true, // 带海报
+        withFirstPost = false, // 带首贴
     }) {
         const orderBy = []; // 注意 orderBy 的顺序
         if (isStickyFirst) orderBy.push({ isSticky: 'desc' }); // XXX 默认顺序下：SQLite 会将false放前面，因为False=0,True=1。其他 DB 可能会将True排前面。
@@ -451,6 +453,7 @@ export const discussionModel = {
             }
         };
         if (withFirstPost) queryCondition.include.firstPost = true;
+        if (withPoster) queryCondition.include.poster = true;
 
         if (categoryId) {
             queryCondition.where = { categoryId };
@@ -554,6 +557,7 @@ export const discussionModel = {
                 }
             });
 
+            let poster = null;
             // connect upload to post
             if (images?.length > 0) {
                 const uploads = await tx.upload.findMany({ where: { url: { in: images } } });
@@ -563,11 +567,18 @@ export const discussionModel = {
                         postId: post.id
                     }))
                 });
+
+                // first page is the poster
+                poster = uploads[0];
             }
 
             discussion = await tx.discussion.update({
                 where: { id: discussion.id },
-                data: { firstPostId: post.id, lastPostId: post.id }
+                data: {
+                    firstPostId: post.id,
+                    lastPostId: post.id,
+                    posterId: poster?.id, // maybe null
+                }
             });
 
             discussion.posts = [{ ...post }];

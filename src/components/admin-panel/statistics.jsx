@@ -52,6 +52,7 @@ export default function Statistics() {
                         <Stats name='话题' value={stats.discussions || '-'} />
                         <Stats name='帖子' value={stats.posts || '-'} />
                         <Stats name='反馈' value={stats.reactions || '-'} />
+                        <Stats name='图片' value={stats.uploads || '-'} />
                     </>
                 }
             </div>

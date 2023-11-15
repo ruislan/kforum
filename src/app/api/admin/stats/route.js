@@ -13,13 +13,15 @@ export async function GET(request, { params }) {
     const fetchStatsDiscussions = prisma.discussion.count();
     const fetchStatsPosts = prisma.post.count();
     const fetchStatsReactions = prisma.reactionPostRef.count();
-    const [admins, users, discussions, posts, reactions] = await Promise.all([
+    const fetchStatsUploads = prisma.upload.count();
+    const [admins, users, discussions, posts, reactions, uploads] = await Promise.all([
         fetchStatsAdmins,
         fetchStatsUsers,
         fetchStatsDiscussions,
         fetchStatsPosts,
-        fetchStatsReactions
+        fetchStatsReactions,
+        fetchStatsUploads,
     ]);
-    const data = { admins, users, discussions, posts, reactions };
+    const data = { admins, users, discussions, posts, reactions, uploads };
     return rest.ok({ data });
 }

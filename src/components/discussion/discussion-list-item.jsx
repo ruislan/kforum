@@ -11,13 +11,6 @@ import Tag from '../ui/tag';
 import ProseContent from '../ui/prose-content';
 import UserAvatar from '../ui/user-avatar';
 
-/*
-    line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
-    line 2: title / tags
-    line 3: post content
-    line 4: discussion meta: replies, reactions, participants
-    line 5: actions: reply, edit, delete, share, follow, favorite, report
-*/
 export default function DiscussionListItem({ discussion }) {
     const c = discussion.category;
     if (!discussion) return null;
@@ -47,7 +40,12 @@ export default function DiscussionListItem({ discussion }) {
                             name={discussion.user?.name}
                             avatar={discussion.user?.avatarUrl}
                         />
-                        <Link href={`/u/${discussion.user?.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{discussion.user?.name}</Link>
+                        <Link
+                            href={`/u/${discussion.user?.name}`}
+                            onClick={e => e.stopPropagation()}
+                            className='text-xs hover:underline underline-offset-2 cursor-pointer'>
+                            u/{discussion.user?.name}
+                        </Link>
                     </div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                     <span className='text-xs'>{dateUtils.fromNow(discussion.createdAt)}</span>
@@ -62,7 +60,12 @@ export default function DiscussionListItem({ discussion }) {
                         <Tag>Great</Tag>
                     </div> */}
                 </div>
-                <ProseContent className='max-h-64 overflow-hidden content-mask-b' content={discussion.firstPost?.content} />
+                {discussion.poster ?
+                    <div className='relative flex w-full justify-center'>
+                        <Image className='max-w-full' width='800' height='680' src={discussion.poster.url} alt={discussion.poster.originalFileName} />
+                    </div> :
+                    <ProseContent className='max-h-64 overflow-hidden content-mask-b' content={discussion.firstPost?.text} />
+                }
                 <div className='text-xs inline-flex items-center text-gray-300 mt-3'>
                     <div className='flex items-center'><span>参与 {discussion.userCount}</span></div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />

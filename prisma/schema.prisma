@@ -43,6 +43,7 @@ model Discussion {
   reactionCount Int     @default(0) @map("reaction_count") @db.UnsignedInt // 全部帖子的反馈统计
   postCount     Int     @default(1) @map("post_count") // 帖子统计
 
+  posterId        Int?      @map("poster_id") @db.UnsignedInt
   userId          Int       @map("user_id") @db.UnsignedInt
   firstPostId     Int?      @unique @map("first_post_id") @db.UnsignedInt
   lastPostId      Int?      @unique @map("last_post_id") @db.UnsignedInt
@@ -60,6 +61,7 @@ model Discussion {
   lastPost  Post?    @relation(name: "last_post", fields: [lastPostId], references: [id])
   firstPost Post?    @relation(name: "first_post", fields: [firstPostId], references: [id])
   posts     Post[]   @relation(name: "posts")
+  poster    Upload?  @relation(fields: [posterId], references: [id])
 
   @@index([createdAt, isSticky])
 }
@@ -106,16 +108,17 @@ model Upload {
   createdAt DateTime @default(now()) @map("created_at")
 
   //ref
-  posts   UploadPostRef[]
-  avatars UploadAvatarRef[]
+  posts      UploadPostRef[]
+  avatars    UploadAvatarRef[]
+  discussion Discussion[]
 
   @@index([url])
 }
 
 // 图片头像引用
 model UploadAvatarRef {
-  userId    Int      @id @map("user_id") @db.UnsignedInt
   uploadId  Int      @map("upload_id") @db.UnsignedInt
+  userId    Int      @id @map("user_id") @db.UnsignedInt
   createdAt DateTime @default(now()) @map("created_at")
 
   // ref
@@ -125,8 +128,8 @@ model UploadAvatarRef {
 
 // 图片帖子引用
 model UploadPostRef {
-  postId    Int      @map("post_id") @db.UnsignedInt
   uploadId  Int      @map("upload_id") @db.UnsignedInt
+  postId    Int      @map("post_id") @db.UnsignedInt
   createdAt DateTime @default(now()) @map("created_at")
 
   // ref

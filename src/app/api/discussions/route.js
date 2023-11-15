@@ -1,9 +1,8 @@
 import { getServerSession } from 'next-auth';
 
-import prisma from '@/lib/prisma';
 import rest from '@/lib/rest';
 import authOptions from '@/lib/auth';
-import { discussionModel } from '@/lib/models';
+import { ModelError, discussionModel } from '@/lib/models';
 import _ from 'lodash';
 
 export async function GET(request, { params }) {
