@@ -16,10 +16,8 @@ export async function GET(request, { params }) {
     const userParams = { page };
     if (!_.isEmpty(q)) {
         const id = Number(q) || 0;
-        const name = q;
-        const email = q;
         userParams.query = {
-            OR: [{ id }, { name }, { email }]
+            OR: [{ id }, { name: { contains: q } }, { email: { contains: q } }]
         };
     }
 

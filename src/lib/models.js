@@ -65,6 +65,7 @@ export const userModel = {
         query
     }) {
         const countCondition = {};
+        if (query) countCondition.where = query;
         const fetchCount = prisma.user.count(countCondition);
 
         const queryCondition = {};
