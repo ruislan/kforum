@@ -19,7 +19,11 @@ function ProseContent({ content, limit = SUMMARY_LIMIT, isSummary, className }) 
     }, [content, limit, isSummary]);
 
     return (
-        <div className={clsx('prose prose-sm dark:prose-invert text-sm break-words', className)}
+        <div
+            className={clsx(
+                'prose prose-sm dark:prose-invert text-sm break-words',
+                className
+            )}
             dangerouslySetInnerHTML={{ __html: c }}>
         </div>
     );

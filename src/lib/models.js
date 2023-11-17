@@ -3,9 +3,8 @@ import _ from 'lodash';
 import CryptoJS from 'crypto-js';
 
 import prisma from './prisma';
-import pageUtils from './page-utils';
+import pageUtils, { DEFAULT_PAGE_LIMIT } from './page-utils';
 import storage from './storage';
-import logger from './logger';
 
 export class ModelError extends Error { }
 
@@ -359,8 +358,9 @@ export const postModel = {
     },
     async getPosts({
         discussionId, // 如果有discussionId说明是某个话题下面的回帖
-        isOldFirst = false,
-        page = 1
+        isNewFirst = false,
+        page = 1,
+        pageSize = DEFAULT_PAGE_LIMIT
     }) {
         const countCondition = {};
         if (discussionId) {
@@ -378,10 +378,12 @@ export const postModel = {
             };
         }
 
-        const { limit: take, skip } = pageUtils.getDefaultLimitAndSkip(page);
+        const skip = pageUtils.getSkip(page, pageSize);
+        const take = pageSize;
         queryCondition.take = take;
         queryCondition.skip = skip;
-        if (isOldFirst) queryCondition.orderBy = { createdAt: 'desc' };
+
+        if (isNewFirst) queryCondition.orderBy = { createdAt: 'desc' };
         queryCondition.include = {
             reactions: {
                 select: {
@@ -426,6 +428,34 @@ export const postModel = {
             post.reactions.sort((a, b) => b.count - a.count);
         }
         return { posts, hasMore: count > skip + take };
+    },
+    async getUserReplyPosts({
+        userId,
+        isNewFirst = true,
+        page = 1,
+        pageSize = DEFAULT_PAGE_LIMIT
+    }) {
+        const skip = pageUtils.getSkip(page, pageSize);
+        const take = pageSize;
+
+        const whereClause = { userId, firstPostDiscussion: null }; // 只有回帖不包含主贴
+
+        const fetchCount = prisma.post.count({ where: whereClause });
+        const fetchPosts = prisma.post.findMany({
+            where: whereClause,
+            include: {
+                discussion: {
+                    include: {
+                        category: true,
+                        user: { select: userModel.fields.simple }
+                    }
+                },
+            },
+            orderBy: [{ createdAt: isNewFirst ? 'desc' : 'asc' }],
+            skip, take
+        });
+        let [posts, count] = await Promise.all([fetchPosts, fetchCount]);
+        return { posts, hasMore: count > skip + take };
     }
 };
 
@@ -436,39 +466,38 @@ export const discussionModel = {
         SCHEMA_CATEGORY: '分类是必填的，请选择一个分类',
     },
     async getDiscussions({
-        categoryId = null, // 如果有categoryId说明是某个分类下面的全部话题，则无需在每个话题上携带自己的分类
+        categoryId = null, // 如果有categoryId，也即是进行分类过滤，那么无需在每个话题上携带分类 Join（都是这个分类）
+        userId = null, // 如果有userId，也即是进行所有人过滤，那么无需在每个话题上携带用户 Join（都是这个人）
         page = 1,
+        pageSize = DEFAULT_PAGE_LIMIT,
         isStickyFirst = false,
-        isOldFirst = true,
+        isNewFirst = true,
         withPoster = true, // 带海报
         withFirstPost = false, // 带首贴
     }) {
         const orderBy = []; // 注意 orderBy 的顺序
-        if (isStickyFirst) orderBy.push({ isSticky: 'desc' }); // XXX 默认顺序下：SQLite 会将false放前面，因为False=0,True=1。其他 DB 可能会将True排前面。
-        if (isOldFirst) orderBy.push({ createdAt: 'desc' });
+        if (isStickyFirst) orderBy.push({ isSticky: 'desc' });
+        if (isNewFirst) orderBy.push({ createdAt: 'desc' });
 
         const queryCondition = {
             orderBy,
-            include: {
-                user: true
-            }
+            include: {}
         };
         if (withFirstPost) queryCondition.include.firstPost = true;
         if (withPoster) queryCondition.include.poster = true;
 
-        if (categoryId) {
-            queryCondition.where = { categoryId };
-        } else {
-            queryCondition.include.category = {
-                select: { id: true, name: true, slug: true, color: true, icon: true }
-            };
-        }
+        if (categoryId) queryCondition.where = { categoryId };
+        else queryCondition.include.category = { select: { id: true, name: true, slug: true, color: true, icon: true } };
 
-        const { limit: take, skip } = pageUtils.getDefaultLimitAndSkip(page);
+        if (userId) queryCondition.where = { userId };
+        else queryCondition.include.user = { select: userModel.fields.simple };
+
+        const skip = pageUtils.getSkip(page, pageSize);
+        const take = pageSize;
         queryCondition.take = take;
         queryCondition.skip = skip;
-
         const countCondition = queryCondition.where ? { where: queryCondition.where } : {};
+
         const countFetch = prisma.discussion.count(countCondition);
         const discussionsFetch = prisma.discussion.findMany(queryCondition);
         const [discussions, count] = await Promise.all([discussionsFetch, countFetch]);

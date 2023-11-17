@@ -1,4 +1,4 @@
-import pageUtils from '@/lib/page-utils';
+import { discussionModel } from '@/lib/models';
 import prisma from '@/lib/prisma';
 import rest from '@/lib/rest';
 
@@ -10,23 +10,14 @@ export async function GET(request, { params }) {
     const user = await prisma.user.findUnique({ where: { name } });
     if (!user) return rest.ok({ data: [] });
 
-    const { limit: take, skip } = pageUtils.getDefaultLimitAndSkip(page);
+    const { discussions, hasMore } = await discussionModel.getDiscussions({
+        userId: user.id,
+        withFirstPost: false,
+        withPoster: false,
+        isStickyFirst: false,
+        isNewFirst: true,
+        page
+    })
 
-    const fetchCount = prisma.discussion.count({ where: { userId: user.id } });
-    const fetchDiscussions = prisma.discussion.findMany({
-        where: { userId: user.id },
-        include: {
-            category: true,
-            _count: {
-                select: { posts: true },
-            }
-        },
-        skip, take
-    });
-    const [count, data] = await Promise.all([fetchCount, fetchDiscussions]);
-    data.forEach(d => {
-        d.postCount = d._count.posts - 1; // sub first post;
-        delete d._count;
-    });
-    return rest.ok({ data, hasMore: count > skip + take });
+    return rest.ok({ data: discussions, hasMore });
 }

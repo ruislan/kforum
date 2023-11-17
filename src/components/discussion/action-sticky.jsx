@@ -19,7 +19,7 @@ export default function ActionSticky({ discussion, onSticky }) {
             const res = await fetch(`/api/discussions/${discussion.id}/sticky`,
                 {
                     method: 'PUT',
-                    body: JSON.stringify({ newStickyState }),
+                    body: JSON.stringify({ isSticky: newStickyState }),
                     headers: { 'Content-Type': 'application/json' }
                 });
             if (res.ok) {

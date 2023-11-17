@@ -61,7 +61,7 @@ export default function DiscussionListItem({ discussion }) {
                     </div> */}
                 </div>
                 {discussion.poster ?
-                    <div className='relative flex w-full justify-center'>
+                    <div className='relative flex w-full justify-center pb-2'>
                         <Image
                             className='max-h-[496px] w-auto'
                             width={640} height={380}
@@ -69,9 +69,9 @@ export default function DiscussionListItem({ discussion }) {
                             alt={discussion.poster.originalFileName}
                         />
                     </div> :
-                    <ProseContent className='max-h-64 overflow-hidden content-mask-b' content={discussion.firstPost?.text} />
+                    <ProseContent className='pb-2 max-h-64 overflow-hidden content-mask-b' content={discussion.firstPost?.text} />
                 }
-                <div className='text-xs inline-flex items-center text-gray-300 mt-3'>
+                <div className='text-xs inline-flex items-center text-gray-300 mt-2'>
                     <div className='flex items-center'><span>参与 {discussion.userCount}</span></div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                     <div className='flex items-center'><span>帖子 {discussion.postCount}</span></div>

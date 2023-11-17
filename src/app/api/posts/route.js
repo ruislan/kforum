@@ -9,7 +9,7 @@ export async function GET(request, { params }) {
     const { searchParams } = new URL(request.url);
     const page = Number(searchParams.get('page')) || 1;
     const discussionId = Number(searchParams.get('discussionId')) || null;
-    const { posts, hasMore } = await postModel.getPosts({ discussionId, page });
+    const { posts, hasMore } = await postModel.getPosts({ discussionId, page, pageSize: 50 });
     return rest.ok({ data: posts, hasMore });
 }
 
