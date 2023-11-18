@@ -4,6 +4,7 @@ import rest from '@/lib/rest';
 import authOptions from '@/lib/auth';
 import { ModelError, discussionModel } from '@/lib/models';
 import _ from 'lodash';
+import logger from '@/lib/logger';
 
 export async function GET(request, { params }) {
     const { searchParams } = new URL(request.url);

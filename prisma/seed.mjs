@@ -25,11 +25,19 @@ async function initBase() {
         {
             id: 1,
             dataType: 'text',
+            key: 'site_title',
+            name: '站点标题',
+            description: '尽量用简单的词或者短句，对所有用户都可见。',
+            value: 'KForm 是一个简洁、现代、有趣的论坛'
+        },
+        {
+            id: 2,
+            dataType: 'text',
             key: 'site_about',
             name: '关于本站',
             description: '用简单的一句话描述本站，对所有用户都可见。',
             value: 'KForum 是一个开源的在线论坛。基于 NextJS、Prisma 等技术。秉承开源、简单、便捷、易用、易扩展和集成的理念，旨在帮助公司、组织或个人快速建立一个现代且时尚的在线论坛。'
-        }
+        },
     ];
     for (const item of siteSettings) {
         await db.siteSetting.upsert({ where: { id: item.id }, create: item, update: item });
@@ -82,20 +90,23 @@ async function initDev() {
 
 }
 
-// 用于生成一堆漂亮的假数据
+// 用于生成一个中型活跃论坛的数据
+// 注册用户在数万-数十万，每日发帖数在数百，一年在数十万贴左右
+// Mac i9 16G 386.178s
 async function initFaker() {
     console.log('开始进行faker数据填充，这会会花费一些时间：');
     const time = Date.now();
     await cleanDb();
 
-    const userCount = 1000;
+    const userCount = 100_000;
     const users = _.range(2, userCount + 1).map(id => {
         const gender = _.sample(['MAN', 'WOMAN']);
-        const name = casual.username;
+        const name = casual.username + '_' + id;
+        const email = name + '@mail.fake';
         const user = {
             id,
             name,
-            email: casual.email,
+            email,
             password: passwordHash,
             isAdmin: false,
             gender,
@@ -110,11 +121,12 @@ async function initFaker() {
     console.log(`已完成初始化 ${userCount} 个用户`);
 
     // 1000 个用户，每个生成 20 个话题，共20000个话题
-    let totalDiscussion = 20000;
+    let userLimit = 1000;
+    let totalDiscussion = 20_000;
     let dIds = _.shuffle(_.range(1, 20001, 1));
     let dIdIndex = 0;
     let postId = 1;
-    for (let userId = 1; userId <= userCount; userId++) {
+    for (let userId = 1; userId <= userLimit; userId++) {
         for (let j = 0; j < 20; j++) {
             const dId = dIds[dIdIndex];
             const category = _.sample([1, 2, 3, 4, 5]); // 5 categories
@@ -154,10 +166,10 @@ async function initFaker() {
     };
     console.log(`已完成初始化 ${totalDiscussion} 个话题`);
 
-    // 选择前 2000 个话题，每个话题随机选择 100 个用户，每个用户产生 1 个回帖，单个话题 100 个回帖，最大回贴数 100 * 2000 = 200,000(20万)
+    // 选择 2000 个话题，每个话题随机选择 100 个用户，每个用户产生 1 个回帖，单个话题 100 个回帖，最大回贴数 100 * 2000 = 200,000(20万)
     for (let dId = 1; dId <= 2000; dId++) {
         const posts = _.range(0, 100).map(i => {
-            const uId = _.random(1, 1000, false);
+            const uId = _.random(1, userLimit, false);
             const content = casual.sentences(10);
             const post = {
                 id: postId,
@@ -196,6 +208,7 @@ async function main() {
     const { values } = parseArgs({ options: { cmd: { type: 'string', }, } });
     switch (values.cmd) {
         case 'clean': await cleanDb(); break;
+        case 'base': await initBase(); break;
         case 'dev': {
             await initBase();
             await initDev();

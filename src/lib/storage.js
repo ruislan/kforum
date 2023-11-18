@@ -4,10 +4,9 @@ import logger from './logger';
 
 // XXX maybe we can try a cloud storage like qiniu, superbase, s3, etc.
 class LocalStorage {
-    constructor({ storeBase, relativePathBase, isDebug }) {
+    constructor({ storeBase, relativePathBase }) {
         this.storeBase = storeBase || './public/uploads';
         this.relativePathBase = relativePathBase || '/uploads';
-        this.isDebug = isDebug;
     }
     async store(filename, bytes) {
         const buffer = Buffer.from(bytes);
@@ -21,21 +20,21 @@ class LocalStorage {
         if (!fs.existsSync(dir)) await fs.promises.mkdir(dir, { recursive: true });
         await fs.promises.writeFile(`${dir}/${filename}`, buffer);
         const filePath = `${this.relativePathBase}/${year}/${month}/${day}/${filename}`;
-        if (this.isDebug) logger.info(`storage:local File ${filename} is store to dir ${dir}, relative path is ${filePath} .`);
+        logger.info(`storage:local File ${filename} is store to dir ${dir}, relative path is ${filePath} .`);
         return filePath;
     }
     async delete(filename) {
         const path = filename.substring(this.relativePathBase.length);
         const dir = `${this.storeBase}${path}`;
         await fs.promises.unlink(dir);
-        if (this.isDebug) logger.info(`storage:local File ${filename} is deleted`);
+        logger.info(`storage:local File ${filename} is deleted`);
     }
 }
 
 const isProdEnv = process.env.NODE_ENV === 'production';
 
 const globalForStorage = global;
-const storage = globalForStorage.storage ?? new LocalStorage({ isDebug: !isProdEnv });
+const storage = globalForStorage.storage ?? new LocalStorage({});
 if (!isProdEnv) globalForStorage.storage = storage;
 
 export default storage;

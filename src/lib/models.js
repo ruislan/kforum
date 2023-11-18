@@ -465,6 +465,7 @@ export const discussionModel = {
         SCHEMA_CONTENT: '内容是必填的，不小于 2 个字符。',
         SCHEMA_CATEGORY: '分类是必填的，请选择一个分类',
     },
+    // TODO 这里看是不是要拆分一下user的，因为user的读取话题的排序逻辑可能不同
     async getDiscussions({
         categoryId = null, // 如果有categoryId，也即是进行分类过滤，那么无需在每个话题上携带分类 Join（都是这个分类）
         userId = null, // 如果有userId，也即是进行所有人过滤，那么无需在每个话题上携带用户 Join（都是这个人）
@@ -477,7 +478,7 @@ export const discussionModel = {
     }) {
         const orderBy = []; // 注意 orderBy 的顺序
         if (isStickyFirst) orderBy.push({ isSticky: 'desc' });
-        if (isNewFirst) orderBy.push({ createdAt: 'desc' });
+        if (isNewFirst) orderBy.push({ updatedAt: 'desc' });
 
         const queryCondition = {
             orderBy,
@@ -621,6 +622,7 @@ export const discussionModel = {
 
 export const siteSettingModel = {
     fields: {
+        siteTitle: 'site_title',
         siteAbout: 'site_about',
     },
     async updateSettings(settings) {

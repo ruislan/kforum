@@ -9,6 +9,7 @@
     "start": "next start",
     "start:seed": "npx prisma db push && node prisma/seed.mjs --cmd prod && next start",
     "lint": "next lint",
+    "seed:base": "node prisma/seed.mjs --cmd base",
     "seed:dev": "node prisma/seed.mjs --cmd dev",
     "seed:faker": "node prisma/seed.mjs --cmd faker",
     "seed:clean": "node prisma/seed.mjs --cmd clean"
@@ -36,7 +37,6 @@
     "eslint": "8.48.0",
     "eslint-config-next": "13.4.19",
     "lodash": "^4.17.21",
-    "log4js": "^6.9.1",
     "next": "^14.0.3",
     "next-auth": "^4.24.5",
     "postcss": "^8.4.31",

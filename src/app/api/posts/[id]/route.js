@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/auth';
 import rest from '@/lib/rest';
 import { ModelError, postModel } from '@/lib/models';
+import logger from '@/lib/logger';
 
 const handler = async function (request, params, method) {
     // require user
