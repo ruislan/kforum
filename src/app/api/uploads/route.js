@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import rest from '@/lib/rest';
 import authOptions from '@/lib/auth';
 import { ModelError, uploadModel } from '@/lib/models';
+import logger from '@/lib/logger';
 
 export async function POST(request, { params }) {
     const session = await getServerSession(authOptions);
