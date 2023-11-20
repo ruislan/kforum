@@ -1,8 +1,18 @@
 import './globals.css';
+import { siteSettingModel } from '@/lib/models';
 
-export const metadata = {
-  title: 'KForum',
-  description: 'Simple, Modern, Beautiful and Fast',
+export async function generateMetadata({ params, searchParams }, parent) {
+  const data = await siteSettingModel.getFieldsValues(
+    siteSettingModel.fields.siteTitle,
+    siteSettingModel.fields.siteAbout
+  );
+  return {
+    title: {
+      default: data[siteSettingModel.fields.siteTitle],
+      template: '%s | ' + data[siteSettingModel.fields.siteTitle]
+    }, 
+    description: data[siteSettingModel.fields.siteAbout],
+  };
 }
 
 export default async function RootLayout({ children }) {

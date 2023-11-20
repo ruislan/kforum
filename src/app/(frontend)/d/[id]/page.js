@@ -8,12 +8,16 @@ const DiscussionStats = dynamic(() => import('@/components/discussion/discussion
 const CategoryBox = dynamic(() => import('@/components/category/category-box'));
 const ActionCreate = dynamic(() => import('@/components/discussion/action-create'));
 
+export async function generateMetadata({ params, searchParams }, parent) {
+  return {
+    title: '话题',  // FIXME 如果在这里动态获取，则会和 Page 一起调用两次，后面来解决，现在就这样
+  };
+}
+
 export default async function Page({ params }) {
   const id = Number(params.id);
-
   const d = await discussionModel.getDiscussion({ id });
   if (!d) notFound();
-
   // we must assure the discussion exists
   await discussionModel.incrementDiscussionView({ id: d.id });
 

@@ -6,6 +6,12 @@ import { userModel } from '@/lib/models';
 const UserInfo = dynamic(() => import('@/components/user/user-info'));
 const UserTabs = dynamic(() => import('@/components/user/user-tabs'));
 
+export async function generateMetadata({ params, searchParams }, parent) {
+  return {
+    title: `u/${params.slug}`, 
+  };
+}
+
 export default async function Page({ params, searchParams }) {
   const user = await userModel.getUserByName({ name: params.slug });
   if (!user) notFound();

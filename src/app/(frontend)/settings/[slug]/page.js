@@ -21,6 +21,12 @@ const menus = [
 
 export const dynamic = 'force-dynamic'; // no cache for this page
 
+export async function generateMetadata({ params, searchParams }, parent) {
+  return {
+    title: `设置`, 
+  };
+}
+
 export default async function Page({ params }) {
   const session = await getServerSession(authOptions);
   const user = await userModel.getUser({ id: session.user?.id });

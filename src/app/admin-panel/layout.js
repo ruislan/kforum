@@ -14,6 +14,10 @@ const menus = [
   { label: '用户', path: '/admin-panel/users' },
 ];
 
+export const metadata = {
+  title:'管理'
+};
+
 export default async function Layout({ children }) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.isAdmin) notFound();

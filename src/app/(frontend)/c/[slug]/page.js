@@ -21,6 +21,12 @@ async function getDiscussions(categoryId) {
   });
 }
 
+export async function generateMetadata({ params, searchParams }, parent) {
+  return {
+    title: params.slug,
+  };
+}
+
 export default async function Page({ params }) {
   const category = await getCategory(params.slug);
   if (!category) notFound();

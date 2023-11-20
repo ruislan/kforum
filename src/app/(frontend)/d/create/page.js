@@ -5,6 +5,13 @@ import Box from '@/components/ui/box';
 
 const DiscussionCreator = dynamic(() => import('@/components/discussion/discussion-creator'));
 
+export async function generateMetadata({ params, searchParams }, parent) {
+  return {
+    title: `发布话题`, 
+  };
+}
+
+
 export default async function Page({ searchParams }) {
   const categories = await categoryModel.getCategories();
   return (

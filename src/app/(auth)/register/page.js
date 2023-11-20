@@ -1,8 +1,7 @@
 import RegisterForm from '@/components/auth/register-form';
 
 export const metadata = {
-  title: '注册 | KForum',
-  description: 'Simple, Modern, Beautiful and Fast',
+  title: '注册'
 };
 
 export default function Page() {

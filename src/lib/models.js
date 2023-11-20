@@ -636,9 +636,31 @@ export const siteSettingModel = {
     async getSettings() {
         return await prisma.siteSetting.findMany();
     },
+    async getFieldsValues(...fields) {
+        const data = {};
+        if (!fields || fields.length == 0) return data;
+
+        const items = await prisma.siteSetting.findMany({
+            where: {
+                key: { 
+                    in: fields
+                }
+            }
+        });
+
+        items.forEach(item => {
+            data[item.key] = this.decodeValue(item);
+        });
+        
+        return data;
+    },
     async getFieldValue(field, defaultValue) {
         if (!field) return defaultValue;
         const item = await prisma.siteSetting.findUnique({ where: { key: field } });
+        const value = this.decodeValue(item);
+        return value;
+    },
+    decodeValue(item) {
         switch (item.dataType) {
             case 'text':
             case 'html':
@@ -698,7 +720,7 @@ export const uploadModel = {
         const uploads = await prisma.upload.findMany({
             take: 1000,
             where: {
-                discussion: { none: {} },
+                discussions: { none: {} },
                 posts: { none: {} },
                 avatars: { none: {} },
             }
