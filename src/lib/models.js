@@ -624,6 +624,7 @@ export const siteSettingModel = {
     fields: {
         siteTitle: 'site_title',
         siteAbout: 'site_about',
+        siteLogo: 'site_logo',
     },
     async updateSettings(settings) {
         await prisma.$transaction(
@@ -642,7 +643,7 @@ export const siteSettingModel = {
 
         const items = await prisma.siteSetting.findMany({
             where: {
-                key: { 
+                key: {
                     in: fields
                 }
             }
@@ -651,26 +652,23 @@ export const siteSettingModel = {
         items.forEach(item => {
             data[item.key] = this.decodeValue(item);
         });
-        
+
         return data;
     },
-    async getFieldValue(field, defaultValue) {
-        if (!field) return defaultValue;
+    async getFieldValue(field) {
+        if (!field) return null;
         const item = await prisma.siteSetting.findUnique({ where: { key: field } });
         const value = this.decodeValue(item);
         return value;
     },
     decodeValue(item) {
         switch (item.dataType) {
-            case 'text':
-            case 'html':
-                return item.value;
             case 'json':
                 return JSON.parse(item.value);
             case 'number':
                 return new Number(item.value);
             default:
-                return defaultValue;
+                return item.value;
         }
     }
 };

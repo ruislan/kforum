@@ -196,7 +196,7 @@ model SiteNavMenu {
 
 model SiteSetting {
   id          Int      @id @default(autoincrement()) @db.UnsignedInt
-  dataType    String   @map("data_type") @db.VarChar(16) // string(input), text(textarea), number, json, html, xml, etc...
+  dataType    String   @map("data_type") @db.VarChar(16) // string(input), text(textarea), number, image, json, html, xml, etc...
   key         String   @unique @db.VarChar(64)
   description String?  @db.VarChar(128)
   name        String   @db.VarChar(64)

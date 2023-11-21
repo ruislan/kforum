@@ -24,20 +24,28 @@ async function initBase() {
     const siteSettings = [
         {
             id: 1,
-            dataType: 'text',
+            dataType: 'string',
             key: 'site_title',
             name: '站点标题',
             description: '尽量用简单的词或者短句，对所有用户都可见。',
-            value: 'KForm 是一个简洁、现代、有趣的论坛'
+            value: 'KForum'
         },
         {
             id: 2,
-            dataType: 'text',
+            dataType: 'string',
             key: 'site_about',
             name: '关于本站',
             description: '用简单的一句话描述本站，对所有用户都可见。',
             value: 'KForum 是一个开源的在线论坛。基于 NextJS、Prisma 等技术。秉承开源、简单、便捷、易用、易扩展和集成的理念，旨在帮助公司、组织或个人快速建立一个现代且时尚的在线论坛。'
         },
+        {
+            id: 3,
+            dataType: 'image',
+            key: 'site_logo',
+            name: '站点 Logo',
+            description: '站点左上角的 Logo 图片，建议使用宽高比为 3:1 的矩形图片。如果为空，则展示默认的 KForum 。',
+            value: '',
+        }
     ];
     for (const item of siteSettings) {
         await db.siteSetting.upsert({ where: { id: item.id }, create: item, update: item });
