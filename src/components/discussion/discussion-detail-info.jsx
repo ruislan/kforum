@@ -88,7 +88,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                         <Link href={`/u/${discussion.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{discussion.user.name}</Link>
                     </div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                    <span className='text-xs'>{dateUtils.fromNow(discussion.createdAt)}</span>
+                    <span className='text-xs' suppressHydrationWarning>{dateUtils.fromNow(discussion.createdAt)}</span>
                     {discussion.lastUpdatedAt && (
                         <>
                             <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />

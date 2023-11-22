@@ -24,7 +24,7 @@ export default async function Header() {
             <nav className='flex items-center h-full w-full max-w-5xl m-auto '>
                 <Link href='/' className='relative font-bold text-lg text-white mr-4 flex items-center group'>
                     {logo ?
-                        <Image className='h-9 w-auto max-w-[108px] max-h-9' src={logo} alt={logo} width={108} height={36} /> :
+                        <Image className='h-9 w-auto max-h-9' src={logo} alt={logo} width={180} height={60} /> :
                         <>
                             <div className='absolute w-9 h-9 rounded-md bg-neutral-600 shadow-lg left-0 group-hover:w-full transition-[width]'></div>
                             <span className='z-10 w-9 h-9 text-xl flex justify-center items-center mr-1 group-hover:-rotate-12 transition-all duration-500'>K</span>

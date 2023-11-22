@@ -107,7 +107,7 @@ export default function UserList() {
                                     <span className='text-sm text-gray-200'>{user.email}</span>
                                     {user.isLocked && (<span className='h-3.5 w-3.5 ml-1.5 text-yellow-400'><Locked /></span>)}
                                 </div>
-                                <span className='text-xs text-gray-400'>
+                                <span className='text-xs text-gray-400' suppressHydrationWarning>
                                     注册于 {new Date(user.createdAt).toLocaleString()}
                                 </span>
                             </div>

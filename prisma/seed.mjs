@@ -43,7 +43,15 @@ async function initBase() {
             dataType: 'image',
             key: 'site_logo',
             name: '站点 Logo',
-            description: '站点左上角的 Logo 图片，建议使用宽高比为 3:1 的矩形图片。如果为空，则展示默认的 KForum 。',
+            description: '站点左上角的 Logo 图片，建议使用宽高比为 3:1 的矩形图片。设置为空则展示默认。',
+            value: '',
+        },
+        {
+            id: 4,
+            dataType: 'image',
+            key: 'site_favicon',
+            name: '站点 Favicon',
+            description: '站点的 Favicon 图片，建议使用128x128的 png 图片。设置为空则展示默认。',
             value: '',
         }
     ];

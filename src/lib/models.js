@@ -625,6 +625,7 @@ export const siteSettingModel = {
         siteTitle: 'site_title',
         siteAbout: 'site_about',
         siteLogo: 'site_logo',
+        siteFavicon: 'site_favicon',
     },
     async updateSettings(settings) {
         await prisma.$transaction(

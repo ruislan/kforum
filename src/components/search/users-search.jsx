@@ -59,7 +59,7 @@ export default function UsersSearch({ query }) {
                             u/{item.name}
                         </Link>
                         <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                        <span className='text-gray-400'>注册于 {dateUtils.fromNow(item.createdAt)}</span>
+                        <span className='text-gray-400' suppressHydrationWarning>注册于 {dateUtils.fromNow(item.createdAt)}</span>
                     </div>
                 </Box>
             ))}

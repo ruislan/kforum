@@ -55,7 +55,7 @@ export default function UserTabsDiscussions({ user }) {
                         <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />
                         <Link className='inline-block align-middle text-xs text-gray-400 hover:underline underline-offset-2 cursor-pointer' href={`/u/${user.name}`}>u/{user.name}</Link>
                         <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />
-                        <span className='inline-flex align-middle text-xs text-gray-400'>{dateUtils.fromNow(item.createdAt)}</span>
+                        <span className='inline-flex align-middle text-xs text-gray-400' suppressHydrationWarning>{dateUtils.fromNow(item.createdAt)}</span>
                     </div>
                     <div className='text-xs inline-flex items-center text-gray-300 mt-1'>
                         <div className='flex items-center'><span>参与 {item.userCount}</span></div>

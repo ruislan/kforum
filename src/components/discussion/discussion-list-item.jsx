@@ -48,7 +48,7 @@ export default function DiscussionListItem({ discussion }) {
                         </Link>
                     </div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                    <span className='text-xs'>{dateUtils.fromNow(discussion.createdAt)}</span>
+                    <span className='text-xs' suppressHydrationWarning>{dateUtils.fromNow(discussion.createdAt)}</span>
                     <span className='ml-1' />
                     {discussion.isSticky && (<span className='h-4 w-4 ml-0.5 text-green-400'><Pined /></span>)}
                     {discussion.isLocked && (<span className='h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}

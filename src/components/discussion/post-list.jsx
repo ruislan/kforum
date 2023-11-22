@@ -94,7 +94,7 @@ function PostItem({ isDiscussionLocked, item, onReplyClick }) {
                     <div className='flex items-center text-gray-300'>
                         <Link href={`/u/${post.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{post.user.name}</Link>
                         <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                        <span className='text-xs'>{dateUtils.fromNow(post.createdAt)}</span>
+                        <span className='text-xs' suppressHydrationWarning>{dateUtils.fromNow(post.createdAt)}</span>
                     </div>
                     <PostReplyContent replyPost={post.replyPost} />
                     {isEditMode ?

@@ -91,7 +91,7 @@ export default function UserTabsPosts({ user }) {
                         <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />
                         <Link className='inline-block align-middle text-xs text-gray-400 hover:underline underline-offset-2 cursor-pointer' href={`/u/${discussion.user.name}`}>u/{discussion.user.name}</Link>
                         <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />
-                        <span className='inline-block align-middle text-xs text-gray-400'>{dateUtils.fromNow(discussion.createdAt)}</span>
+                        <span className='inline-block align-middle text-xs text-gray-400' suppressHydrationWarning>{dateUtils.fromNow(discussion.createdAt)}</span>
                     </div>
                     {discussion.posts.map((post, i) => (
                         <div key={i} className='flex flex-col p-2'>
@@ -103,7 +103,7 @@ export default function UserTabsPosts({ user }) {
                                     u/{user.name}
                                 </Link>
                                 <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                                <span className='text-xs text-gray-400'>
+                                <span className='text-xs text-gray-400' suppressHydrationWarning>
                                     {dateUtils.fromNow(post.createdAt)}
                                 </span>
                             </div>
