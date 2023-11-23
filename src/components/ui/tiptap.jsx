@@ -24,6 +24,17 @@ import urlUtils from '@/lib/url-utils';
 
 const IMAGE_UPLOAD_SIZE_LIMIT = 1024 * 1024 * 10; // 10MB
 
+function getLinkNode({ editor, pos }) {
+  const node = editor.view.domAtPos(pos).node;
+  let link = null;
+  if (node?.nodeName === '#text') {
+    link = node?.parentNode.closest('a');
+  } else {
+    link = node?.closest('a');
+  }
+  return link;
+}
+
 function ImageActionButton({ editor }) {
   const imageInput = useRef();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -140,6 +151,7 @@ function LinkActionButton({ editor }) {
   const handleClose = async () => {
     resetFields();
     setShow(false);
+    editor.commands.focus();
   }
 
   const handleOk = async () => {
@@ -154,6 +166,7 @@ function LinkActionButton({ editor }) {
       .run();
     resetFields();
     setShow(false);
+    editor.commands.focus();
   };
 
   if (!editor) return null;
@@ -162,15 +175,9 @@ function LinkActionButton({ editor }) {
       <ActionButton
         isActive={editor.isActive('link')}
         onClick={() => {
-          const { from, to } = editor.view.state.selection;
-          const node = editor.view.domAtPos(from).node;
-          let link = null;
-          if (node?.nodeName === '#text') {
-            link = node?.parentNode.closest('a');
-          } else {
-            link = node?.closest('a');
-          }
-
+          const { from, to } = editor.state.selection;
+          const isMultiSelection = to - from > 0;
+          let link = isMultiSelection ? getLinkNode({ editor, pos: to - 1 }) : getLinkNode({ editor, pos: from });
           if (link) {
             const nodePosStart = editor.view.posAtDOM(link, 0);
             const nodePosEnd = nodePosStart + link.innerText.length;
@@ -180,7 +187,7 @@ function LinkActionButton({ editor }) {
             setUrl(url);
             setNodeRange({ from: nodePosStart, to: nodePosEnd });
           } else {
-            const text = editor.view.state.doc.textBetween(from, to, '');
+            const text = editor.state.doc.textBetween(from, to, '');
             setNodeRange({ from, to });
             setTitle(text);
           }
@@ -363,6 +370,7 @@ export function toHTML(stringContent) {
 export default function Tiptap({ content, endActionEnhancer, onCreate, onUpdate }) {
   const editor = useEditor({
     extensions,
+    autofocus: true,
     editorProps: {
       attributes: {
         class: 'prose dark:prose-invert prose-sm py-2 px-3 focus:outline-none min-h-[100px] max-w-full',
