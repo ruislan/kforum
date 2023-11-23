@@ -170,14 +170,12 @@ function LinkActionButton({ editor }) {
           } else {
             link = node?.closest('a');
           }
-          console.log(editor);
 
           if (link) {
             const nodePosStart = editor.view.posAtDOM(link, 0);
             const nodePosEnd = nodePosStart + link.innerText.length;
             const text = link.innerText;
-            console.log(link);
-            const url = editor.getAttributes('link').href;
+            const url = link.getAttribute('href');
             setTitle(text);
             setUrl(url);
             setNodeRange({ from: nodePosStart, to: nodePosEnd });
