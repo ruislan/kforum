@@ -16,7 +16,21 @@ import Link from '@tiptap/extension-link';
 import { generateHTML } from '@tiptap/html';
 
 import Button from './button';
-import { Bold, Italic, Underline as UnderlineIcon, Strike, Heading1, Heading2, Heading3, BulletList, OrderedList, BlockQuote, Link as LinkIcon, Image as ImageIcon, Close } from '../icons';
+import {
+  Bold,
+  Italic,
+  Underline as UnderlineIcon,
+  Strike,
+  Heading1,
+  Heading2,
+  Heading3,
+  BulletList,
+  OrderedList,
+  BlockQuote,
+  Link as LinkIcon,
+  Image as ImageIcon,
+  Close
+} from '../icons';
 import { runIfFn } from '@/lib/fn';
 import FormControl from './form-control';
 import Input from './input';
@@ -24,16 +38,6 @@ import urlUtils from '@/lib/url-utils';
 
 const IMAGE_UPLOAD_SIZE_LIMIT = 1024 * 1024 * 10; // 10MB
 
-function getLinkNode({ editor, pos }) {
-  const node = editor.view.domAtPos(pos).node;
-  let link = null;
-  if (node?.nodeName === '#text') {
-    link = node?.parentNode.closest('a');
-  } else {
-    link = node?.closest('a');
-  }
-  return link;
-}
 
 function ImageActionButton({ editor }) {
   const imageInput = useRef();
@@ -118,14 +122,16 @@ function ImageActionButton({ editor }) {
 }
 
 // 设置超链接
-// 前置条件：
+// 条件：
 // 1. 选中了超链接，点击🔗按钮
+//   a. 弹出窗口。展示出链接和文字，修改文字会将超链接的文字一并修改。
 // 2. 选中了文字，点击🔗按钮
+//   a. 弹出窗口。展示出文字，链接填入点击确定即可。
+//   b. 修改文字会将超链接的文字一并修改。
 // 3. 没有任何选中，点击🔗按钮
-// 流程：
-// 1.a 弹出窗口。展示出链接和文字，修改文字会将超链接的文字一并修改。
-// 2.a 弹出窗口，展示出文字，链接填入点击确定即可。
-// 2.b 等待用户输入，输入完成之后添加超链接
+//   a. 弹出窗口。用户填入链接和标题（可选）点击确定即可
+// 说明：
+// 1. 如果标题没有填写，则直接展示 URL
 function LinkActionButton({ editor }) {
   const [show, setShow] = useState(false);
   const [url, setUrl] = useState('');
@@ -148,6 +154,42 @@ function LinkActionButton({ editor }) {
     return true;
   };
 
+  const getLinkNode = ({ editor, pos }) => {
+    const node = editor.view.domAtPos(pos).node;
+    const targetNode = node.nodeType === 3 ? node.parentNode : node;
+    const link = targetNode?.closest('a');
+    return link;
+  };
+
+  const handleClick = async () => {
+    const { from, to } = editor.state.selection;
+    const linkNode = to > from ?
+      getLinkNode({ editor, pos: to - 1 }) :
+      getLinkNode({ editor, pos: from });
+    if (linkNode) { // maybe edit
+      const nodePosStart = editor.view.posAtDOM(linkNode, 0);
+      const nodePosEnd = nodePosStart + linkNode.innerText.length;
+      const isOnlyLink = (from === nodePosStart && to === nodePosEnd) || (from >= nodePosStart && to <= nodePosEnd);
+      if (isOnlyLink) { // only link can edit
+        const text = linkNode.innerText;
+        const url = linkNode.getAttribute('href');
+        setTitle(text);
+        setUrl(url);
+        setNodeRange({ from: nodePosStart, to: nodePosEnd });
+        setShow(true);
+        return;
+      }
+    }
+    if (to - from === 1) { // only one char selected
+      setUrl(editor.getAttributes('link').href ?? ''); // check if there is a link
+    }
+    // add new url
+    const text = editor.state.doc.textBetween(from, to, '');
+    setNodeRange({ from, to });
+    setTitle(text);
+    setShow(true);
+  };
+
   const handleClose = async () => {
     resetFields();
     setShow(false);
@@ -156,13 +198,12 @@ function LinkActionButton({ editor }) {
 
   const handleOk = async () => {
     if (!validateFields()) return;
-    // 如果选择了text再点击设置超链接，那么：
-    // 没有改变title，则直接加入 url
-    // 改变了title，则替换掉那个text，再加入url
+    let fixedUrl = urlUtils.fixURL(url);
+    let newTitle = _.isEmpty(title) ? fixedUrl : title;
     editor.commands.deleteRange(nodeRange);
     editor.chain().focus()
-      .setLink({ href: urlUtils.fixURL(url) })
-      .insertContent(title)
+      .setLink({ href: fixedUrl })
+      .insertContent(newTitle)
       .run();
     resetFields();
     setShow(false);
@@ -174,25 +215,7 @@ function LinkActionButton({ editor }) {
     <>
       <ActionButton
         isActive={editor.isActive('link')}
-        onClick={() => {
-          const { from, to } = editor.state.selection;
-          const isMultiSelection = to - from > 0;
-          let link = isMultiSelection ? getLinkNode({ editor, pos: to - 1 }) : getLinkNode({ editor, pos: from });
-          if (link) {
-            const nodePosStart = editor.view.posAtDOM(link, 0);
-            const nodePosEnd = nodePosStart + link.innerText.length;
-            const text = link.innerText;
-            const url = link.getAttribute('href');
-            setTitle(text);
-            setUrl(url);
-            setNodeRange({ from: nodePosStart, to: nodePosEnd });
-          } else {
-            const text = editor.state.doc.textBetween(from, to, '');
-            setNodeRange({ from, to });
-            setTitle(text);
-          }
-          setShow(true);
-        }}>
+        onClick={handleClick}>
         <LinkIcon />
       </ActionButton>
       <Transition appear show={show} as={Fragment}>
