@@ -20,7 +20,7 @@ function ImageType({ value, onDeleted, onUploaded }) {
 
     const validateFields = (file) => {
         if (!file || file.size === 0) {
-            toast.error('你还没准备好，请先选择图片');
+            toast.error('请先选择图片');
             return false;
         }
         if (file.size > IMAGE_UPLOAD_SIZE_LIMIT) {

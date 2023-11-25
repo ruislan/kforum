@@ -32,7 +32,7 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
     const validateFields = () => {
         setError(null);
         if (contentText?.length < 1) {
-            setError('你还没准备好，请填写内容');
+            setError('请填写内容');
             return false;
         }
         return true;

@@ -1,5 +1,5 @@
 'use client';
-import { Fragment, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import CryptoJS from 'crypto-js';
 import _ from 'lodash';
@@ -268,7 +268,7 @@ function ActionButton({ isActive, onClick, ...rest }) {
       kind='ghost'
       shape='square'
       size='sm'
-      className={isActive ? 'text-neutral-200' : 'text-neutral-500'}
+      className={isActive ? 'text-gray-200' : 'text-gray-500'}
       onClick={e => {
         e.preventDefault();
         runIfFn(onClick);
