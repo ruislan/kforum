@@ -1,5 +1,5 @@
 'use client';
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import CryptoJS from 'crypto-js';
 import _ from 'lodash';
@@ -193,7 +193,7 @@ function LinkActionButton({ editor }) {
   const handleClose = async () => {
     resetFields();
     setShow(false);
-    editor.commands.focus();
+    setTimeout(() => editor.commands.focus(), 500); // wait 1s for editor rendering
   }
 
   const handleOk = async () => {
@@ -207,7 +207,7 @@ function LinkActionButton({ editor }) {
       .run();
     resetFields();
     setShow(false);
-    editor.commands.focus();
+    setTimeout(() => editor.commands.focus(), 500);
   };
 
   if (!editor) return null;
@@ -219,20 +219,20 @@ function LinkActionButton({ editor }) {
         <LinkIcon />
       </ActionButton>
       <Transition appear show={show} as={Fragment}>
-        <Dialog className="relative z-50" onClose={handleClose}>
+        <Dialog className='relative z-50' onClose={handleClose}>
           <Transition.Child as={Fragment}
-            enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100"
-            leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0"
+            enter='ease-out duration-300' enterFrom='opacity-0' enterTo='opacity-100'
+            leave='ease-in duration-200' leaveFrom='opacity-100' leaveTo='opacity-0'
           >
-            <div className="fixed inset-0 bg-black bg-opacity-80" />
+            <div className='fixed inset-0 bg-black bg-opacity-80' />
           </Transition.Child>
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full items-center justify-center p-4 text-center'>
               <Transition.Child as={Fragment}
-                enter="ease-out duration-300" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95"
+                enter='ease-out duration-300' enterFrom='opacity-0 scale-95' enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200' leaveFrom='opacity-100 scale-100' leaveTo='opacity-0 scale-95'
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-neutral-800 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-lg bg-neutral-800 text-left align-middle shadow-xl transition-all'>
                   <div className='flex justify-end pt-4 pl-4 pr-4'>
                     <Button size='sm' kind='ghost' shape='circle' onClick={handleClose}>
                       <Close />
@@ -280,8 +280,8 @@ function ActionButton({ isActive, onClick, ...rest }) {
 function MenuBar({ editor, endActionEnhancer }) {
   if (!editor) return null;
   return (
-    <div className='flex items-center justify-between p-2'>
-      <div className='flex items-center gap-1'>
+    <div className='flex items-center justify-between px-2 pb-2'>
+      <div className='flex items-center'>
         <ActionButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editor.can().chain().focus().toggleBold().run()}
@@ -391,30 +391,38 @@ export function toHTML(stringContent) {
 }
 
 export default function Tiptap({ content, endActionEnhancer, onCreate, onUpdate }) {
+  const [isReady, setIsReady] = useState(false);
   const editor = useEditor({
     extensions,
     autofocus: true,
     editorProps: {
       attributes: {
-        class: 'prose dark:prose-invert prose-sm py-2 px-3 focus:outline-none min-h-[100px] max-w-full',
+        class: 'prose dark:prose-invert prose-sm py-2 px-3 focus:outline-none min-h-[96px] max-w-full',
       },
     },
     content,
-    onCreate: onCreate ?? (() => { }),
+    onCreate: ({ editor }) => {
+      setIsReady(true);
+      runIfFn(onCreate, { editor });
+    },
     onUpdate: onUpdate ?? (() => { }),
   });
 
   return (
-    <div className='flex flex-col p-0 border border-solid border-neutral-700 bg-neutral-800 rounded-md focus-within:border-neutral-400'>
-      {editor ?
-        <>
-          <EditorContent editor={editor} />
-          <MenuBar editor={editor} endActionEnhancer={endActionEnhancer} />
-        </> : <>
-          {/* <textarea></textarea> XXX 在editor加载出来之前，显示textarea，让用户可以输入内容*/}
-        </>
-      }
-
+    <div className='flex flex-col min-h-[144px] items-center justify-center'>
+      {!isReady && !content && <span className='text-sm text-gray-400'>编辑器加载中...</span>}
+      <Transition appear show={isReady} as={Fragment}>
+        <Transition.Child as={Fragment}
+          enter='ease-out duration-300'
+          enterFrom='opacity-0'
+          enterTo='opacity-100'
+        >
+          <div className='w-full flex flex-col p-0 border border-solid border-neutral-700 bg-neutral-800 rounded-md focus-within:border-neutral-400'>
+            <EditorContent editor={editor} />
+            <MenuBar editor={editor} endActionEnhancer={endActionEnhancer} />
+          </div>
+        </Transition.Child>
+      </Transition>
     </div>
   );
 };
