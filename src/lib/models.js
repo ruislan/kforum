@@ -465,7 +465,7 @@ export const discussionModel = {
         SCHEMA_CONTENT: '内容是必填的，不小于 2 个字符。',
         SCHEMA_CATEGORY: '分类是必填的，请选择一个分类',
     },
-    // TODO 这里看是不是要拆分一下user的，因为user的读取话题的排序逻辑可能不同
+    // XXX 后面可以可能要拆分一下user的话题，因为user的读取话题的排序逻辑可能有很大的不同
     async getDiscussions({
         categoryId = null, // 如果有categoryId，也即是进行分类过滤，那么无需在每个话题上携带分类 Join（都是这个分类）
         userId = null, // 如果有userId，也即是进行所有人过滤，那么无需在每个话题上携带用户 Join（都是这个人）
@@ -729,4 +729,29 @@ export const uploadModel = {
         data.size = uploads.reduce((prev, curr) => prev + (Number(curr.fileSize) || 0), 0);
         return data;
     }
+}
+
+export const reportModel = {
+    errors: {
+        TYPE_INVALID: '不支持的举报理由，建议选择“其他”，并说明举报原因',
+        REASON_TOO_SHORT: '请说明举报的原因，至少 4 个字',
+
+    },
+    types: { // 举报的分类
+        SPAM: 'spam', // 偏离主题，与当前话题无关，口水贴、价值不高等
+        RULES: 'rules', // 违反规则
+        RUDELY: 'rudely', // 脏话、威胁、人身攻击等不当言论
+        INFRINGEMENT: 'infringement', // 侵犯隐私、著作权等等
+        OTHER: 'other', //其他
+        includes(value) {
+            return Object.values(this).includes(value);
+        }
+    },
+    async create({ userId, postId, type, reason }) {
+        if (!this.types.includes(type)) throw ModelError(this.errors.TYPE_INVALID);
+        if (type === this.types.OTHER && reason.length < 4) throw ModelError(this.errors.REASON_TOO_SHORT)
+        await prisma.db.report.create({
+            data: { userId, postId, type, reason }
+        });
+    },
 }
