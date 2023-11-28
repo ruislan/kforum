@@ -6,10 +6,9 @@ import toast from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
 import { Dialog, Transition } from '@headlessui/react';
 
-import { runIfFn } from '@/lib/fn';
 import useLoginModal from '@/hooks/useLoginModal';
 
-import { CheckIcon, Close, Flag, LoadingIcon } from '../icons';
+import { CheckIcon, Close, Flag } from '../icons';
 import ActionButton from '../ui/action-button';
 import Button from '../ui/button';
 import Textarea from '../ui/textarea';
@@ -22,7 +21,7 @@ const reportTypeOptions = [
     { name: '其他', description: '以上原因均不适合', value: 'other' },
 ];
 
-export default function ActionReport({ post, onReported }) {
+export default function ActionReport({ post }) {
     const [show, setShow] = useState(false);
     const loginModal = useLoginModal();
     const { data } = useSession();
@@ -51,15 +50,20 @@ export default function ActionReport({ post, onReported }) {
         return true;
     };
 
+    const handleClick = async () => {
+        if (!data?.user) loginModal.open();
+        setShow(true);
+    };
+
     const handleTypeChanged = async (type) => {
         setType(type);
         setError('');
-    }
+    };
 
     const handleClose = async () => {
         resetFields();
         setShow(false);
-    }
+    };
 
     const handleSubmit = async () => {
         if (!validateFields()) return;
@@ -67,16 +71,15 @@ export default function ActionReport({ post, onReported }) {
         setIsSubmitting(true);
         setError(null);
         try {
-            const res = await fetch('/api/reports', {
+            const res = await fetch(`/api/posts/${post.id}/reports`, {
                 method: 'POST',
-                body: JSON.stringify({ postId: post.id, type, reason }),
+                body: JSON.stringify({ type, reason }),
                 headers: { 'Content-Type': 'application/json' },
             });
             if (res.ok) {
                 resetFields();
                 setShow(false);
-                runIfFn(onReported);
-                toast.success('感谢您的帮助');
+                toast.success('再次感谢您，这将会帮助我们做得更好');
             } else {
                 if (res.status === 400) {
                     const json = await res.json();
@@ -97,14 +100,15 @@ export default function ActionReport({ post, onReported }) {
     if (!post) return null;
 
     return (
-        <ActionButton onClick={e => {
-            e.preventDefault();
-            if (!data?.user) loginModal.open();
-            setShow(true);
-        }}>
-            <Flag />
+        <>
+            <ActionButton onClick={e => {
+                e.preventDefault();
+                handleClick();
+            }}>
+                <Flag />
+            </ActionButton>
             <Transition appear show={show} as={Fragment}>
-                <Dialog className='relative z-50' onClose={handleClose}>
+                <Dialog as='div' className='relative z-50' onClose={handleClose}>
                     <Transition.Child
                         as={Fragment}
                         enter='ease-out duration-300'
@@ -114,12 +118,12 @@ export default function ActionReport({ post, onReported }) {
                         leaveFrom='opacity-100'
                         leaveTo='opacity-0'
                     >
-                        <div className='fixed inset-0 bg-black bg-opacity-80' />
+                        <div className='fixed inset-0 bg-black/80' aria-hidden='true' />
                     </Transition.Child>
                     <div className='fixed inset-0 overflow-y-auto'>
                         <div className='flex min-h-full items-center justify-center p-4 text-center'>
                             <Transition.Child
-                                Ïas={Fragment}
+                                as={Fragment}
                                 enter='ease-out duration-300'
                                 enterFrom='opacity-0 scale-95'
                                 enterTo='opacity-100 scale-100'
@@ -133,8 +137,8 @@ export default function ActionReport({ post, onReported }) {
                                             <Close />
                                         </Button>
                                     </div>
-                                    <Dialog.Title className='text-2xl font-bold pl-8 pr-8 mb-4'>举报</Dialog.Title>
-                                    <Dialog.Description className='text-sm pl-8 pr-8 mb-4'>
+                                    <Dialog.Title as='h3' className='text-2xl font-bold pl-8 pr-8 mb-4'>举报</Dialog.Title>
+                                    <Dialog.Description className='flex flex-col text-sm pl-8 pr-8 mb-4'>
                                         感谢您帮助我们建设文明健康的社区，您的每一分付出，我们都看得到。
                                     </Dialog.Description>
                                     <div className='flex flex-col gap-2 pl-8 pr-8 mb-4 w-full'>
@@ -191,6 +195,6 @@ export default function ActionReport({ post, onReported }) {
                     </div>
                 </Dialog>
             </Transition>
-        </ActionButton>
+        </>
     );
 }

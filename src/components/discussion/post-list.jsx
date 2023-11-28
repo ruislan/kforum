@@ -21,6 +21,7 @@ import ActionReply from './action-reply';
 import PostUpdater from './post-updater';
 import Spinner from '../ui/spinner';
 import UserAvatar from '../ui/user-avatar';
+import ActionReport from './action-report';
 
 function PostReplyContent({ replyPost }) {
     const limit = 100;
@@ -116,8 +117,16 @@ function PostItem({ isDiscussionLocked, item, onReplyClick }) {
                                 {!isDiscussionLocked && <ActionReply onClick={() => runIfFn(onReplyClick, { post })} />}
                                 {/* give reaction  */}
                                 <ActionReact post={post} onReacted={handleUserReacted} />
-                                {/* copy url to share  */}
-                                {/* <ActionButton><LinkIcon /></ActionButton> */}
+                                {isAuthenticated && <>
+                                    <ActionReport post={post} />
+                                    {/* copy url to share  */}
+                                    {/* <ActionButton><LinkIcon /></ActionButton> */}
+                                    {/* save to bookmark */}
+                                    {/* <ActionButton><Bookmark /></ActionButton><ActionButton><UnBookmark /></ActionButton> */}
+                                    {/* report: owner, moderator and the user who has reported don't show this flag icon */}
+                                    {/* hide */}
+                                    {/* <ActionButton><EyeOff /></ActionButton> */}
+                                </>}
                                 {/* report: owner, moderator and the user who has reported don't show this flag icon */}
                                 {/* <ActionButton><Flag /></ActionButton> */}
                                 {/* define this port: owner, moderator. multi choose, items: spoiler(剧透)，NSFW(少儿不宜)，fake（假的），approved（实锤），spam（水贴）, OC（原创）, official（官方）*/}

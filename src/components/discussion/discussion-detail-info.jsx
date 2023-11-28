@@ -132,7 +132,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                             {/* copy url to share  */}
                             {/* <ActionButton><LinkIcon /></ActionButton> */}
                             {isAuthenticated && <>
-                                <ActionReport post={firstPost} onReported={() => { }} />
+                                <ActionReport post={firstPost} />
                                 {/* save to bookmark */}
                                 {/* <ActionButton><Bookmark /></ActionButton>
                             <ActionButton><UnBookmark /></ActionButton> */}

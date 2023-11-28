@@ -735,7 +735,6 @@ export const reportModel = {
     errors: {
         TYPE_INVALID: '不支持的举报理由，建议选择“其他”，并说明举报原因',
         REASON_TOO_SHORT: '请说明举报的原因，至少 4 个字',
-
     },
     types: { // 举报的分类
         SPAM: 'spam', // 偏离主题，与当前话题无关，口水贴、价值不高等
@@ -748,9 +747,11 @@ export const reportModel = {
         }
     },
     async create({ userId, postId, type, reason }) {
-        if (!this.types.includes(type)) throw ModelError(this.errors.TYPE_INVALID);
-        if (type === this.types.OTHER && reason.length < 4) throw ModelError(this.errors.REASON_TOO_SHORT)
-        await prisma.db.report.create({
+        if (!this.types.includes(type)) throw new ModelError(this.errors.TYPE_INVALID);
+        if (type === this.types.OTHER && reason.length < 4) throw new ModelError(this.errors.REASON_TOO_SHORT);
+        const report = await prisma.report.findFirst({ where: { userId, postId } });
+        if (report) return; // 举报过了不用再次存储
+        await prisma.report.create({
             data: { userId, postId, type, reason }
         });
     },
