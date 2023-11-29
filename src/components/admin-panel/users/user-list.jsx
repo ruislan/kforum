@@ -119,7 +119,7 @@ export default function UserList() {
                 ))}
                 {!isLoading && dataList.length === 0 && <NoContent noWrap text='没有数据' />}
             </div>
-            {isLoading && <Spinner />}
+            {isLoading && <Spinner　className='self-center' />}
             {hasMore && (
                 <div className='self-center py-2'>
                     <Button kind='ghost' disabled={isLoading} onClick={() => setPage(prev => prev + 1)}>查看更多</Button>

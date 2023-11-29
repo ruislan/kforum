@@ -12,6 +12,7 @@ const menus = [
   { label: '概览', path: '/admin-panel' },
   { label: '设置', path: '/admin-panel/site' },
   { label: '用户', path: '/admin-panel/users' },
+  { label: '举报', path: '/admin-panel/reports' },
 ];
 
 export const metadata = {

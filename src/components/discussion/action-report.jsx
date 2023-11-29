@@ -12,14 +12,7 @@ import { CheckIcon, Close, Flag } from '../icons';
 import ActionButton from '../ui/action-button';
 import Button from '../ui/button';
 import Textarea from '../ui/textarea';
-
-const reportTypeOptions = [
-    { name: '偏离主题', description: '此帖与当前话题无关，口水贴、价值不高等。', value: 'spam' },
-    { name: '违反规则', description: '此贴违反了社区规则。', value: 'rules' },
-    { name: '不当言论', description: '此贴包含了脏话、威胁、仇恨、人身攻击等不当内容。', value: 'rudely' },
-    { name: '侵犯权益', description: '此贴侵犯了隐私、肖像权、著作权等他人权益', value: 'infringement' },
-    { name: '其他', description: '以上原因均不适合', value: 'other' },
-];
+import { REPORT_TYPES } from '@/lib/constants';
 
 export default function ActionReport({ post }) {
     const [show, setShow] = useState(false);
@@ -142,7 +135,7 @@ export default function ActionReport({ post }) {
                                         感谢您帮助我们建设文明健康的社区，您的每一分付出，我们都看得到。
                                     </Dialog.Description>
                                     <div className='flex flex-col gap-2 pl-8 pr-8 mb-4 w-full'>
-                                        {reportTypeOptions.map((option, index) => (
+                                        {REPORT_TYPES.map((option, index) => (
                                             <div
                                                 key={index}
                                                 onClick={() => handleTypeChanged(option.value)}

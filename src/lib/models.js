@@ -755,4 +755,95 @@ export const reportModel = {
             data: { userId, postId, type, reason }
         });
     },
+    async getReportsGroupByPost({
+        page = 1,
+        pageSize = DEFAULT_PAGE_LIMIT
+    }) {
+        const skip = pageUtils.getSkip(page, pageSize);
+        const take = pageSize;
+        // 这里主要是以帖子为主体的举报
+        const fetchCount = prisma.post.count({
+            where: {
+                reports: {
+                    some: {}
+                }
+            }
+        });
+        const fetchList = await prisma.post.findMany({
+            where: {
+                reports: {
+                    some: {}
+                }
+            },
+            include: {
+                user: {
+                    select: userModel.fields.simple,
+                },
+                discussion: {
+                    include: {
+                        category: true,
+                        user: {
+                            select: userModel.fields.simple,
+                        }
+                    }
+                },
+                reports: {
+                    include: {
+                        user: {
+                            select: userModel.fields.simple,
+                        }
+                    }
+                },
+            },
+            orderBy: {
+                updatedAt: 'desc'
+            },
+            take,
+            skip,
+        });
+
+        let [posts, count] = await Promise.all([fetchList, fetchCount]);
+        return { posts, hasMore: count > skip + take };
+    },
+    async perform({ action, userId, reportIds }) {
+        let data = null;
+        // agree 情况下，应该隐藏或者删除帖子，这里就直接用删除
+        switch (action) {
+            case 'agree': {
+                data = {
+                    agreed: true,
+                    agreedBy: userId,
+                    agreedAt: new Date(),
+                };
+                break;
+            }
+            case 'disagree': {
+                data = {
+                    disagreed: true,
+                    disagreedBy: userId,
+                    disagreedAt: new Date(),
+                };
+                break;
+            }
+            case 'ignore': {
+                data = {
+                    ignored: true,
+                    ignoredBy: userId,
+                    ignoredAt: new Date(),
+                };
+                break;
+            }
+            default: break;
+        }
+        if (!data) return; // nothing to do
+
+        await prisma.report.updateMany({
+            where: {
+                id: {
+                    in: reportIds,
+                }
+            },
+            data
+        })
+    }
 }

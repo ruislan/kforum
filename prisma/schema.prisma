@@ -29,6 +29,7 @@ model User {
   posts       Post[]
   reactions   ReactionPostRef[]
   avatar      UploadAvatarRef?
+  reports     Report[]
 }
 
 model Discussion {
@@ -91,6 +92,7 @@ model Post {
   reactions           ReactionPostRef[]
   replies             Post[]            @relation(name: "replies")
   uploads             UploadPostRef[]
+  reports             Report[]
 
   @@index([id, discussionId])
   @@index([discussionId, createdAt])
@@ -199,6 +201,10 @@ model Report {
   ignoredAt   DateTime? @default(now()) @map("ignored_at")
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  // ref
+  post Post @relation(fields: [postId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
   @@unique([userId, postId]) // 一个用户只能对一个帖子进行举报
 }

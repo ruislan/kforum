@@ -21,7 +21,7 @@ Running MySQL first. Rename .env.example to .env. Set DATABASE_URL.
 cd kforum
 pnpm install
 pnpm prisma db push
-pnpm prisma db seed
+pnpm seed:dev
 pnpm dev
 ```
 
