@@ -208,9 +208,9 @@ export default function ReportList({ filter }) {
                                 </div>
                             ))}
                         </div>
-                        {filter !== 'ignored' && (
+                        {item.reports.every(r => !r.ignored) && (
                             <>
-                                <h3 className='text-sm text-gray-300 font-semibold'>是否认可上述{item.reports?.length > 1 && '这些'}举报内容?</h3>
+                                <h3 className='text-sm text-gray-300 font-semibold'>是否认可上述{item.reports.length > 1 && '这些'}举报内容?</h3>
                                 <div className='flex items-center text-gray-300 gap-2'>
                                     <ActionPerform action='agree' label='是' reportIds={item.reports.map(r => r.id)} onPerformed={() => handlePerformed(item)} />
                                     <ActionPerform action='disagree' label='否' reportIds={item.reports.map(r => r.id)} onPerformed={() => handlePerformed(item)} />
