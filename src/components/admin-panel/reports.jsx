@@ -15,10 +15,10 @@ import SplitBall from '@/components/ui/split-ball';
 import { Locked, Pined } from '@/components/icons';
 import ProseContent from '@/components/ui/prose-content';
 import UserAvatar from '@/components/ui/user-avatar';
-import { REPORT_TYPES } from '@/lib/constants';
+import { REPORT_FILTERS, REPORT_TYPES } from '@/lib/constants';
 import { runIfFn } from '@/lib/fn';
 
-function ActionPerform({ reportIds, action, label, kind, onPerformed }) {
+function ActionPerform({ reportIds, action, label, onPerformed }) {
     const [isLoading, setIsLoading] = useState(false);
     const handleClick = async () => {
         setIsLoading(true);
@@ -52,7 +52,6 @@ function ActionPerform({ reportIds, action, label, kind, onPerformed }) {
     };
     return (
         <Button
-            kind={kind ?? 'default'}
             size='xs'
             isLoading={isLoading}
             onClick={e => {
@@ -64,11 +63,11 @@ function ActionPerform({ reportIds, action, label, kind, onPerformed }) {
     );
 }
 
-export default function ReportList() {
+export default function ReportList({ filter }) {
     const [isLoading, setIsLoading] = useState(false);
     const [dataList, setDataList] = useState([]);
-    const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(false);
+    const [page, setPage] = useState(1);
 
     const handlePerformed = async (item) => {
         setDataList(prev => prev.filter(p => p.id !== item.id));
@@ -77,7 +76,7 @@ export default function ReportList() {
     const fetchDataList = useCallback(async () => {
         setIsLoading(true);
         try {
-            let url = `/api/admin/reports?page=${page}`;
+            let url = `/api/admin/reports?filter=${filter}&page=${page}`;
             const res = await fetch(url);
             if (res.ok) {
                 const json = await res.json();
@@ -91,7 +90,7 @@ export default function ReportList() {
         } finally {
             setIsLoading(false);
         }
-    }, [page]);
+    }, [page, filter]);
 
     useEffect(() => {
         fetchDataList();
@@ -100,6 +99,20 @@ export default function ReportList() {
     return (
         <Box className='flex flex-col'>
             <HeadingSmall>举报列表</HeadingSmall>
+            <div className='flex flex-wrap text-sm font-semibold gap-2 mb-4'>
+                {REPORT_FILTERS.map(f => (
+                    <Link
+                        className={clsx(
+                            'text-sm text-gray-200 px-2 py-1 rounded-md hover:bg-neutral-700',
+                            f.value === filter && 'bg-neutral-700 font-semibold'
+                        )}
+                        key={f.value}
+                        href={`?filter=${f.value}`}
+                    >
+                        {f.name}
+                    </Link>
+                ))}
+            </div>
             <div className='flex flex-col px-0.5 gap-3'>
                 {dataList.map((item, index) => (
                     <div
@@ -162,10 +175,30 @@ export default function ReportList() {
                             {item.reports.map((report, j) => (
                                 <div key={j} className='flex flex-col p-2 rounded-md bg-zinc-700 gap-1'>
                                     <div className='flex items-center text-gray-300 text-xs'>
-                                        <Link href={`/u/${report.user.name}`} onClick={e => e.stopPropagation()} className='hover:underline underline-offset-2 cursor-pointer'>u/{report.user.name}</Link>
+                                        <Link
+                                            href={`/u/${report.user.name}`}
+                                            onClick={e => e.stopPropagation()}
+                                            className='hover:underline underline-offset-2 cursor-pointer'>
+                                            u/{report.user.name}
+                                        </Link>
                                         <span>&nbsp;于&nbsp;</span>
-                                        <span suppressHydrationWarning>{dateUtils.fromNow(item.createdAt)}&nbsp;举报此贴，&nbsp;认为此贴&nbsp;</span>
+                                        <span suppressHydrationWarning>{dateUtils.fromNow(item.createdAt)}&nbsp;举报此贴，认为此贴&nbsp;</span>
                                         <span className='font-semibold '>{REPORT_TYPES.find(r => r.value === report.type).name}</span>
+                                        <span>。</span>
+                                        {report.ignoredUser && (
+                                            <>
+                                                <span>&nbsp;管理员&nbsp;</span>
+                                                <Link
+                                                    href={`/u/${report.user.name}`}
+                                                    onClick={e => e.stopPropagation()}
+                                                    className='hover:underline underline-offset-2 cursor-pointer'>
+                                                    u/{report.user.name}
+                                                </Link>
+                                                <span>&nbsp;于&nbsp;</span>
+                                                <span suppressHydrationWarning>{dateUtils.fromNow(report.ignoredAt)}</span>
+                                                <span className='font-semibold'>&nbsp;忽略了此举报&nbsp;</span>
+                                            </>
+                                        )}
                                     </div>
                                     {report.reason && (
                                         <div className='text-xs'>
@@ -175,12 +208,16 @@ export default function ReportList() {
                                 </div>
                             ))}
                         </div>
-                        <h3 className='text-sm text-gray-300 font-semibold'>是否认可上述{item.reports?.length > 0 && '这些'}举报内容?</h3>
-                        <div className='flex items-center text-gray-300 gap-2'>
-                            <ActionPerform action='agree' label='是' reportIds={item.reports.map(r => r.id)} onPerformed={() => handlePerformed(item)} />
-                            <ActionPerform action='disagree' label='否' reportIds={item.reports.map(r => r.id)} onPerformed={() => handlePerformed(item)} />
-                            <ActionPerform action='ignore' label='忽略' kind='outline' reportIds={item.reports.map(r => r.id)} onPerformed={() => handlePerformed(item)} />
-                        </div>
+                        {filter !== 'ignored' && (
+                            <>
+                                <h3 className='text-sm text-gray-300 font-semibold'>是否认可上述{item.reports?.length > 1 && '这些'}举报内容?</h3>
+                                <div className='flex items-center text-gray-300 gap-2'>
+                                    <ActionPerform action='agree' label='是' reportIds={item.reports.map(r => r.id)} onPerformed={() => handlePerformed(item)} />
+                                    <ActionPerform action='disagree' label='否' reportIds={item.reports.map(r => r.id)} onPerformed={() => handlePerformed(item)} />
+                                </div>
+                                <span className='text-xs text-gray-400'>认可将会删除该贴及其所有关联的内容，帖子的回复、图片、举报等；不认可将会忽略掉这些举报</span>
+                            </>
+                        )}
                     </div>
                 ))}
                 {!isLoading && dataList.length === 0 && <NoContent noWrap text='没有数据' />}

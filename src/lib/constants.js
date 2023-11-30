@@ -7,3 +7,9 @@ export const REPORT_TYPES = [
     { name: '侵犯权益', description: '此贴侵犯了隐私、肖像权、著作权等他人权益', value: 'infringement' },
     { name: '其他', description: '以上原因均不适合', value: 'other' },
 ];
+
+export const REPORT_FILTERS = [
+    { name: '待处理', value: 'pending' },
+    { name: '已忽略', value: 'ignored' },
+    { name: '全部', value: 'all' },
+];

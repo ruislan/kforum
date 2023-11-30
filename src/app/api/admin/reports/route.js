@@ -11,8 +11,8 @@ export async function GET(request, { params }) {
 
     const { searchParams } = new URL(request.url);
     const page = Number(searchParams.get('page')) || 1;
+    const filter = searchParams.get('filter');
 
-    // TODO 这里要获取全部，没有处理过的，处理过的，
-    const { posts, hasMore } = await reportModel.getReportsGroupByPost({ page });
+    const { posts, hasMore } = await reportModel.getReportsGroupByPost({ page, filter });
     return rest.ok({ data: posts, hasMore });
 }

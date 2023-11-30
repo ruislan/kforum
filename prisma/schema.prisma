@@ -25,11 +25,12 @@ model User {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // ref
-  discussions Discussion[]
-  posts       Post[]
-  reactions   ReactionPostRef[]
-  avatar      UploadAvatarRef?
-  reports     Report[]
+  discussions    Discussion[]
+  posts          Post[]
+  reactions      ReactionPostRef[]
+  avatar         UploadAvatarRef?
+  reports        Report[]          @relation(name: "userReports")
+  ignoredReports Report[]          @relation(name: "ignoredReports")
 }
 
 model Discussion {
@@ -125,7 +126,7 @@ model UploadAvatarRef {
 
   // ref
   upload Upload @relation(fields: [uploadId], references: [id])
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade) // deleting user will also delete all uploads refs
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade) // delete user will also delete all uploads refs
 }
 
 // 图片帖子引用 多对多
@@ -136,7 +137,7 @@ model UploadPostRef {
 
   // ref
   upload Upload @relation(fields: [uploadId], references: [id])
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade) // deleting post will also delete all uploads refs
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade) // delete post will also delete all uploads refs
 
   @@id([uploadId, postId])
 }
@@ -185,26 +186,21 @@ model Category {
 
 // 帖子举报
 model Report {
-  id          Int       @id @default(autoincrement()) @db.UnsignedInt
-  type        String    @db.VarChar(32) // 类别
-  reason      String    @db.VarChar(512)
-  postId      Int       @map("post_id") @db.UnsignedInt
-  userId      Int       @map("user_id") @db.UnsignedInt
-  agreed      Boolean? // 认同举报，认同举报视为已经处理完成
-  agreedBy    Int?      @map("agreed_by") // 认同操作人
-  agreedAt    DateTime? @default(now()) @map("agreed_at")
-  disagreed   Boolean? // 不认同举报，不认同举报视为已经处理完成
-  disagreedBy Int?      @map("disagreed_by") // 不认同操作人
-  disagreedAt DateTime? @default(now()) @map("disagreed_at")
-  ignored     Boolean? // 忽略， 忽略视为已经处理完成
-  ignoredBy   Int?      @map("ignored_by") // 忽略操作人
-  ignoredAt   DateTime? @default(now()) @map("ignored_at")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  id            Int       @id @default(autoincrement()) @db.UnsignedInt
+  type          String    @db.VarChar(32) // 类别
+  reason        String    @db.VarChar(512)
+  postId        Int       @map("post_id") @db.UnsignedInt
+  userId        Int       @map("user_id") @db.UnsignedInt
+  ignored       Boolean? // 忽略举报
+  ignoredUserId Int?      @map("ignored_user_id") @db.UnsignedInt // 忽略的操作人
+  ignoredAt     DateTime? @default(now()) @map("ignored_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
 
   // ref
-  post Post @relation(fields: [postId], references: [id])
-  user User @relation(fields: [userId], references: [id])
+  post        Post  @relation(fields: [postId], references: [id], onDelete: Cascade) // delete post will also delete all related reports
+  user        User  @relation(name: "userReports", fields: [userId], references: [id])
+  ignoredUser User? @relation(name: "ignoredReports", fields: [ignoredUserId], references: [id])
 
   @@unique([userId, postId]) // 一个用户只能对一个帖子进行举报
 }

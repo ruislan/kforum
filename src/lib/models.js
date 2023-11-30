@@ -5,6 +5,7 @@ import CryptoJS from 'crypto-js';
 import prisma from './prisma';
 import pageUtils, { DEFAULT_PAGE_LIMIT } from './page-utils';
 import storage from './storage';
+import { REPORT_FILTERS } from './constants';
 
 export class ModelError extends Error { }
 
@@ -337,21 +338,21 @@ export const postModel = {
             await tx.post.update({ where: { id }, data: { content, text } });
         });
     },
-    async delete({ user, id }) {
+    async delete({ user, id, isBySystem = false }) {
         const post = await prisma.post.findUnique({ where: { id }, include: { discussion: true } });
         if (!post) throw new ModelError(this.errors.POST_NOT_FOUND);
-        if (!this.checkPermission(user, post)) throw new ModelError(this.errors.NO_PERMISSION);
+        if (!isBySystem && !this.checkPermission(user, post)) throw new ModelError(this.errors.NO_PERMISSION);
 
         const isFirstPost = post.discussion.firstPostId === post.id;
         await prisma.$transaction(async tx => {
             await tx.reactionPostRef.deleteMany({ where: { postId: post.id } });// delete reactions
             // 不用更新所有回复这贴的引用为null, 外键约束会自动设置为null
             if (isFirstPost) { // delete all
-                // XXX 所有讨论的帖子的图片引用会级联删除
+                // XXX 所有讨论的帖子的图片、举报等引用会级联删除
                 await tx.post.deleteMany({ where: { discussionId: post.discussion.id } });
                 await tx.discussion.delete({ where: { id: post.discussion.id } });
             } else {
-                // XXX 此贴的图片引用会级联删除
+                // XXX 此贴的图片、举报等引用会级联删除
                 await tx.post.delete({ where: { id: post.id } }); // delete one
             }
         });
@@ -736,6 +737,10 @@ export const reportModel = {
         TYPE_INVALID: '不支持的举报理由，建议选择“其他”，并说明举报原因',
         REASON_TOO_SHORT: '请说明举报的原因，至少 4 个字',
     },
+    actions: {
+        agree: 'agree',
+        disagree: 'disagree',
+    },
     types: { // 举报的分类
         SPAM: 'spam', // 偏离主题，与当前话题无关，口水贴、价值不高等
         RULES: 'rules', // 违反规则
@@ -756,25 +761,33 @@ export const reportModel = {
         });
     },
     async getReportsGroupByPost({
+        filter,
         page = 1,
         pageSize = DEFAULT_PAGE_LIMIT
     }) {
         const skip = pageUtils.getSkip(page, pageSize);
         const take = pageSize;
-        // 这里主要是以帖子为主体的举报
-        const fetchCount = prisma.post.count({
-            where: {
-                reports: {
-                    some: {}
+
+        let whereClause = {
+            reports: {
+                some: {
                 }
             }
-        });
+        };
+        switch (filter) {
+            case 'pending':
+                whereClause.reports.some.ignored = null;
+                break;
+            case 'ignored':
+                whereClause.reports.some.ignored = true;
+                break;
+            default: break;
+        }
+
+        // 这里主要是以帖子为主体的举报
+        const fetchCount = prisma.post.count({ where: whereClause });
         const fetchList = await prisma.post.findMany({
-            where: {
-                reports: {
-                    some: {}
-                }
-            },
+            where: whereClause,
             include: {
                 user: {
                     select: userModel.fields.simple,
@@ -791,7 +804,10 @@ export const reportModel = {
                     include: {
                         user: {
                             select: userModel.fields.simple,
-                        }
+                        },
+                        ignoredUser: {
+                            select: userModel.fields.simple,
+                        },
                     }
                 },
             },
@@ -806,44 +822,26 @@ export const reportModel = {
         return { posts, hasMore: count > skip + take };
     },
     async perform({ action, userId, reportIds }) {
-        let data = null;
-        // agree 情况下，应该隐藏或者删除帖子，这里就直接用删除
-        switch (action) {
-            case 'agree': {
-                data = {
-                    agreed: true,
-                    agreedBy: userId,
-                    agreedAt: new Date(),
-                };
-                break;
-            }
-            case 'disagree': {
-                data = {
-                    disagreed: true,
-                    disagreedBy: userId,
-                    disagreedAt: new Date(),
-                };
-                break;
-            }
-            case 'ignore': {
-                data = {
-                    ignored: true,
-                    ignoredBy: userId,
+        if (![this.actions.agree, this.actions.disagree].includes(action)) throw new ModelError('action not support');
+        if (action === this.actions.agree) {
+            console.log(reportIds);
+            const report = await prisma.report.findFirst({
+                where: { id: reportIds[0] }
+            });
+            await postModel.delete({ id: report.postId, isBySystem: true });
+        } else {
+            await prisma.report.updateMany({
+                where: {
+                    id: {
+                        in: reportIds,
+                    }
+                },
+                data: {
+                    ignoredUserId: userId,
                     ignoredAt: new Date(),
-                };
-                break;
-            }
-            default: break;
-        }
-        if (!data) return; // nothing to do
-
-        await prisma.report.updateMany({
-            where: {
-                id: {
-                    in: reportIds,
+                    ignored: true,
                 }
-            },
-            data
-        })
+            });
+        }
     }
 }
