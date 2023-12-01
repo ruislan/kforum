@@ -5,7 +5,6 @@ import CryptoJS from 'crypto-js';
 import prisma from './prisma';
 import pageUtils, { DEFAULT_PAGE_LIMIT } from './page-utils';
 import storage from './storage';
-import { REPORT_FILTERS } from './constants';
 
 export class ModelError extends Error { }
 
@@ -845,3 +844,60 @@ export const reportModel = {
         }
     }
 }
+
+export const tagModel = {
+    errors: {
+        SCHEMA_NAME: '名称是必填的，不小于 2 个字符，不大于 20 个字符',
+        UNIQUE_NAME: '已经存在的标签',
+    },
+    validate({ name }) {
+        if (!name || name.length < 2 || name.length > 20) return { error: true, message: this.errors.SCHEMA_NAME };
+        return { error: false };
+    },
+    async create({ name, textColor, bgColor }) {
+        // check unique
+        const exists = (await prisma.tag.count({ where: { name } })) > 0;
+        if (exists) throw new ModelError(this.errors.UNIQUE_NAME);
+        const newTag = await prisma.tag.create({ data: { name, textColor, bgColor } });
+        return newTag;
+    },
+    async update({ id, name, textColor, bgColor }) {
+        const exists = (await prisma.tag.count({
+            where: {
+                name,
+                id: { not: id },
+            }
+        })) > 0;
+        if (exists) throw new ModelError(this.errors.UNIQUE_NAME);
+        await prisma.tag.update({
+            where: { id },
+            data: { name, textColor, bgColor }
+        });
+    },
+    async delete({ id }) {
+        await prisma.tag.delete({ where: { id } });
+    },
+    async getTag({ id }) {
+        if (!id) return null;
+        return await prisma.tag.findUnique({ where: { id } });
+    },
+    async getTags({
+        query,
+        page = 1,
+        pageSize = DEFAULT_PAGE_LIMIT
+    }) {
+        const skip = pageUtils.getSkip(page, pageSize);
+        const take = pageSize;
+        const whereClause = {
+            name: { contains: query }
+        };
+        const fetchCount = prisma.tag.count({ where: whereClause });
+        const fetchList = prisma.tag.findMany({
+            where: whereClause,
+            skip,
+            take,
+        });
+        let [tags, count] = await Promise.all([fetchList, fetchCount]);
+        return { tags, hasMore: count > skip + take };
+    }
+};

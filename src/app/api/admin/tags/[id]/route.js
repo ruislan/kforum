@@ -1,9 +1,10 @@
+import _ from 'lodash';
 import { getServerSession } from 'next-auth';
 
 import authOptions from '@/lib/auth';
 import logger from '@/lib/logger';
 import rest from '@/lib/rest';
-import { ModelError, categoryModel } from '@/lib/models';
+import { ModelError, tagModel } from '@/lib/models';
 
 export async function PUT(request, { params }) {
     // require admin
@@ -11,17 +12,18 @@ export async function PUT(request, { params }) {
     if (!session?.user?.isAdmin) return rest.notFound();
 
     let id = params.id;
-    let { name, slug, sequence, description, color } = await request.json();
+    let { name, textColor, bgColor } = await request.json();
 
     id = Number(id) || 0;
-    sequence = Number(sequence) || 0;
+    name = _.trim(name);
+    textColor = _.trim(textColor);
+    bgColor = _.trim(bgColor);
 
-    const validateResult = categoryModel.validate({ name, slug, sequence, description, color });
+    const validateResult = tagModel.validate({ name, textColor, bgColor });
     if (validateResult.error) return rest.badRequest({ message: validateResult.message });
 
     try {
-        await categoryModel.update({ id, name, slug, sequence, description, color });
-        // revalidateTag('categories');
+        await tagModel.update({ id, name, textColor, bgColor });
         return rest.updated();
     } catch (err) {
         if (err instanceof ModelError)
@@ -43,7 +45,7 @@ export async function DELETE(request, { params }) {
     id = Number(id) || 0;
 
     try {
-        await categoryModel.delete({ id });
+        await tagModel.delete({ id });
         return rest.deleted();
     } catch (err) {
         if (err instanceof ModelError)
