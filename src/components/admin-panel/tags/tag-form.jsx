@@ -1,5 +1,6 @@
 'use client';
 import _ from 'lodash';
+import Link from 'next/link';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
@@ -10,7 +11,65 @@ import { HeadingSmall } from '@/components/ui/heading';
 import Input from '@/components/ui/input';
 import Button from '@/components/ui/button';
 import Tag from '@/components/ui/tag';
-import Link from 'next/link';
+import ConfirmModal from '@/components/ui/confirm-modal';
+
+function ActionDelete({ id, onError }) {
+    const [isShow, setIsShow] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const router = useRouter();
+    const handleDelete = async () => {
+        setIsDeleting(true);
+        try {
+            const res = await fetch(`/api/admin/tags/${id}`, {
+                method: 'DELETE',
+            });
+            if (res.ok) {
+                toast.success('删除成功');
+                router.replace('/admin-panel/tags');
+            } else {
+                if (res.status === 400) {
+                    const json = await res.json();
+                    runIfFn(onError, json.message);
+                } else if (res.status === 401) {
+                    runIfFn(onError, '您的登录已过期，请重新登录');
+                } else {
+                    throw new Error();
+                }
+            }
+        } catch (err) {
+            runIfFn(onError, '未知错误');
+        } finally {
+            setIsShow(false);
+            setIsDeleting(false);
+        }
+    };
+
+    if (!id) return null;
+    return (
+        <Button
+            kind='outline'
+            className='self-end'
+            type='button'
+            isLoading={isDeleting}
+            disabled={isDeleting}
+            onClick={(e) => {
+                e.preventDefault();
+                setIsShow(true);
+            }}
+        >
+            删除
+            <ConfirmModal
+                show={isShow}
+                title='确认删除'
+                description='是否删除当前这个标签，这将会让所有使用该标签的主题都失去该标签。'
+                onCancel={() => setIsShow(false)}
+                onClose={() => setIsShow(false)}
+                onConfirm={() => handleDelete()}
+            />
+        </Button>
+    );
+}
+
 
 export default function TagForm({ tag }) {
     const router = useRouter();
@@ -133,6 +192,7 @@ export default function TagForm({ tag }) {
                 {error && <span className='text-sm text-red-500'>{error}</span>}
                 <div className='flex items-center justify-between'>
                     <Button type='submit' isLoading={isSubmitting} disabled={isSubmitting}>{id ? '更新' : '新建'}</Button>
+                    <ActionDelete id={id} onError={(message) => setError(message)} />
                 </div>
             </form>
         </Box>

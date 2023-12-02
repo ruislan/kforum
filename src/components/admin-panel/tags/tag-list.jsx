@@ -74,7 +74,9 @@ export default function TagList() {
                 <Button onClick={e => {
                     e.preventDefault();
                     onNewClick();
-                }}>新增</Button>
+                }}>
+                    新增
+                </Button>
             </div>
             <div className='flex flex-wrap px-0.5 gap-2'>
                 {dataList.map((tag, index) => (

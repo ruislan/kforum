@@ -9,6 +9,7 @@ import Button from '../ui/button';
 import Tiptap from '../ui/tiptap';
 import Select from '../ui/select';
 import Input from '../ui/input';
+import InputTags from './input-tags';
 
 export default function DiscussionCreator({ categories, initCategorySlug }) {
     const router = useRouter();
@@ -18,7 +19,17 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
     const [contentJson, setContentJson] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
-    const options = useMemo(() => categories.map(c => ({ value: c.slug, label: c.name })), [categories]);
+    const options = useMemo(() =>
+        categories.map(c => ({
+            value: c.slug,
+            label: (
+                <div className='flex items-center gap-2'>
+                    <span className='w-4 h-4' style={{ backgroundColor: c.color }} />
+                    <span>{c.name}</span>
+                </div>
+            )
+        })),
+        [categories]);
 
     const resetFields = () => {
         setCategorySlug('');
@@ -102,11 +113,14 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
                         maxLength={300}
                         minLength={2}
                         endEnhancer={
-                            <span className='text-xs ml-2 text-neutral-500'>
+                            <span className='text-xs ml-2 text-gray-500'>
                                 {title?.length || 0}/300
                             </span>
                         }
                     />
+                    <InputTags
+                        placeHolder='添加标签（可选），最多 5 个。'
+                     />
                     <Tiptap
                         kind='default'
                         content={''}

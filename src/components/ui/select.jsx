@@ -56,14 +56,14 @@ const Select = ({ options, label, value, onChange }) => {
                                 >
                                     {({ selected }) => (
                                         <>
-                                            <span
+                                            <div
                                                 className={clsx(
                                                     'block truncate',
                                                     selected ? 'font-semibold' : 'font-normal'
                                                 )}
                                             >
                                                 {option.label}
-                                            </span>
+                                            </div>
                                             {selected && (
                                                 <span className='flex items-center text-gray-100'>
                                                     <CheckIcon className='h-4 w-4' aria-hidden='true' />

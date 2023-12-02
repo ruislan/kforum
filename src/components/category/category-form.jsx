@@ -58,7 +58,7 @@ function ActionDelete({ id, onError}) {
             <ConfirmModal
                 show={isShow}
                 title='确认删除'
-                description='是否删除当前这个分类，如果分类下存在话题，请先进行转移，再删除。'
+                description='是否删除当前这个分类，如果分类下存在话题，则无法删除。'
                 onCancel={() => setIsShow(false)}
                 onClose={() => setIsShow(false)}
                 onConfirm={() => handleDelete()}
