@@ -10,6 +10,7 @@ import Button from '../ui/button';
 import FormControl from '../ui/form-control';
 import { Image as ImageIcon, DeleteBin } from '../icons';
 import { runIfFn } from '@/lib/fn';
+import { SITE_SETTING_TYPES } from '@/lib/constants';
 
 const IMAGE_UPLOAD_SIZE_LIMIT = 1024 * 1024 * 10; // 10MB
 
@@ -142,6 +143,7 @@ export default function SiteForm({ settings: initSettings }) {
                         id: s.id,
                         key: s.key,
                         value: s.value,
+                        dataType: s.dataType,
                     }))
                 }),
                 headers: { 'Content-Type': 'application/json' }
@@ -176,7 +178,7 @@ export default function SiteForm({ settings: initSettings }) {
         >
             {settings.map(setting =>
                 <FormControl key={setting.key} title={setting.name} subtitle={setting.description}>
-                    {setting.dataType === 'string' && (
+                    {setting.dataType === SITE_SETTING_TYPES.string && (
                         <Input
                             value={setting.value}
                             name={setting.key}
@@ -186,7 +188,7 @@ export default function SiteForm({ settings: initSettings }) {
                             }}
                         />
                     )}
-                    {setting.dataType === 'image' &&
+                    {setting.dataType === SITE_SETTING_TYPES.image &&
                         <ImageType
                             value={setting.value}
                             onUploaded={(image) => {

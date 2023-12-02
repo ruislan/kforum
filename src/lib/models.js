@@ -5,6 +5,7 @@ import CryptoJS from 'crypto-js';
 import prisma from './prisma';
 import pageUtils, { DEFAULT_PAGE_LIMIT } from './page-utils';
 import storage from './storage';
+import { SITE_SETTING_TYPES } from './constants';
 
 export class ModelError extends Error { }
 
@@ -628,12 +629,21 @@ export const siteSettingModel = {
         siteFavicon: 'site_favicon',
     },
     async updateSettings(settings) {
-        await prisma.$transaction(
-            settings.map(s => prisma.siteSetting.update({
-                where: { id: s.id },
-                data: { value: s.value }
-            }))
-        );
+        await prisma.$transaction(async tx => {
+            for (const setting of settings) {
+                let data = { value: setting.value };
+                if (setting.dataType === SITE_SETTING_TYPES.image) { // 图片类型，链接图片
+                    const upload = await tx.upload.findFirst({
+                        where: { url: data.value }
+                    });
+                    data.uploadId = upload?.id;
+                }
+                await tx.siteSetting.update({
+                    where: { id: setting.id },
+                    data
+                });
+            }
+        });
     },
     async getSettings() {
         return await prisma.siteSetting.findMany();
@@ -712,7 +722,7 @@ export const uploadModel = {
         return savedFile;
     },
     async cleanup() {
-        // 清理的图片通常是不能 PostRef, AvatarRef，Discussion Poster 中没有的图片
+        // 清理的图片通常是不能 PostRef, AvatarRef，Discussion Poster
         // 清理掉数据库记录
         // 清理掉文件
         // 为了避免清理过大，我们一次最多只处理 1000 条记录
@@ -722,6 +732,7 @@ export const uploadModel = {
                 discussions: { none: {} },
                 posts: { none: {} },
                 avatars: { none: {} },
+                siteSettings: { none: {} }
             }
         });
         const data = await prisma.upload.deleteMany({ where: { id: { in: uploads.map(u => u.id) } } });

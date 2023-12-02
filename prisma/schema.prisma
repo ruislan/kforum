@@ -113,9 +113,10 @@ model Upload {
   createdAt DateTime @default(now()) @map("created_at")
 
   //ref
-  posts       UploadPostRef[]
-  avatars     UploadAvatarRef[]
-  discussions Discussion[]
+  posts        UploadPostRef[]
+  avatars      UploadAvatarRef[]
+  discussions  Discussion[]
+  siteSettings SiteSetting[]
 
   @@index([url])
 }
@@ -246,6 +247,10 @@ model SiteSetting {
   description String?  @db.VarChar(128)
   name        String   @db.VarChar(64)
   value       String   @db.VarChar(256)
+  uploadId    Int?     @db.UnsignedInt // 图片类型的图片引用
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // ref
+  upload Upload? @relation(fields: [uploadId], references: [id])
 }

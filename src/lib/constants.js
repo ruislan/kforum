@@ -13,3 +13,10 @@ export const REPORT_FILTERS = [
     { name: '已忽略', value: 'ignored' },
     { name: '全部', value: 'all' },
 ];
+
+export const SITE_SETTING_TYPES = {
+    image: 'image',
+    string: 'string',
+    text: 'text',
+    html: 'html'
+};
