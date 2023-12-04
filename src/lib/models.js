@@ -344,6 +344,7 @@ export const postModel = {
         if (!isBySystem && !this.checkPermission(user, post)) throw new ModelError(this.errors.NO_PERMISSION);
 
         const isFirstPost = post.discussion.firstPostId === post.id;
+        const isLastPost = post.discussion.lastPostId === post.id;
         await prisma.$transaction(async tx => {
             await tx.reactionPostRef.deleteMany({ where: { postId: post.id } });// delete reactions
             // 不用更新所有回复这贴的引用为null, 外键约束会自动设置为null
@@ -354,6 +355,19 @@ export const postModel = {
             } else {
                 // XXX 此贴的图片、举报等引用会级联删除
                 await tx.post.delete({ where: { id: post.id } }); // delete one
+                let lastPost = null;
+                if (isLastPost) { // 查找新的最后一贴，并设置
+                    lastPost = await tx.post.findFirst({ where: { discussionId: post.discussionId }, orderBy: { createdAt: 'desc' } });
+                }
+                await tx.discussion.update({
+                    where: { id: post.discussionId },
+                    data: {
+                        lastPostId: lastPost?.id,
+                        lastPostedAt: lastPost?.createdAt,
+                        postCount: { increment: -1 },
+                    }
+                });
+
             }
         });
     },
@@ -570,18 +584,35 @@ export const discussionModel = {
         if (!categorySlug) return { error: true, message: this.errors.SCHEMA_CATEGORY };
         return { error: false };
     },
-    async create({ user, title, text, content, categorySlug, ip }) {
+    async create({ user, title, text, content, categorySlug, tags: tagIds, ip }) {
         const cat = await prisma.category.findUnique({ where: { slug: categorySlug } });
         if (!cat) throw new ModelError(this.errors.SCHEMA_CATEGORY);
 
         const images = uploadModel.getImageUrls(content);
+        tagIds = tagIds?.slice(0, 5);
 
         const data = await prisma.$transaction(async tx => {
             let discussion = await tx.discussion.create({
                 data: {
-                    title, categoryId: cat.id, userId: user.id,
+                    title,
+                    categoryId: cat.id,
+                    userId: user.id,
                 }
             });
+            // connect tag to discussion
+            if (tagIds?.length > 0) {
+                let tags = await tx.tag.findMany({
+                    where: {
+                        id: { in: tagIds },
+                    }
+                });
+                const data = tags.map(t => ({ tagId: t.id, discussionId: discussion.id, userId: user.id }));
+                await tx.tagDiscussionRef.createMany({
+                    data,
+                    skipDuplicates: true
+                });
+            }
+
             const post = await tx.post.create({
                 data: {
                     content, text, discussionId: discussion.id, type: 'text',
@@ -894,20 +925,35 @@ export const tagModel = {
     },
     async getTags({
         query,
+        ignoreIds,
+        isHot = false,
         page = 1,
         pageSize = DEFAULT_PAGE_LIMIT
     }) {
         const skip = pageUtils.getSkip(page, pageSize);
         const take = pageSize;
+
         const whereClause = {
             name: { contains: query }
         };
+        if (!_.isEmpty(ignoreIds)) whereClause.id = { notIn: ignoreIds };
+
         const fetchCount = prisma.tag.count({ where: whereClause });
-        const fetchList = prisma.tag.findMany({
+
+        const fetchCondition = {
             where: whereClause,
             skip,
             take,
-        });
+        };
+        if (isHot) {
+            fetchCondition.orderBy = {
+                discussions: {
+                    _count: 'desc'
+                }
+            };
+        }
+        const fetchList = prisma.tag.findMany(fetchCondition);
+
         let [tags, count] = await Promise.all([fetchList, fetchCount]);
         return { tags, hasMore: count > skip + take };
     }

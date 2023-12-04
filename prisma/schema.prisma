@@ -216,7 +216,8 @@ model Tag {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  refs TagDiscussionRef[]
+  // ref
+  discussions TagDiscussionRef[]
 }
 
 // 每个主题不超过 5 个标签

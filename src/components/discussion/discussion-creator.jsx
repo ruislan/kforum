@@ -9,7 +9,7 @@ import Button from '../ui/button';
 import Tiptap from '../ui/tiptap';
 import Select from '../ui/select';
 import Input from '../ui/input';
-import InputTags from './input-tags';
+import ActionTags from './action-tags';
 
 export default function DiscussionCreator({ categories, initCategorySlug }) {
     const router = useRouter();
@@ -17,6 +17,7 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
     const [title, setTitle] = useState('');
     const [contentText, setContentText] = useState('');
     const [contentJson, setContentJson] = useState('');
+    const [tags, setTags] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const options = useMemo(() =>
@@ -69,6 +70,7 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
                     content: JSON.stringify(contentJson),
                     text: contentText,
                     categorySlug,
+                    tags: tags?.map(t => Number(t.id)).filter(Boolean)
                 }),
                 headers: { 'Content-Type': 'application/json' },
             });
@@ -118,9 +120,6 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
                             </span>
                         }
                     />
-                    <InputTags
-                        placeHolder='添加标签（可选），最多 5 个。'
-                     />
                     <Tiptap
                         kind='default'
                         content={''}
@@ -129,6 +128,9 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
                             setContentText(editor.getText());
                         }}
                     />
+                    <div className='flex items-center'>
+                        <ActionTags onOk={tags => setTags([...tags])} />
+                    </div>
                     {error && <span className='text-sm text-red-500'>{error}</span>}
                     <div className='flex justify-end'>
                         <Button
