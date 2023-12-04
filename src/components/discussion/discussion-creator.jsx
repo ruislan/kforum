@@ -3,13 +3,14 @@
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import _ from 'lodash';
 
 import Box from '../ui/box';
 import Button from '../ui/button';
 import Tiptap from '../ui/tiptap';
 import Select from '../ui/select';
 import Input from '../ui/input';
-import ActionTags from './action-tags';
+import TagsInput from './tags-input';
 
 export default function DiscussionCreator({ categories, initCategorySlug }) {
     const router = useRouter();
@@ -128,16 +129,14 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
                             setContentText(editor.getText());
                         }}
                     />
-                    <div className='flex items-center'>
-                        <ActionTags onOk={tags => setTags([...tags])} />
-                    </div>
+                    <TagsInput onSelected={tags => setTags([...tags])} />
                     {error && <span className='text-sm text-red-500'>{error}</span>}
                     <div className='flex justify-end'>
                         <Button
                             type='submit'
                             isLoading={isSubmitting}
                             disabled={
-                                (!categorySlug && categorySlug?.length <= 0) ||
+                                (_.isEmpty(categorySlug)) ||
                                 contentText?.length < 1 ||
                                 title?.length < 1
                             }>

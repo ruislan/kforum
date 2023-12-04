@@ -101,7 +101,7 @@ export default function TagForm({ tag }) {
             const json = await res.json();
             setId(json.data);
             toast.success('创建成功');
-            router.push(`/admin-panel/tags/${id}`);
+            router.push(`/admin-panel/tags/${json.data}`);
         } else {
             if (res.status === 400) {
                 const json = await res.json();

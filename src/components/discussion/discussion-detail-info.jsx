@@ -25,6 +25,7 @@ import ActionReply from './action-reply';
 import Tag from '../ui/tag';
 import UserAvatar from '../ui/user-avatar';
 import ActionReport from './action-report';
+import ActionTags from './action-tags';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -38,6 +39,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
     const { data, status } = useSession();
     const [firstPost, setFirstPost] = useState(discussion?.firstPost);
     const [reactions, setReactions] = useState(discussion?.firstPost?.reactions);
+    const [tags, setTags] = useState(discussion?.tags);
     const [isSticky, setIsSticky] = useState(discussion?.isSticky);
     const [isLocked, setIsLocked] = useState(discussion?.isLocked);
     const [isEditMode, setIsEditMode] = useState(false);
@@ -100,14 +102,16 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                     {isSticky && (<span className='h-4 w-4 ml-0.5 text-green-400'><Pined /></span>)}
                     {isLocked && (<span className='h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}
                 </div>
-                <h2 className='inline text-xl font-bold break-words text-gray-50'>{discussion.title}</h2>
-                {/* <div className='flex flex-wrap gap-1 my-2'>
-                    <Tag>News</Tag>
-                    <Tag>Help</Tag>
-                    <Tag>Function</Tag>
-                    <Tag>Cheer</Tag>
-                    <Tag>Great</Tag>
-                </div> */}
+                <div className='inline-block relative mb-1'>
+                    <h2 className='inline text-xl font-bold break-words text-gray-50'>{discussion.title}</h2>
+                    {tags && (
+                        <div className='inline-flex flex-wrap ml-2 gap-1 align-text-top'>
+                            {tags.map(tag => (
+                                <Tag size='xs' key={tag.id} color={tag.textColor} bgColor={tag.bgColor}>{tag.name}</Tag>
+                            ))}
+                        </div>
+                    )}
+                </div>
                 {isEditMode ?
                     <PostUpdater
                         post={firstPost}
@@ -144,6 +148,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                                 <>
                                     {/* define this port: owner, moderator. multi choose, items: spoiler(剧透)，NSFW(少儿不宜)，fake（假的），approved（实锤），spam（水贴）, OC（原创）, official（官方）*/}
                                     {/* <ActionButton><Markup /></ActionButton> */}
+                                    <ActionTags discussion={discussion} onSelected={tags => { setTags(tags); discussion.tags = tags;}} />
                                     {/* let discussion stay top of the discussion list: owner, moderator */}
                                     <ActionSticky discussion={discussion} onSticky={(sticky) => { setIsSticky(sticky); discussion.isSticky = sticky; }} />
                                     {/* lock all: owner, moderator */}

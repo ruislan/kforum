@@ -479,6 +479,8 @@ export const discussionModel = {
         SCHEMA_TITLE: '标题是必填的，不小于 2 个字符。',
         SCHEMA_CONTENT: '内容是必填的，不小于 2 个字符。',
         SCHEMA_CATEGORY: '分类是必填的，请选择一个分类',
+        DISCUSSION_NOT_FOUND: '请指定要更新的主题',
+        NO_PERMISSION: '没有操作权限',
     },
     // XXX 后面可以可能要拆分一下user的话题，因为user的读取话题的排序逻辑可能有很大的不同
     async getDiscussions({
@@ -488,6 +490,7 @@ export const discussionModel = {
         pageSize = DEFAULT_PAGE_LIMIT,
         isStickyFirst = false,
         isNewFirst = true,
+        withTags = true,
         withPoster = true, // 带海报
         withFirstPost = false, // 带首贴
     }) {
@@ -501,6 +504,7 @@ export const discussionModel = {
         };
         if (withFirstPost) queryCondition.include.firstPost = true;
         if (withPoster) queryCondition.include.poster = true;
+        if (withTags) queryCondition.include.tags = { select: { tag: true } };
 
         if (categoryId) queryCondition.where = { categoryId };
         else queryCondition.include.category = { select: { id: true, name: true, slug: true, color: true, icon: true } };
@@ -517,6 +521,13 @@ export const discussionModel = {
         const countFetch = prisma.discussion.count(countCondition);
         const discussionsFetch = prisma.discussion.findMany(queryCondition);
         const [discussions, count] = await Promise.all([discussionsFetch, countFetch]);
+
+        if (withTags) {
+            for (const d of discussions) {
+                d.tags = d.tags.map(t => t.tag);
+            }
+        }
+
         return { discussions, hasMore: count > skip + take };
     },
     async incrementDiscussionView({ id }) {
@@ -532,7 +543,8 @@ export const discussionModel = {
         withFirstPost = true,
         withLastPost = true,
         withUser = true,
-        withCategory = true
+        withCategory = true,
+        withTags = true,
     }) {
         if (!id) return null;
         const queryCondition = {
@@ -548,6 +560,8 @@ export const discussionModel = {
                 user: { select: userModel.fields.simple }
             }
         };
+        if (withTags) queryCondition.include.tags = { select: { tag: true } };
+
         const d = await prisma.discussion.findUnique(queryCondition);
         if (!d) return null;
 
@@ -575,6 +589,8 @@ export const discussionModel = {
             }
         });
         d.firstPost.reactions.sort((a, b) => b.count - a.count);
+        if (withTags) d.tags = d.tags.map(ref => ref.tag);
+
         return d;
     },
     validate({ title, text, content, categorySlug }) {
@@ -583,6 +599,13 @@ export const discussionModel = {
         if (!text || text.length < 2) return { error: true, message: this.errors.SCHEMA_CONTENT };
         if (!categorySlug) return { error: true, message: this.errors.SCHEMA_CATEGORY };
         return { error: false };
+    },
+    checkPermission(user, discussion) {
+        const isAdmin = user.isAdmin;
+        const isOwner = discussion.userId === user.id;
+        // isModerator ...
+        if (!isAdmin && !isOwner) return false;
+        return true;
     },
     async create({ user, title, text, content, categorySlug, tags: tagIds, ip }) {
         const cat = await prisma.category.findUnique({ where: { slug: categorySlug } });
@@ -649,7 +672,34 @@ export const discussionModel = {
         });
 
         return data;
-    }
+    },
+    async tagDiscussion({ user, id, tags: tagIds }) {
+        const discussion = await prisma.discussion.findUnique({ where: { id } });
+        if (!discussion) throw new ModelError(this.errors.DISCUSSION_NOT_FOUND);
+        if (!this.checkPermission(user, discussion)) throw new ModelError(this.errors.NO_PERMISSION);
+
+        tagIds = tagIds?.slice(0, 5);
+
+        await prisma.$transaction(async tx => {
+            await tx.tagDiscussionRef.deleteMany({
+                where: {
+                    discussionId: discussion.id,
+                }
+            });
+            if (tagIds?.length > 0) {
+                let tags = await tx.tag.findMany({
+                    where: {
+                        id: { in: tagIds },
+                    }
+                });
+                const data = tags.map(t => ({ tagId: t.id, discussionId: discussion.id, userId: user.id }));
+                await tx.tagDiscussionRef.createMany({
+                    data,
+                    skipDuplicates: true
+                });
+            }
+        });
+    },
 };
 
 export const siteSettingModel = {

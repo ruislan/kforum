@@ -53,12 +53,13 @@ export default function DiscussionListItem({ discussion }) {
                     {discussion.isSticky && (<span className='h-4 w-4 ml-0.5 text-green-400'><Pined /></span>)}
                     {discussion.isLocked && (<span className='h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}
                 </div>
-                <div className='inline-block relative mb-1'>
+                <div className='inline-block relative mb-2'>
                     <div className='inline text-gray-50 text-lg font-bold break-words'>{discussion.title}</div>
-                    {/* <div className='inline-flex flex-wrap ml-2 gap-1'>
-                        <Tag>News</Tag>
-                        <Tag>Great</Tag>
-                    </div> */}
+                    <div className='inline-flex flex-wrap ml-2 gap-1 align-text-top'>
+                        {discussion.tags.map(tag => (
+                            <Tag key={tag.id} color={tag.textColor} bgColor={tag.bgColor}>{tag.name}</Tag>
+                        ))}
+                    </div>
                 </div>
                 {discussion.poster ?
                     <div className='relative flex w-full justify-center pb-2'>
