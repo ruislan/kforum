@@ -1,21 +1,24 @@
 # KForum
 
-A Simple, Modern and Beautiful Forum.
+A simple and modern forum.
 
 ![screenshot](./docs/screenshot.png)
 
 ## Build With
 
 * Framework: NextJS
-* Database: Sqlite(v0.5.0) MySQL(^v0.6.0)
+* Database: MySQL(^v0.6.0)
 * ORM: Prisma
 * Auth: Next Auth
 * State: Zustand
-* Styling: NextUI、Tailwind CSS、Headless UI
+* Styling: Tailwind CSS、Headless UI
+* Editor: TipTap
 
 ## Running Locally
 
-Running MySQL first. Rename .env.example to .env. Set DATABASE_URL.
+1. Running MySQL first
+2. Rename .env.example to .env
+3. Set the property DATABASE_URL
 
 ```shell
 cd kforum
@@ -42,4 +45,4 @@ that's all, enjoy.
 
 ## Other
 
-NextJS is amazing, you can build a website instantly. And if your website is growing big, you can easily rewrite your backend in any other languages(Java, Go, Rust, etc...).
+NextJS is amazing, you can build a website instantly. If your website is growing big, you can easily rewrite your backend services in any other languages (Java, Go, Rust, etc...).
