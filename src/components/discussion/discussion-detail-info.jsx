@@ -12,7 +12,6 @@ import { runIfFn } from '@/lib/fn';
 import Box from '../ui/box';
 import { Blank, Heart, Locked, Pined, Link as LinkIcon, Bookmark, Flag, EyeOff, Markup, UnBookmark, Pin, Lock, Edit, DeleteBin, Reply } from '../icons';
 import SplitBall from '../ui/split-ball';
-// import Tag from '../ui/tag';
 import ActionButton from '../ui/action-button';
 import ProseContent from '../ui/prose-content';
 import ActionDelete from './action-delete';
@@ -107,7 +106,18 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                     {tags && (
                         <div className='inline-flex flex-wrap ml-2 gap-1 align-text-top'>
                             {tags.map(tag => (
-                                <Tag size='xs' key={tag.id} color={tag.textColor} bgColor={tag.bgColor}>{tag.name}</Tag>
+                                <Tag
+                                    key={tag.id}
+                                    color={tag.textColor}
+                                    bgColor={tag.bgColor}
+                                    onClick={e => {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                        router.push(`/t/${tag.name}`);
+                                    }}
+                                >
+                                    {tag.name}
+                                </Tag>
                             ))}
                         </div>
                     )}
@@ -146,16 +156,15 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                             </>}
                             {(isOwner || isAdmin) &&
                                 <>
-                                    {/* define this port: owner, moderator. multi choose, items: spoiler(剧透)，NSFW(少儿不宜)，fake（假的），approved（实锤），spam（水贴）, OC（原创）, official（官方）*/}
-                                    {/* <ActionButton><Markup /></ActionButton> */}
-                                    <ActionTags discussion={discussion} onSelected={tags => { setTags(tags); discussion.tags = tags;}} />
-                                    {/* let discussion stay top of the discussion list: owner, moderator */}
-                                    <ActionSticky discussion={discussion} onSticky={(sticky) => { setIsSticky(sticky); discussion.isSticky = sticky; }} />
-                                    {/* lock all: owner, moderator */}
-                                    <ActionLock discussion={discussion} onLocked={handleLockClick}><Lock /></ActionLock>
-                                    {/* edit:owner, moderator */}
+                                    {/* give discussion tags: admin, moderator, owner */}
+                                    <ActionTags discussion={discussion} onSelected={tags => { setTags(tags); discussion.tags = tags; }} />
+                                    {/* let discussion stay top of the discussion list: admin, moderator */}
+                                    {isAdmin && <ActionSticky discussion={discussion} onSticky={(sticky) => { setIsSticky(sticky); discussion.isSticky = sticky; }} />}
+                                    {/* lock all: admin, owner, moderator */}
+                                    {<ActionLock discussion={discussion} onLocked={handleLockClick}><Lock /></ActionLock>}
+                                    {/* edit:owner, moderator, admin */}
                                     <ActionButton onClick={() => setIsEditMode(true)}><Edit /></ActionButton>
-                                    {/* delete:owner, moderator */}
+                                    {/* delete:owner, moderator, admin */}
                                     <ActionDelete // 删除首贴会自动删除整个讨论（目前是这个规则）
                                         confirmContent='你确定要删除这篇讨论及其所有的回复吗？'
                                         post={firstPost}

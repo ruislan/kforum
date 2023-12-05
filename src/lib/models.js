@@ -486,6 +486,7 @@ export const discussionModel = {
     async getDiscussions({
         categoryId = null, // 如果有categoryId，也即是进行分类过滤，那么无需在每个话题上携带分类 Join（都是这个分类）
         userId = null, // 如果有userId，也即是进行所有人过滤，那么无需在每个话题上携带用户 Join（都是这个人）
+        tagId = null, // 如果有tagId，也即是根据标签进行过滤
         page = 1,
         pageSize = DEFAULT_PAGE_LIMIT,
         isStickyFirst = false,
@@ -496,7 +497,7 @@ export const discussionModel = {
     }) {
         const orderBy = []; // 注意 orderBy 的顺序
         if (isStickyFirst) orderBy.push({ isSticky: 'desc' });
-        if (isNewFirst) orderBy.push({ updatedAt: 'desc' });
+        if (isNewFirst) orderBy.push({ createdAt: 'desc' });
 
         const queryCondition = {
             orderBy,
@@ -511,6 +512,8 @@ export const discussionModel = {
 
         if (userId) queryCondition.where = { userId };
         else queryCondition.include.user = { select: userModel.fields.simple };
+
+        if (tagId) queryCondition.where = { tags: { some: { tagId } } };
 
         const skip = pageUtils.getSkip(page, pageSize);
         const take = pageSize;
@@ -969,9 +972,29 @@ export const tagModel = {
     async delete({ id }) {
         await prisma.tag.delete({ where: { id } });
     },
-    async getTag({ id }) {
-        if (!id) return null;
-        return await prisma.tag.findUnique({ where: { id } });
+    async getTag({
+        id,
+        name,
+        withStats = false,
+    }) {
+        if (!id && !name) return null;
+
+        const tag = await prisma.tag.findUnique({
+            where: {
+                id: id || undefined,
+                name: name || undefined
+            },
+            include: {
+                _count: withStats ?
+                    { select: { discussions: true } } :
+                    undefined
+            }
+        });
+        if (tag && withStats) {
+            tag.discussionCount = tag._count.discussions;
+            delete tag._count;
+        }
+        return tag;
     },
     async getTags({
         query,

@@ -5,7 +5,7 @@ import { categoryModel } from '@/lib/models';
 import Link from 'next/link';
 import { Eye } from '@/components/icons';
 
-const CategoryForm = dynamic(() => import('@/components/category/category-form'));
+const CategoryForm = dynamic(() => import('@/components/admin-panel/category/category-form'));
 
 export default async function Page({ searchParams }) {
     const slug = searchParams.slug;

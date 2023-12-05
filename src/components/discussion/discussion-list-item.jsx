@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 import dateUtils from '@/lib/date-utils';
 
@@ -12,6 +13,7 @@ import ProseContent from '../ui/prose-content';
 import UserAvatar from '../ui/user-avatar';
 
 export default function DiscussionListItem({ discussion }) {
+    const router = useRouter();
     const c = discussion.category;
     if (!discussion) return null;
     return (
@@ -57,7 +59,18 @@ export default function DiscussionListItem({ discussion }) {
                     <div className='inline text-gray-50 text-lg font-bold break-words'>{discussion.title}</div>
                     <div className='inline-flex flex-wrap ml-2 gap-1 align-text-top'>
                         {discussion.tags.map(tag => (
-                            <Tag key={tag.id} color={tag.textColor} bgColor={tag.bgColor}>{tag.name}</Tag>
+                            <Tag
+                                key={tag.id}
+                                color={tag.textColor}
+                                bgColor={tag.bgColor}
+                                onClick={e => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    router.push(`/t/${tag.name}`);
+                                }}
+                            >
+                                {tag.name}
+                            </Tag>
                         ))}
                     </div>
                 </div>

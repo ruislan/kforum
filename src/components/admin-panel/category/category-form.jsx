@@ -4,10 +4,10 @@ import { useState } from 'react';
 import _ from 'lodash';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import Button from '../ui/button';
-import Input from '../ui/input';
-import FormControl from '../ui/form-control';
-import ConfirmModal from '../ui/confirm-modal';
+import Button from '../../ui/button';
+import Input from '../../ui/input';
+import FormControl from '../../ui/form-control';
+import ConfirmModal from '../../ui/confirm-modal';
 import { runIfFn } from '@/lib/fn';
 
 function ActionDelete({ id, onError}) {

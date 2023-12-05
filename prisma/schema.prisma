@@ -210,7 +210,7 @@ model Report {
 
 model Tag {
   id        Int      @id @default(autoincrement()) @db.UnsignedInt
-  name      String   @db.VarChar(64)
+  name      String   @unique @db.VarChar(64)
   textColor String?  @db.VarChar(32) // 字体颜色
   bgColor   String?  @db.VarChar(32) // 背景色
   createdAt DateTime @default(now()) @map("created_at")
