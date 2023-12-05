@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/auth';
 import { ModelError, categoryModel } from '@/lib/models';
@@ -11,6 +12,10 @@ export async function POST(request, { params }) {
 
     let { name, slug, sequence, description, color } = await request.json();
     sequence = Number(sequence) || 0;
+    name = _.trim(name);
+    slug = _.trim(slug);
+    color = _.trim(color);
+
     const validateResult = categoryModel.validate({ name, slug, sequence, description, color });
     if (validateResult.error) return rest.badRequest({ message: validateResult.message });
 

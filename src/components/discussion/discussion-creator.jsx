@@ -1,14 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import _ from 'lodash';
 
 import Box from '../ui/box';
 import Button from '../ui/button';
 import Tiptap from '../ui/tiptap';
 import Select from '../ui/select';
 import Input from '../ui/input';
+import TagsInput from './tags-input';
 
 export default function DiscussionCreator({ categories, initCategorySlug }) {
     const router = useRouter();
@@ -16,8 +18,20 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
     const [title, setTitle] = useState('');
     const [contentText, setContentText] = useState('');
     const [contentJson, setContentJson] = useState('');
+    const [tags, setTags] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
+    const options = useMemo(() =>
+        categories.map(c => ({
+            value: c.slug,
+            label: (
+                <div className='flex items-center gap-2'>
+                    <span className='w-4 h-4' style={{ backgroundColor: c.color }} />
+                    <span>{c.name}</span>
+                </div>
+            )
+        })),
+        [categories]);
 
     const resetFields = () => {
         setCategorySlug('');
@@ -29,17 +43,17 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
 
     const validateFields = () => {
         setError(null);
-        if (categorySlug?.length < 1) {
-            setError('你还没准备好，请选择分类');
+        if (!categorySlug || categorySlug?.length < 1) {
+            setError('请选择分类');
             return false;
         }
         if (title?.length < 1) {
-            setError('你还没准备好，请填写标题');
+            setError('请填写标题');
             return false;
         }
 
         if (contentText?.length < 1) {
-            setError('你还没准备好，请填写内容');
+            setError('请填写内容');
             return false;
         }
         return true;
@@ -57,6 +71,7 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
                     content: JSON.stringify(contentJson),
                     text: contentText,
                     categorySlug,
+                    tags: tags?.map(t => Number(t.id)).filter(Boolean)
                 }),
                 headers: { 'Content-Type': 'application/json' },
             });
@@ -87,22 +102,24 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
             <form onSubmit={async e => { e.preventDefault(); handleSubmit(); }}>
                 <div className='flex flex-col w-full gap-2'>
                     <Select
-                        required
-                        onChange={e => setCategorySlug(e.target.value)}
-                        value={categorySlug}
-                    >
-                        <option value={null}>选择分类</option>
-                        {categories.map(c => <option key={c.slug} value={c.slug}>{c.name}</option>)}
-                    </Select>
+                        label='选择分类'
+                        onChange={option => setCategorySlug(option.value)}
+                        value={options.find(o => o.value === categorySlug)}
+                        options={options}
+                    />
                     <Input
                         type='text'
                         value={title}
                         onChange={e => setTitle(e.target.value)}
-                        placeholder='起一个不错的标题吧...'
+                        placeholder='写一个不错的标题吧...'
                         required
                         maxLength={300}
                         minLength={2}
-                        endEnhancer={<span className='text-xs ml-2 text-neutral-500'>{title?.length || 0}/300</span>}
+                        endEnhancer={
+                            <span className='text-xs ml-2 text-gray-500'>
+                                {title?.length || 0}/300
+                            </span>
+                        }
                     />
                     <Tiptap
                         kind='default'
@@ -112,9 +129,19 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
                             setContentText(editor.getText());
                         }}
                     />
+                    <TagsInput onSelected={tags => setTags([...tags])} />
                     {error && <span className='text-sm text-red-500'>{error}</span>}
                     <div className='flex justify-end'>
-                        <Button type='submit' isLoading={isSubmitting} disabled={contentText?.length <= 0}>发布</Button>
+                        <Button
+                            type='submit'
+                            isLoading={isSubmitting}
+                            disabled={
+                                (_.isEmpty(categorySlug)) ||
+                                contentText?.length < 1 ||
+                                title?.length < 1
+                            }>
+                            发布
+                        </Button>
                     </div>
                 </div>
             </form>

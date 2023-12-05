@@ -1,5 +1,4 @@
 import { getServerSession } from 'next-auth';
-// import { revalidateTag } from 'next/cache';
 
 import authOptions from '@/lib/auth';
 import logger from '@/lib/logger';

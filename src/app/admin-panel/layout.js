@@ -10,9 +10,15 @@ import SideNav from '@/components/settings/side-nav';
 
 const menus = [
   { label: '概览', path: '/admin-panel' },
-  { label: '设置', path: '/admin-panel/site' },
-  { label: '用户', path: '/admin-panel/users' },
+  { label: '举报处理', path: '/admin-panel/reports' },
+  { label: '用户管理', path: '/admin-panel/users' },
+  { label: '标签管理', path: '/admin-panel/tags' },
+  { label: '站点设置', path: '/admin-panel/site' },
 ];
+
+export const metadata = {
+  title: '管理'
+};
 
 export default async function Layout({ children }) {
   const session = await getServerSession(authOptions);

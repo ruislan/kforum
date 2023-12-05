@@ -8,7 +8,7 @@ const Input = forwardRef(({ className, type, endEnhancer, ...props }, ref) => {
             <input
                 type={type}
                 className={clsx(
-                    'w-full h-7 text-neutral-200 bg-transparent outline-none',
+                    'w-full h-7 text-gray-200 bg-transparent outline-none',
                     className
                 )}
                 ref={ref}

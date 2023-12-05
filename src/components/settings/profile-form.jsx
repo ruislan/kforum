@@ -6,6 +6,12 @@ import Select from '../ui/select';
 import toast from 'react-hot-toast';
 import FormControl from '../ui/form-control';
 
+const genderOptions = [
+    { label: '男', value: 'MAN' },
+    { label: '女', value: 'WOMAN' },
+    { label: '保密', value: 'UNKNOWN' },
+];
+
 export default function ProfileForm({ user }) {
     const [gender, setGender] = useState(user?.gender);
     const [bio, setBio] = useState(user?.bio);
@@ -58,12 +64,11 @@ export default function ProfileForm({ user }) {
         >
             <FormControl title='性别'>
                 <Select
-                    value={gender}
-                    onChange={e => setGender(e.target.value)}
+                    label='选择性别'
+                    value={genderOptions.find(option => option.value === gender)}
+                    onChange={option => setGender(option.value)}
+                    options={genderOptions}
                 >
-                    <option value='MAN'>男</option>
-                    <option value='WOMAN'>女</option>
-                    <option value='UNKNOWN'>保密</option>
                 </Select>
             </FormControl>
             <FormControl title='自我介绍'>

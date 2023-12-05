@@ -38,15 +38,17 @@ export default function ActionDelete({ post, onDeleted, confirmContent = '你确
         }
     }
     return (
-        <ActionButton onClick={e => {
-            e.preventDefault();
-            setIsOpenDeleteConfirm(true);
-        }}>
-            {isDeleting ? <LoadingIcon /> : <DeleteBin />}
+        <>
+            <ActionButton onClick={e => {
+                e.preventDefault();
+                setIsOpenDeleteConfirm(true);
+            }}>
+                {isDeleting ? <LoadingIcon /> : <DeleteBin />}
+            </ActionButton>
             <ConfirmModal title='删除确认' description={confirmContent}
                 show={isOpenDeleteConfirm} onConfirm={() => handleDelete()}
                 onCancel={() => setIsOpenDeleteConfirm(false)}
                 onClose={() => setIsOpenDeleteConfirm(false)} />
-        </ActionButton>
+        </>
     );
 }

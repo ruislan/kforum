@@ -22,7 +22,7 @@ export default function AvatarUploader({ user }) {
     const validateFields = (file) => {
         setError(null);
         if (!file || file.size === 0) {
-            setError('你还没准备好，请先选择头像');
+            setError('请先选择头像');
             return false;
         }
         if (file.size > IMAGE_UPLOAD_SIZE_LIMIT) {

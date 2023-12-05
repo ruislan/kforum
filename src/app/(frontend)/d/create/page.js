@@ -5,6 +5,13 @@ import Box from '@/components/ui/box';
 
 const DiscussionCreator = dynamic(() => import('@/components/discussion/discussion-creator'));
 
+export async function generateMetadata({ params, searchParams }, parent) {
+  return {
+    title: `发布话题`,
+  };
+}
+
+
 export default async function Page({ searchParams }) {
   const categories = await categoryModel.getCategories();
   return (
@@ -27,6 +34,7 @@ export default async function Page({ searchParams }) {
           <span>7.避免色情、赌博等不良话题</span>
           <span>8.避免伤风败俗、违背道德等话题</span>
           <span>9.避免非法话题</span>
+          <span>10.谨慎书写标题，为了保持上下文一致性，一旦发布将不允许修改</span>
         </Box>
       </div>
     </div>

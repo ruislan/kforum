@@ -15,6 +15,9 @@ async function getDiscussions() {
   });
 }
 
+export const metadata = {
+  title: '首页'
+}
 
 export default async function Home() {
   const { discussions, hasMore } = await getDiscussions();

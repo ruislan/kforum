@@ -74,7 +74,7 @@ export default function PostsSearch({ query }) {
                             <Link href={`/u/${item.discussion.user?.name}`} onClick={e => e.stopPropagation()} className='text-xs text-gray-400 hover:underline underline-offset-2 cursor-pointer'>u/{item.discussion.user.name}</Link>
                         </div>
                         <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />
-                        <span className='inline-block align-middle text-xs text-gray-400 whitespace-nowrap'>{dateUtils.fromNow(item.discussion.createdAt)}</span>
+                        <span className='inline-block align-middle text-xs text-gray-400 whitespace-nowrap' suppressHydrationWarning>{dateUtils.fromNow(item.discussion.createdAt)}</span>
                     </div>
                     <div className='flex flex-col p-2'>
                         <div className='flex items-center mb-1'>

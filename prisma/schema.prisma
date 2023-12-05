@@ -25,10 +25,13 @@ model User {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // ref
-  discussions Discussion[]
-  posts       Post[]
-  reactions   ReactionPostRef[]
-  avatar      UploadAvatarRef?
+  discussions    Discussion[]
+  posts          Post[]
+  reactions      ReactionPostRef[]
+  avatar         UploadAvatarRef?
+  reports        Report[]           @relation(name: "userReports")
+  ignoredReports Report[]           @relation(name: "ignoredReports")
+  tags           TagDiscussionRef[]
 }
 
 model Discussion {
@@ -56,12 +59,13 @@ model Discussion {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // ref
-  category  Category @relation(fields: [categoryId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
-  lastPost  Post?    @relation(name: "last_post", fields: [lastPostId], references: [id])
-  firstPost Post?    @relation(name: "first_post", fields: [firstPostId], references: [id])
-  posts     Post[]   @relation(name: "posts")
-  poster    Upload?  @relation(fields: [posterId], references: [id])
+  category  Category           @relation(fields: [categoryId], references: [id])
+  user      User               @relation(fields: [userId], references: [id])
+  lastPost  Post?              @relation(name: "last_post", fields: [lastPostId], references: [id])
+  firstPost Post?              @relation(name: "first_post", fields: [firstPostId], references: [id])
+  posts     Post[]             @relation(name: "posts")
+  poster    Upload?            @relation(fields: [posterId], references: [id])
+  tags      TagDiscussionRef[]
 
   @@index([createdAt, isSticky])
 }
@@ -91,6 +95,7 @@ model Post {
   reactions           ReactionPostRef[]
   replies             Post[]            @relation(name: "replies")
   uploads             UploadPostRef[]
+  reports             Report[]
 
   @@index([id, discussionId])
   @@index([discussionId, createdAt])
@@ -108,9 +113,10 @@ model Upload {
   createdAt DateTime @default(now()) @map("created_at")
 
   //ref
-  posts       UploadPostRef[]
-  avatars     UploadAvatarRef[]
-  discussions Discussion[]
+  posts        UploadPostRef[]
+  avatars      UploadAvatarRef[]
+  discussions  Discussion[]
+  siteSettings SiteSetting[]
 
   @@index([url])
 }
@@ -123,7 +129,7 @@ model UploadAvatarRef {
 
   // ref
   upload Upload @relation(fields: [uploadId], references: [id])
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade) // deleting user will also delete all uploads refs
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade) // delete user will also delete all uploads refs
 }
 
 // 图片帖子引用 多对多
@@ -134,7 +140,7 @@ model UploadPostRef {
 
   // ref
   upload Upload @relation(fields: [uploadId], references: [id])
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade) // deleting post will also delete all uploads refs
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade) // delete post will also delete all uploads refs
 
   @@id([uploadId, postId])
 }
@@ -181,10 +187,51 @@ model Category {
   discussions Discussion[]
 }
 
-// each discussion has no more than 5 tags
+// 帖子举报
+model Report {
+  id            Int       @id @default(autoincrement()) @db.UnsignedInt
+  type          String    @db.VarChar(32) // 类别
+  reason        String    @db.VarChar(512)
+  postId        Int       @map("post_id") @db.UnsignedInt
+  userId        Int       @map("user_id") @db.UnsignedInt
+  ignored       Boolean? // 忽略举报
+  ignoredUserId Int?      @map("ignored_user_id") @db.UnsignedInt // 忽略的操作人
+  ignoredAt     DateTime? @default(now()) @map("ignored_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // ref
+  post        Post  @relation(fields: [postId], references: [id], onDelete: Cascade) // delete post will also delete all related reports
+  user        User  @relation(name: "userReports", fields: [userId], references: [id], onDelete: Cascade)
+  ignoredUser User? @relation(name: "ignoredReports", fields: [ignoredUserId], references: [id])
+
+  @@unique([userId, postId]) // 一个用户只能对一个帖子进行举报
+}
+
 model Tag {
-  name      String   @id @db.VarChar(64)
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  name      String   @unique @db.VarChar(64)
+  textColor String?  @db.VarChar(32) // 字体颜色
+  bgColor   String?  @db.VarChar(32) // 背景色
   createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // ref
+  discussions TagDiscussionRef[]
+}
+
+// 每个主题不超过 5 个标签
+model TagDiscussionRef {
+  tagId        Int @map("tag_id") @db.UnsignedInt
+  discussionId Int @map("discussion_id") @db.UnsignedInt
+  userId       Int @map("user_id") @db.UnsignedInt
+
+  //ref
+  tag        Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  discussion Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([tagId, discussionId, userId])
 }
 
 model SiteNavMenu {
@@ -196,11 +243,15 @@ model SiteNavMenu {
 
 model SiteSetting {
   id          Int      @id @default(autoincrement()) @db.UnsignedInt
-  dataType    String   @map("data_type") @db.VarChar(16) // string(input), text(textarea), number, json, html, xml, etc...
+  dataType    String   @map("data_type") @db.VarChar(16) // string(input), text(textarea), number, image, json, html, xml, etc...
   key         String   @unique @db.VarChar(64)
   description String?  @db.VarChar(128)
   name        String   @db.VarChar(64)
   value       String   @db.VarChar(256)
+  uploadId    Int?     @db.UnsignedInt // 图片类型的图片引用
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // ref
+  upload Upload? @relation(fields: [uploadId], references: [id])
 }

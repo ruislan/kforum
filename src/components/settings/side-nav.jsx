@@ -23,7 +23,14 @@ export default function SideNav({ menus }) {
     if (!menus) return null;
     return (
         <ul className='flex flex-col gap-2 p-2 text-base border border-neutral-700 bg-neutral-800 rounded-md'>
-            {menus.map((menu, index) => <li key={index}><MenuItem menu={menu} isActive={pathname === menu.path} /></li>)}
+            {menus.map((menu, index) =>
+                <li key={index}>
+                    <MenuItem
+                        menu={menu}
+                        isActive={pathname === menu.path}
+                    />
+                </li>
+            )}
         </ul>
     );
 }

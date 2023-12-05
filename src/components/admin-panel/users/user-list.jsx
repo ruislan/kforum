@@ -107,7 +107,7 @@ export default function UserList() {
                                     <span className='text-sm text-gray-200'>{user.email}</span>
                                     {user.isLocked && (<span className='h-3.5 w-3.5 ml-1.5 text-yellow-400'><Locked /></span>)}
                                 </div>
-                                <span className='text-xs text-gray-400'>
+                                <span className='text-xs text-gray-400' suppressHydrationWarning>
                                     注册于 {new Date(user.createdAt).toLocaleString()}
                                 </span>
                             </div>
@@ -119,7 +119,7 @@ export default function UserList() {
                 ))}
                 {!isLoading && dataList.length === 0 && <NoContent noWrap text='没有数据' />}
             </div>
-            {isLoading && <Spinner />}
+            {isLoading && <Spinner　className='self-center' />}
             {hasMore && (
                 <div className='self-center py-2'>
                     <Button kind='ghost' disabled={isLoading} onClick={() => setPage(prev => prev + 1)}>查看更多</Button>

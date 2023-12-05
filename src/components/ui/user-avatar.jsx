@@ -28,8 +28,8 @@ export default function UserAvatar({
         )}>
             <Image
                 className='rounded w-full h-full'
-                width={40}
-                height={40}
+                width={256}
+                height={256}
                 src={avatar || ''}
                 alt={name} />
         </div>

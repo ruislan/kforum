@@ -6,20 +6,31 @@ import NavMenus from '@/components/header/nav-menus';
 import Search from './search';
 import UserMenus from './user-menus';
 import { Plus } from '../icons';
+import { siteSettingModel } from '@/lib/models';
+import Image from 'next/image';
 
 async function getMenus() {
     return await prisma.siteNavMenu.findMany({ orderBy: { sequence: 'asc' } });
 }
+async function getLogo() {
+    return await siteSettingModel.getFieldValue(siteSettingModel.fields.siteLogo);
+}
 
 export default async function Header() {
     const menus = await getMenus();
+    const logo = await getLogo();
     return (
         <header className='h-12 w-full fixed bg-neutral-800 border-solid border-b border-neutral-700 z-50'>
             <nav className='flex items-center h-full w-full max-w-5xl m-auto '>
                 <Link href='/' className='relative font-bold text-lg text-white mr-4 flex items-center group'>
-                    <div className='absolute w-9 h-9 rounded-md bg-neutral-600 shadow-lg left-0 group-hover:w-full transition-[width]'></div>
-                    <span className='z-10 w-9 h-9 text-xl flex justify-center items-center mr-1 group-hover:-rotate-12 transition-all duration-500'>K</span>
-                    <span className='z-10 pr-3'>Forum</span>
+                    {logo ?
+                        <Image className='h-9 w-auto max-h-9' src={logo} alt={logo} width={180} height={60} /> :
+                        <>
+                            <div className='absolute w-9 h-9 rounded-md bg-neutral-600 shadow-lg left-0 group-hover:w-full transition-[width]'></div>
+                            <span className='z-10 w-9 h-9 text-xl flex justify-center items-center mr-1 group-hover:-rotate-12 transition-all duration-500'>K</span>
+                            <span className='z-10 pr-3'>Forum</span>
+                        </>
+                    }
                 </Link>
                 <NavMenus menus={menus} />
                 <div className='flex items-center flex-grow justify-end gap-4'>

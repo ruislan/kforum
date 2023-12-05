@@ -26,7 +26,7 @@ export async function POST(request, { params }) {
     if (!session.user?.id || session.user?.isLocked) return rest.unauthorized();
 
     // parse body
-    const { title, text, content, categorySlug } = await request.json();
+    const { title, text, content, categorySlug, tags } = await request.json();
 
     // validate params
     const validateResult = discussionModel.validate({ title, text, content, categorySlug });
@@ -38,6 +38,7 @@ export async function POST(request, { params }) {
             title,
             content,
             text,
+            tags,
             categorySlug,
             ip: request.ip
         });

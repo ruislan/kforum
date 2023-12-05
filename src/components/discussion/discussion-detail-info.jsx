@@ -12,7 +12,6 @@ import { runIfFn } from '@/lib/fn';
 import Box from '../ui/box';
 import { Blank, Heart, Locked, Pined, Link as LinkIcon, Bookmark, Flag, EyeOff, Markup, UnBookmark, Pin, Lock, Edit, DeleteBin, Reply } from '../icons';
 import SplitBall from '../ui/split-ball';
-// import Tag from '../ui/tag';
 import ActionButton from '../ui/action-button';
 import ProseContent from '../ui/prose-content';
 import ActionDelete from './action-delete';
@@ -24,6 +23,8 @@ import PostUpdater from './post-updater';
 import ActionReply from './action-reply';
 import Tag from '../ui/tag';
 import UserAvatar from '../ui/user-avatar';
+import ActionReport from './action-report';
+import ActionTags from './action-tags';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -37,6 +38,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
     const { data, status } = useSession();
     const [firstPost, setFirstPost] = useState(discussion?.firstPost);
     const [reactions, setReactions] = useState(discussion?.firstPost?.reactions);
+    const [tags, setTags] = useState(discussion?.tags);
     const [isSticky, setIsSticky] = useState(discussion?.isSticky);
     const [isLocked, setIsLocked] = useState(discussion?.isLocked);
     const [isEditMode, setIsEditMode] = useState(false);
@@ -88,7 +90,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                         <Link href={`/u/${discussion.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{discussion.user.name}</Link>
                     </div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                    <span className='text-xs'>{dateUtils.fromNow(discussion.createdAt)}</span>
+                    <span className='text-xs' suppressHydrationWarning>{dateUtils.fromNow(discussion.createdAt)}</span>
                     {discussion.lastUpdatedAt && (
                         <>
                             <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
@@ -99,14 +101,27 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                     {isSticky && (<span className='h-4 w-4 ml-0.5 text-green-400'><Pined /></span>)}
                     {isLocked && (<span className='h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}
                 </div>
-                <h2 className='inline text-xl font-bold break-words text-gray-50'>{discussion.title}</h2>
-                {/* <div className='flex flex-wrap gap-1 my-2'>
-                    <Tag>News</Tag>
-                    <Tag>Help</Tag>
-                    <Tag>Function</Tag>
-                    <Tag>Cheer</Tag>
-                    <Tag>Great</Tag>
-                </div> */}
+                <div className='inline-block relative mb-1'>
+                    <h2 className='inline text-xl font-bold break-words text-gray-50'>{discussion.title}</h2>
+                    {tags && (
+                        <div className='inline-flex flex-wrap ml-2 gap-1 align-text-top'>
+                            {tags.map(tag => (
+                                <Tag
+                                    key={tag.id}
+                                    color={tag.textColor}
+                                    bgColor={tag.bgColor}
+                                    onClick={e => {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                        router.push(`/t/${tag.name}`);
+                                    }}
+                                >
+                                    {tag.name}
+                                </Tag>
+                            ))}
+                        </div>
+                    )}
+                </div>
                 {isEditMode ?
                     <PostUpdater
                         post={firstPost}
@@ -130,24 +145,26 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                             <ActionReact post={firstPost} onReacted={handleUserReacted} />
                             {/* copy url to share  */}
                             {/* <ActionButton><LinkIcon /></ActionButton> */}
-                            {/* save to bookmark */}
-                            {/* <ActionButton><Bookmark /></ActionButton>
+                            {isAuthenticated && <>
+                                <ActionReport post={firstPost} />
+                                {/* save to bookmark */}
+                                {/* <ActionButton><Bookmark /></ActionButton>
                             <ActionButton><UnBookmark /></ActionButton> */}
-                            {/* report: owner, moderator and the user who has reported don't show this flag icon */}
-                            {/* <ActionButton><Flag /></ActionButton> */}
-                            {/* hide */}
-                            {/* <ActionButton><EyeOff /></ActionButton> */}
+                                {/* report: owner, moderator and the user who has reported don't show this flag icon */}
+                                {/* hide */}
+                                {/* <ActionButton><EyeOff /></ActionButton> */}
+                            </>}
                             {(isOwner || isAdmin) &&
                                 <>
-                                    {/* define this port: owner, moderator. multi choose, items: spoiler(剧透)，NSFW(少儿不宜)，fake（假的），approved（实锤），spam（水贴）, OC（原创）, official（官方）*/}
-                                    {/* <ActionButton><Markup /></ActionButton> */}
-                                    {/* let discussion stay top of the discussion list: owner, moderator */}
-                                    <ActionSticky discussion={discussion} onSticky={(sticky) => { setIsSticky(sticky); discussion.isSticky = sticky; }} />
-                                    {/* lock all: owner, moderator */}
-                                    <ActionLock discussion={discussion} onLocked={handleLockClick}><Lock /></ActionLock>
-                                    {/* edit:owner, moderator */}
+                                    {/* give discussion tags: admin, moderator, owner */}
+                                    <ActionTags discussion={discussion} onSelected={tags => { setTags(tags); discussion.tags = tags; }} />
+                                    {/* let discussion stay top of the discussion list: admin, moderator */}
+                                    {isAdmin && <ActionSticky discussion={discussion} onSticky={(sticky) => { setIsSticky(sticky); discussion.isSticky = sticky; }} />}
+                                    {/* lock all: admin, owner, moderator */}
+                                    {<ActionLock discussion={discussion} onLocked={handleLockClick}><Lock /></ActionLock>}
+                                    {/* edit:owner, moderator, admin */}
                                     <ActionButton onClick={() => setIsEditMode(true)}><Edit /></ActionButton>
-                                    {/* delete:owner, moderator */}
+                                    {/* delete:owner, moderator, admin */}
                                     <ActionDelete // 删除首贴会自动删除整个讨论（目前是这个规则）
                                         confirmContent='你确定要删除这篇讨论及其所有的回复吗？'
                                         post={firstPost}

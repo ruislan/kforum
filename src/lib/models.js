@@ -5,6 +5,7 @@ import CryptoJS from 'crypto-js';
 import prisma from './prisma';
 import pageUtils, { DEFAULT_PAGE_LIMIT } from './page-utils';
 import storage from './storage';
+import { SITE_SETTING_TYPES } from './constants';
 
 export class ModelError extends Error { }
 
@@ -337,22 +338,36 @@ export const postModel = {
             await tx.post.update({ where: { id }, data: { content, text } });
         });
     },
-    async delete({ user, id }) {
+    async delete({ user, id, isBySystem = false }) {
         const post = await prisma.post.findUnique({ where: { id }, include: { discussion: true } });
         if (!post) throw new ModelError(this.errors.POST_NOT_FOUND);
-        if (!this.checkPermission(user, post)) throw new ModelError(this.errors.NO_PERMISSION);
+        if (!isBySystem && !this.checkPermission(user, post)) throw new ModelError(this.errors.NO_PERMISSION);
 
         const isFirstPost = post.discussion.firstPostId === post.id;
+        const isLastPost = post.discussion.lastPostId === post.id;
         await prisma.$transaction(async tx => {
             await tx.reactionPostRef.deleteMany({ where: { postId: post.id } });// delete reactions
             // 不用更新所有回复这贴的引用为null, 外键约束会自动设置为null
             if (isFirstPost) { // delete all
-                // XXX 所有讨论的帖子的图片引用会级联删除
+                // XXX 所有讨论的帖子的图片、举报等引用会级联删除
                 await tx.post.deleteMany({ where: { discussionId: post.discussion.id } });
                 await tx.discussion.delete({ where: { id: post.discussion.id } });
             } else {
-                // XXX 此贴的图片引用会级联删除
+                // XXX 此贴的图片、举报等引用会级联删除
                 await tx.post.delete({ where: { id: post.id } }); // delete one
+                let lastPost = null;
+                if (isLastPost) { // 查找新的最后一贴，并设置
+                    lastPost = await tx.post.findFirst({ where: { discussionId: post.discussionId }, orderBy: { createdAt: 'desc' } });
+                }
+                await tx.discussion.update({
+                    where: { id: post.discussionId },
+                    data: {
+                        lastPostId: lastPost?.id,
+                        lastPostedAt: lastPost?.createdAt,
+                        postCount: { increment: -1 },
+                    }
+                });
+
             }
         });
     },
@@ -464,14 +479,19 @@ export const discussionModel = {
         SCHEMA_TITLE: '标题是必填的，不小于 2 个字符。',
         SCHEMA_CONTENT: '内容是必填的，不小于 2 个字符。',
         SCHEMA_CATEGORY: '分类是必填的，请选择一个分类',
+        DISCUSSION_NOT_FOUND: '请指定要更新的主题',
+        NO_PERMISSION: '没有操作权限',
     },
+    // XXX 后面可以可能要拆分一下user的话题，因为user的读取话题的排序逻辑可能有很大的不同
     async getDiscussions({
         categoryId = null, // 如果有categoryId，也即是进行分类过滤，那么无需在每个话题上携带分类 Join（都是这个分类）
         userId = null, // 如果有userId，也即是进行所有人过滤，那么无需在每个话题上携带用户 Join（都是这个人）
+        tagId = null, // 如果有tagId，也即是根据标签进行过滤
         page = 1,
         pageSize = DEFAULT_PAGE_LIMIT,
         isStickyFirst = false,
         isNewFirst = true,
+        withTags = true,
         withPoster = true, // 带海报
         withFirstPost = false, // 带首贴
     }) {
@@ -485,12 +505,15 @@ export const discussionModel = {
         };
         if (withFirstPost) queryCondition.include.firstPost = true;
         if (withPoster) queryCondition.include.poster = true;
+        if (withTags) queryCondition.include.tags = { select: { tag: true } };
 
         if (categoryId) queryCondition.where = { categoryId };
         else queryCondition.include.category = { select: { id: true, name: true, slug: true, color: true, icon: true } };
 
         if (userId) queryCondition.where = { userId };
         else queryCondition.include.user = { select: userModel.fields.simple };
+
+        if (tagId) queryCondition.where = { tags: { some: { tagId } } };
 
         const skip = pageUtils.getSkip(page, pageSize);
         const take = pageSize;
@@ -501,6 +524,13 @@ export const discussionModel = {
         const countFetch = prisma.discussion.count(countCondition);
         const discussionsFetch = prisma.discussion.findMany(queryCondition);
         const [discussions, count] = await Promise.all([discussionsFetch, countFetch]);
+
+        if (withTags) {
+            for (const d of discussions) {
+                d.tags = d.tags.map(t => t.tag);
+            }
+        }
+
         return { discussions, hasMore: count > skip + take };
     },
     async incrementDiscussionView({ id }) {
@@ -516,7 +546,8 @@ export const discussionModel = {
         withFirstPost = true,
         withLastPost = true,
         withUser = true,
-        withCategory = true
+        withCategory = true,
+        withTags = true,
     }) {
         if (!id) return null;
         const queryCondition = {
@@ -532,6 +563,8 @@ export const discussionModel = {
                 user: { select: userModel.fields.simple }
             }
         };
+        if (withTags) queryCondition.include.tags = { select: { tag: true } };
+
         const d = await prisma.discussion.findUnique(queryCondition);
         if (!d) return null;
 
@@ -559,6 +592,8 @@ export const discussionModel = {
             }
         });
         d.firstPost.reactions.sort((a, b) => b.count - a.count);
+        if (withTags) d.tags = d.tags.map(ref => ref.tag);
+
         return d;
     },
     validate({ title, text, content, categorySlug }) {
@@ -568,18 +603,42 @@ export const discussionModel = {
         if (!categorySlug) return { error: true, message: this.errors.SCHEMA_CATEGORY };
         return { error: false };
     },
-    async create({ user, title, text, content, categorySlug, ip }) {
+    checkPermission(user, discussion) {
+        const isAdmin = user.isAdmin;
+        const isOwner = discussion.userId === user.id;
+        // isModerator ...
+        if (!isAdmin && !isOwner) return false;
+        return true;
+    },
+    async create({ user, title, text, content, categorySlug, tags: tagIds, ip }) {
         const cat = await prisma.category.findUnique({ where: { slug: categorySlug } });
         if (!cat) throw new ModelError(this.errors.SCHEMA_CATEGORY);
 
         const images = uploadModel.getImageUrls(content);
+        tagIds = tagIds?.slice(0, 5);
 
         const data = await prisma.$transaction(async tx => {
             let discussion = await tx.discussion.create({
                 data: {
-                    title, categoryId: cat.id, userId: user.id,
+                    title,
+                    categoryId: cat.id,
+                    userId: user.id,
                 }
             });
+            // connect tag to discussion
+            if (tagIds?.length > 0) {
+                let tags = await tx.tag.findMany({
+                    where: {
+                        id: { in: tagIds },
+                    }
+                });
+                const data = tags.map(t => ({ tagId: t.id, discussionId: discussion.id, userId: user.id }));
+                await tx.tagDiscussionRef.createMany({
+                    data,
+                    skipDuplicates: true
+                });
+            }
+
             const post = await tx.post.create({
                 data: {
                     content, text, discussionId: discussion.id, type: 'text',
@@ -616,37 +675,95 @@ export const discussionModel = {
         });
 
         return data;
-    }
+    },
+    async tagDiscussion({ user, id, tags: tagIds }) {
+        const discussion = await prisma.discussion.findUnique({ where: { id } });
+        if (!discussion) throw new ModelError(this.errors.DISCUSSION_NOT_FOUND);
+        if (!this.checkPermission(user, discussion)) throw new ModelError(this.errors.NO_PERMISSION);
+
+        tagIds = tagIds?.slice(0, 5);
+
+        await prisma.$transaction(async tx => {
+            await tx.tagDiscussionRef.deleteMany({
+                where: {
+                    discussionId: discussion.id,
+                }
+            });
+            if (tagIds?.length > 0) {
+                let tags = await tx.tag.findMany({
+                    where: {
+                        id: { in: tagIds },
+                    }
+                });
+                const data = tags.map(t => ({ tagId: t.id, discussionId: discussion.id, userId: user.id }));
+                await tx.tagDiscussionRef.createMany({
+                    data,
+                    skipDuplicates: true
+                });
+            }
+        });
+    },
 };
 
 export const siteSettingModel = {
     fields: {
+        siteTitle: 'site_title',
         siteAbout: 'site_about',
+        siteLogo: 'site_logo',
+        siteFavicon: 'site_favicon',
     },
     async updateSettings(settings) {
-        await prisma.$transaction(
-            settings.map(s => prisma.siteSetting.update({
-                where: { id: s.id },
-                data: { value: s.value }
-            }))
-        );
+        await prisma.$transaction(async tx => {
+            for (const setting of settings) {
+                let data = { value: setting.value };
+                if (setting.dataType === SITE_SETTING_TYPES.image) { // 图片类型，链接图片
+                    const upload = await tx.upload.findFirst({
+                        where: { url: data.value }
+                    });
+                    data.uploadId = upload?.id;
+                }
+                await tx.siteSetting.update({
+                    where: { id: setting.id },
+                    data
+                });
+            }
+        });
     },
     async getSettings() {
         return await prisma.siteSetting.findMany();
     },
-    async getFieldValue(field, defaultValue) {
-        if (!field) return defaultValue;
+    async getFieldsValues(...fields) {
+        const data = {};
+        if (!fields || fields.length == 0) return data;
+
+        const items = await prisma.siteSetting.findMany({
+            where: {
+                key: {
+                    in: fields
+                }
+            }
+        });
+
+        items.forEach(item => {
+            data[item.key] = this.decodeValue(item);
+        });
+
+        return data;
+    },
+    async getFieldValue(field) {
+        if (!field) return null;
         const item = await prisma.siteSetting.findUnique({ where: { key: field } });
+        const value = this.decodeValue(item);
+        return value;
+    },
+    decodeValue(item) {
         switch (item.dataType) {
-            case 'text':
-            case 'html':
-                return item.value;
             case 'json':
                 return JSON.parse(item.value);
             case 'number':
                 return new Number(item.value);
             default:
-                return defaultValue;
+                return item.value;
         }
     }
 };
@@ -689,16 +806,17 @@ export const uploadModel = {
         return savedFile;
     },
     async cleanup() {
-        // 清理的图片通常是不能 PostRef, AvatarRef，Discussion Poster 中没有的图片
+        // 清理的图片通常是不能 PostRef, AvatarRef，Discussion Poster
         // 清理掉数据库记录
         // 清理掉文件
         // 为了避免清理过大，我们一次最多只处理 1000 条记录
         const uploads = await prisma.upload.findMany({
             take: 1000,
             where: {
-                discussion: { none: {} },
+                discussions: { none: {} },
                 posts: { none: {} },
                 avatars: { none: {} },
+                siteSettings: { none: {} }
             }
         });
         const data = await prisma.upload.deleteMany({ where: { id: { in: uploads.map(u => u.id) } } });
@@ -707,3 +825,209 @@ export const uploadModel = {
         return data;
     }
 }
+
+export const reportModel = {
+    errors: {
+        TYPE_INVALID: '不支持的举报理由，建议选择“其他”，并说明举报原因',
+        REASON_TOO_SHORT: '请说明举报的原因，至少 4 个字',
+    },
+    actions: {
+        agree: 'agree',
+        disagree: 'disagree',
+    },
+    types: { // 举报的分类
+        SPAM: 'spam', // 偏离主题，与当前话题无关，口水贴、价值不高等
+        RULES: 'rules', // 违反规则
+        RUDELY: 'rudely', // 脏话、威胁、人身攻击等不当言论
+        INFRINGEMENT: 'infringement', // 侵犯隐私、著作权等等
+        OTHER: 'other', //其他
+        includes(value) {
+            return Object.values(this).includes(value);
+        }
+    },
+    async create({ userId, postId, type, reason }) {
+        if (!this.types.includes(type)) throw new ModelError(this.errors.TYPE_INVALID);
+        if (type === this.types.OTHER && reason.length < 4) throw new ModelError(this.errors.REASON_TOO_SHORT);
+        const report = await prisma.report.findFirst({ where: { userId, postId } });
+        if (report) return; // 举报过了不用再次存储
+        await prisma.report.create({
+            data: { userId, postId, type, reason }
+        });
+    },
+    async getReportsGroupByPost({
+        filter,
+        page = 1,
+        pageSize = DEFAULT_PAGE_LIMIT
+    }) {
+        const skip = pageUtils.getSkip(page, pageSize);
+        const take = pageSize;
+
+        let whereClause = {
+            reports: {
+                some: {
+                }
+            }
+        };
+        switch (filter) {
+            case 'pending':
+                whereClause.reports.some.ignored = null;
+                break;
+            case 'ignored':
+                whereClause.reports.some.ignored = true;
+                break;
+            default: break;
+        }
+
+        // 这里主要是以帖子为主体的举报
+        const fetchCount = prisma.post.count({ where: whereClause });
+        const fetchList = await prisma.post.findMany({
+            where: whereClause,
+            include: {
+                user: {
+                    select: userModel.fields.simple,
+                },
+                discussion: {
+                    include: {
+                        category: true,
+                        user: {
+                            select: userModel.fields.simple,
+                        }
+                    }
+                },
+                reports: {
+                    include: {
+                        user: {
+                            select: userModel.fields.simple,
+                        },
+                        ignoredUser: {
+                            select: userModel.fields.simple,
+                        },
+                    }
+                },
+            },
+            orderBy: {
+                updatedAt: 'desc'
+            },
+            take,
+            skip,
+        });
+
+        let [posts, count] = await Promise.all([fetchList, fetchCount]);
+        return { posts, hasMore: count > skip + take };
+    },
+    async perform({ action, userId, reportIds }) {
+        if (![this.actions.agree, this.actions.disagree].includes(action)) throw new ModelError('action not support');
+        if (action === this.actions.agree) {
+            console.log(reportIds);
+            const report = await prisma.report.findFirst({
+                where: { id: reportIds[0] }
+            });
+            await postModel.delete({ id: report.postId, isBySystem: true });
+        } else {
+            await prisma.report.updateMany({
+                where: {
+                    id: {
+                        in: reportIds,
+                    }
+                },
+                data: {
+                    ignoredUserId: userId,
+                    ignoredAt: new Date(),
+                    ignored: true,
+                }
+            });
+        }
+    }
+}
+
+export const tagModel = {
+    errors: {
+        SCHEMA_NAME: '名称是必填的，不小于 2 个字符，不大于 20 个字符',
+        UNIQUE_NAME: '已经存在的标签',
+    },
+    validate({ name }) {
+        if (!name || name.length < 2 || name.length > 20) return { error: true, message: this.errors.SCHEMA_NAME };
+        return { error: false };
+    },
+    async create({ name, textColor, bgColor }) {
+        // check unique
+        const exists = (await prisma.tag.count({ where: { name } })) > 0;
+        if (exists) throw new ModelError(this.errors.UNIQUE_NAME);
+        const newTag = await prisma.tag.create({ data: { name, textColor, bgColor } });
+        return newTag;
+    },
+    async update({ id, name, textColor, bgColor }) {
+        const exists = (await prisma.tag.count({
+            where: {
+                name,
+                id: { not: id },
+            }
+        })) > 0;
+        if (exists) throw new ModelError(this.errors.UNIQUE_NAME);
+        await prisma.tag.update({
+            where: { id },
+            data: { name, textColor, bgColor }
+        });
+    },
+    async delete({ id }) {
+        await prisma.tag.delete({ where: { id } });
+    },
+    async getTag({
+        id,
+        name,
+        withStats = false,
+    }) {
+        if (!id && !name) return null;
+
+        const tag = await prisma.tag.findUnique({
+            where: {
+                id: id || undefined,
+                name: name || undefined
+            },
+            include: {
+                _count: withStats ?
+                    { select: { discussions: true } } :
+                    undefined
+            }
+        });
+        if (tag && withStats) {
+            tag.discussionCount = tag._count.discussions;
+            delete tag._count;
+        }
+        return tag;
+    },
+    async getTags({
+        query,
+        ignoreIds,
+        isHot = false,
+        page = 1,
+        pageSize = DEFAULT_PAGE_LIMIT
+    }) {
+        const skip = pageUtils.getSkip(page, pageSize);
+        const take = pageSize;
+
+        const whereClause = {
+            name: { contains: query }
+        };
+        if (!_.isEmpty(ignoreIds)) whereClause.id = { notIn: ignoreIds };
+
+        const fetchCount = prisma.tag.count({ where: whereClause });
+
+        const fetchCondition = {
+            where: whereClause,
+            skip,
+            take,
+        };
+        if (isHot) {
+            fetchCondition.orderBy = {
+                discussions: {
+                    _count: 'desc'
+                }
+            };
+        }
+        const fetchList = prisma.tag.findMany(fetchCondition);
+
+        let [tags, count] = await Promise.all([fetchList, fetchCount]);
+        return { tags, hasMore: count > skip + take };
+    }
+};

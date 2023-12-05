@@ -17,8 +17,8 @@ export default function SearchTabs() {
     const searchParams = useSearchParams();
     const router = useRouter();
 
-    const type = searchParams.get('type');
-    const query = searchParams.get('q');
+    const type = searchParams.get('type') || '';
+    const query = searchParams.get('q') || '';
     return (
         <Tab.Group manual
             selectedIndex={!type ? 0 : tabs.findIndex(t => t.type === type)}
@@ -39,7 +39,7 @@ export default function SearchTabs() {
             </Tab.List>
             <Tab.Panels className='mt-2'>
                 <Tab.Panel><DiscussionsSearch query={query} /></Tab.Panel>
-                <Tab.Panel><PostsSearch  query={query} /></Tab.Panel>
+                <Tab.Panel><PostsSearch query={query} /></Tab.Panel>
                 <Tab.Panel><UsersSearch query={query} /></Tab.Panel>
             </Tab.Panels>
         </Tab.Group>
