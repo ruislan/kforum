@@ -16,7 +16,7 @@ export default async function UserInfo({ user = null }) {
             <div className='text-gray-100 text-xl my-2'>{user.name}</div>
             <div className='grid grid-cols-3 gap-2 mt-2'>
                 <Stats name='话题数' value={user.discussionCount || 0} />
-                <Stats name='回复数' value={user.postCount || 0} />
+                <Stats name='帖子数' value={user.postCount || 0} />
                 <Stats name='注册于' value={new Date(user.createdAt).toLocaleDateString()} />
             </div>
         </Box>

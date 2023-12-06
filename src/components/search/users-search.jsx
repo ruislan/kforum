@@ -37,6 +37,8 @@ export default function UsersSearch({ query }) {
             }
         })();
     }, [page, query]);
+
+    if (!query) return <NoContent text='没有提供搜索词，输入搜索词试试？' />;
     if (!isLoading && dataList.length === 0) return <NoContent text='没有搜索到结果，换个词试试？' />
 
     return (

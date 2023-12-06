@@ -349,7 +349,7 @@ export const postModel = {
             await tx.reactionPostRef.deleteMany({ where: { postId: post.id } });// delete reactions
             // 不用更新所有回复这贴的引用为null, 外键约束会自动设置为null
             if (isFirstPost) { // delete all
-                // XXX 所有讨论的帖子的图片、举报等引用会级联删除
+                // XXX 所有主题的帖子的图片、举报等引用会级联删除
                 await tx.post.deleteMany({ where: { discussionId: post.discussion.id } });
                 await tx.discussion.delete({ where: { id: post.discussion.id } });
             } else {
@@ -372,46 +372,51 @@ export const postModel = {
         });
     },
     async getPosts({
+        queryText,
         discussionId, // 如果有discussionId说明是某个话题下面的回帖
         isNewFirst = false,
+        withUser = true,
+        withReactions = true,
+        withReplyPosts = true,
         page = 1,
         pageSize = DEFAULT_PAGE_LIMIT
     }) {
-        const countCondition = {};
-        if (discussionId) {
-            countCondition.where = { discussionId, firstPostDiscussion: null }; // 去掉首贴，XXX 后面如果追加字段post_number可以直接用post_number > 1
-        } else {
-            countCondition.where = { discussionId: { gt: 0 } }; // 使用discussionId 作为index
+        const queryCondition = {
+            where: {
+                discussionId: discussionId || { gt: 0 }, // 没有discussionId，就用 discussionId作为 index
+                firstPostDiscussion: discussionId ? null : undefined, // 有discussionId则表示要去掉首贴，XXX 后面如果追加字段post_number可以直接用post_number > 1，效率会更快
+                text: { contains: queryText || '' }
+            },
+            orderBy: {
+                createdAt: isNewFirst ? 'desc' : undefined
+            },
+            include: {
+                reactions: withReactions ? {
+                    select: {
+                        userId: true, postId: true, reaction: true,
+                    }
+                } : false,
+                user: withUser ? { select: userModel.fields.simple } : false,
+                replyPost: withReplyPosts ? {
+                    include: {
+                        user: { select: userModel.fields.simple }
+                    }
+                } : false,
+                discussion: discussionId ? false : {
+                    include: {
+                        category: true,
+                        user: { select: userModel.fields.simple }
+                    }
+                }
+            }
         };
-        const fetchCount = prisma.post.count(countCondition);
-
-        const queryCondition = {};
-        if (discussionId) {
-            queryCondition.where = {
-                discussionId,
-                firstPostDiscussion: null, // 去掉首贴，XXX 后面如果追加字段post_number可以直接用post_number > 1
-            };
-        }
 
         const skip = pageUtils.getSkip(page, pageSize);
         const take = pageSize;
         queryCondition.take = take;
         queryCondition.skip = skip;
 
-        if (isNewFirst) queryCondition.orderBy = { createdAt: 'desc' };
-        queryCondition.include = {
-            reactions: {
-                select: {
-                    userId: true, postId: true, reaction: true,
-                }
-            },
-            user: { select: userModel.fields.simple },
-            replyPost: {
-                include: {
-                    user: { select: userModel.fields.simple }
-                }
-            }
-        };
+        const fetchCount = prisma.post.count({ where: queryCondition.where });
         const fetchPosts = await prisma.post.findMany(queryCondition);
         let [posts, count] = await Promise.all([fetchPosts, fetchCount]);
 
@@ -484,6 +489,7 @@ export const discussionModel = {
     },
     // XXX 后面可以可能要拆分一下user的话题，因为user的读取话题的排序逻辑可能有很大的不同
     async getDiscussions({
+        queryTitle = null, // 如果存在 queryTitle 则即是要进行模糊搜索
         categoryId = null, // 如果有categoryId，也即是进行分类过滤，那么无需在每个话题上携带分类 Join（都是这个分类）
         userId = null, // 如果有userId，也即是进行所有人过滤，那么无需在每个话题上携带用户 Join（都是这个人）
         tagId = null, // 如果有tagId，也即是根据标签进行过滤
@@ -500,27 +506,29 @@ export const discussionModel = {
         if (isNewFirst) orderBy.push({ createdAt: 'desc' });
 
         const queryCondition = {
+            where: {
+                id: { gt: 0 },
+                title: { contains: queryTitle || '' },
+                userId: userId || undefined,
+                categoryId: categoryId || undefined,
+                tagId: tagId ? { tags: { some: { tagId } } } : undefined
+            },
             orderBy,
-            include: {}
+            include: {
+                firstPost: withFirstPost,
+                poster: withPoster,
+                tags: withTags ? { select: { tag: true } } : false,
+                category: categoryId ? false : { select: { id: true, name: true, slug: true, color: true, icon: true } },
+                user: userId ? false : { select: userModel.fields.simple },
+            }
         };
-        if (withFirstPost) queryCondition.include.firstPost = true;
-        if (withPoster) queryCondition.include.poster = true;
-        if (withTags) queryCondition.include.tags = { select: { tag: true } };
-
-        if (categoryId) queryCondition.where = { categoryId };
-        else queryCondition.include.category = { select: { id: true, name: true, slug: true, color: true, icon: true } };
-
-        if (userId) queryCondition.where = { userId };
-        else queryCondition.include.user = { select: userModel.fields.simple };
-
-        if (tagId) queryCondition.where = { tags: { some: { tagId } } };
 
         const skip = pageUtils.getSkip(page, pageSize);
         const take = pageSize;
         queryCondition.take = take;
         queryCondition.skip = skip;
-        const countCondition = queryCondition.where ? { where: queryCondition.where } : {};
 
+        const countCondition = { where: queryCondition.where };
         const countFetch = prisma.discussion.count(countCondition);
         const discussionsFetch = prisma.discussion.findMany(queryCondition);
         const [discussions, count] = await Promise.all([discussionsFetch, countFetch]);
@@ -918,7 +926,6 @@ export const reportModel = {
     async perform({ action, userId, reportIds }) {
         if (![this.actions.agree, this.actions.disagree].includes(action)) throw new ModelError('action not support');
         if (action === this.actions.agree) {
-            console.log(reportIds);
             const report = await prisma.report.findFirst({
                 where: { id: reportIds[0] }
             });

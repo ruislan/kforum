@@ -15,21 +15,7 @@ import Spinner from '../ui/spinner';
 
 import { Locked, Pined } from '../icons';
 
-function grouped(posts) {
-    const groupList = [];
-    posts.forEach(post => {
-        let d = groupList.find(d => d.id === post.discussionId);
-        if (!d) {
-            d = post.discussion;
-            d.posts = [];
-            groupList.push(d);
-        }
-        d.posts.push(post);
-    });
-    return groupList;
-}
-
-// 只列出用户的回复（非讨论首贴）
+// 只列出用户的回帖（非主题首贴）
 export default function UserTabsPosts({ user }) {
     const [isLoading, setIsLoading] = useState(true);
     const [dataList, setDataList] = useState([]);
@@ -82,7 +68,7 @@ export default function UserTabsPosts({ user }) {
             {groupList.map((discussion, i) => (
                 <Box key={i} className='flex flex-col text-sm pl-0 pr-0 pt-0 pb-0'>
                     <div className='inline p-2 border-b border-neutral-700'>
-                        <span className='inline-block align-middle text-xs text-gray-400 mr-1.5 mt-0.5'>回复</span>
+                        <span className='inline-block align-middle text-xs text-gray-400 mr-1.5 mt-0.5'>主题</span>
                         <Link href={`/d/${discussion.id}`} className='inline align-middle hover:underline underline-offset-2 cursor-pointer'>{discussion.title}</Link>
                         {discussion.isSticky && (<span className='inline-block align-middle h-4 w-4 ml-1.5 text-green-400'><Pined /></span>)}
                         {discussion.isLocked && (<span className='inline-block align-middle h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}

@@ -13,7 +13,7 @@ import SplitBall from '../ui/split-ball';
 import { LoadingIcon, Locked, Pined } from '../icons';
 import Spinner from '../ui/spinner';
 
-// 只列出用户的讨论主题（含首贴）
+// 只列出用户的主题主题（含首贴）
 export default function UserTabsDiscussions({ user }) {
     const [isLoading, setIsLoading] = useState(true);
     const [dataList, setDataList] = useState([]);
@@ -60,7 +60,7 @@ export default function UserTabsDiscussions({ user }) {
                     <div className='text-xs inline-flex items-center text-gray-300 mt-1'>
                         <div className='flex items-center'><span>参与 {item.userCount}</span></div>
                         <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                        <div className='flex items-center'><span>回复 {item.postCount || 0}</span></div>
+                        <div className='flex items-center'><span>帖子 {item.postCount || 0}</span></div>
                         <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                         <div className='flex items-center'><span>反馈 {item.reactionCount || 0}</span></div>
                         <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />

@@ -39,7 +39,7 @@ function ActionCleanupUploads() {
 
     return (
         <div className='flex flex-col gap-2'>
-            <span className='text-xs text-gray-400'>无效图片指的是没有被头像、讨论、帖子等使用的图片</span>
+            <span className='text-xs text-gray-400'>无效图片指的是没有被头像、主题、帖子等使用的图片</span>
             <div className='flex'>
                 <Button
                     isLoading={isLoading}

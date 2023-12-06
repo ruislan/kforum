@@ -9,7 +9,7 @@ import UsersSearch from './users-search';
 
 const tabs = [
     { type: 'default', name: '话题' },
-    { type: 'posts', name: '回复' },
+    { type: 'posts', name: '帖子' },
     { type: 'user', name: '用户' },
 ];
 

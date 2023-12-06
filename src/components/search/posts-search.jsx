@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
+import Image from 'next/image';
+import clsx from 'clsx';
 
 import dateUtils from '@/lib/date-utils';
 import Box from '../ui/box';
@@ -12,8 +14,6 @@ import Button from '../ui/button';
 import SplitBall from '../ui/split-ball';
 import ProseContent from '../ui/prose-content';
 import { Locked, Pined } from '../icons';
-import Image from 'next/image';
-import clsx from 'clsx';
 import UserAvatar from '../ui/user-avatar';
 
 export default function PostsSearch({ query }) {
@@ -41,6 +41,8 @@ export default function PostsSearch({ query }) {
             }
         })();
     }, [page, query]);
+
+    if (!query) return <NoContent text='没有提供搜索词，输入搜索词试试？' />;
     if (!isLoading && dataList.length === 0) return <NoContent text='没有搜索到结果，换个词试试？' />
 
     return (
@@ -48,7 +50,7 @@ export default function PostsSearch({ query }) {
             {dataList.map((item, i) => (
                 <Box key={i} className='flex flex-col text-sm pl-0 pr-0 pt-0 pb-0'>
                     <div className='inline align-middle p-2 border-b border-neutral-700'>
-                        <span className='inline align-middle text-xs whitespace-nowrap text-gray-400 mr-1.5 mt-0.5'>回复</span>
+                        <span className='inline align-middle text-xs whitespace-nowrap text-gray-400 mr-1.5 mt-0.5'>主题</span>
                         <Link
                             href={`/d/${item.discussion.id}`}
                             className={clsx(

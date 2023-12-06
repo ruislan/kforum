@@ -20,7 +20,15 @@ export async function GET(request, { params }) {
             OR: [{ id }, { name: { contains: q } }, { email: { contains: q } }]
         };
     }
-
-    const { users, hasMore } = await userModel.getUsers(userParams);
-    return rest.ok({ data: users, hasMore });
+    try {
+        const { users, hasMore } = await userModel.getUsers(userParams);
+        return rest.ok({ data: users, hasMore });
+    } catch (err) {
+        if (err instanceof ModelError)
+            return rest.badRequest({ message: err.message });
+        else {
+            logger.warn(err);
+            return rest.badRequest();
+        }
+    }
 }
