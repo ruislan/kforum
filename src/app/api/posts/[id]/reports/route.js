@@ -4,6 +4,7 @@ import authOptions from '@/lib/auth';
 import rest from '@/lib/rest';
 import prisma from '@/lib/prisma';
 import { ModelError, reportModel } from '@/lib/models';
+import logger from '@/lib/logger';
 
 export async function POST(request, { params }) {
     // require user
@@ -12,11 +13,9 @@ export async function POST(request, { params }) {
 
     const postId = Number(params.id) || 0;
     const { type, reason } = await request.json();
-    const post = await prisma.post.findUnique({ where: { id: postId }, include: { discussion: true } });
-    if (!post) return rest.badRequest({ message: '帖子不存在' });
 
     try {
-        await reportModel.create({ userId: session.user.id, postId: post.id, type, reason });
+        await reportModel.create({ userId: session.user.id, postId, type, reason });
         return rest.created();
     } catch (err) {
         if (err instanceof ModelError)

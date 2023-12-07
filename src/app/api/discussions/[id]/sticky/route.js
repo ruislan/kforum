@@ -1,8 +1,8 @@
 import { getServerSession } from 'next-auth';
-
 import authOptions from '@/lib/auth';
 import rest from '@/lib/rest';
-import prisma from '@/lib/prisma';
+import { ModelError, discussionModel } from '@/lib/models';
+import logger from '@/lib/logger';
 
 export async function PUT(request, { params }) {
     // require admin & moderator
@@ -12,15 +12,16 @@ export async function PUT(request, { params }) {
 
     const discussionId = Number(params.id) || 0;
     const { isSticky } = await request.json();
-    const discussion = await prisma.discussion.findUnique({ where: { id: discussionId } });
-    if (!discussion) return rest.badRequest({ message: '主题不存在' });
 
-    // check if user is admin or is owner
-    const isAdmin = session.user.isAdmin;
-    const isOwner = discussion.userId === session.user.id;
-    if (!isAdmin && !isOwner) return rest.badRequest({ message: '主题不存在' }); // 非正常调用，隐藏真实原因
-
-    // update sticky
-    await prisma.discussion.update({ where: { id: discussionId }, data: { isSticky } });
-    return rest.updated();
+    try {
+        await discussionModel.sticky({ user: session.user, discussionId, isSticky });
+        return rest.updated();
+    } catch (err) {
+        if (err instanceof ModelError)
+            return rest.badRequest({ message: err.message });
+        else {
+            logger.warn(err);
+            return rest.badRequest();
+        }
+    }
 }

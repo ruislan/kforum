@@ -246,6 +246,7 @@ export const postModel = {
         return true;
     },
     async create({ user, content, text, discussionId, replyPostId, ip }) {
+        const localUser = {...user};
         const discussion = await prisma.discussion.findUnique({ where: { id: discussionId } });
         if (!discussion) throw new ModelError(this.errors.DISCUSSION_NOT_FOUND);
         if (discussion.isLocked) throw new ModelError(this.errors.DISCUSSION_IS_LOCKED);
@@ -267,7 +268,7 @@ export const postModel = {
         const sessionUserPosted = await prisma.post.findFirst({
             where: {
                 discussionId,
-                userId: user.id
+                userId: localUser.id
             }
         });
 
@@ -278,7 +279,7 @@ export const postModel = {
                     text,
                     discussionId,
                     type: 'text',
-                    userId: user.id,
+                    userId: localUser.id,
                     ip,
                     replyPostId
                 }
@@ -312,15 +313,16 @@ export const postModel = {
         });
 
         // add ref
-        data.user = user;
+        data.user = localUser;
         data.replyPost = replyPost;
 
         return data;
     },
     async update({ user, id, content, text }) {
+        const localUser = {...user};
         const post = await prisma.post.findUnique({ where: { id } });
         if (!post) throw new ModelError(this.errors.POST_NOT_FOUND);
-        if (!this.checkPermission(user, post)) throw new ModelError(this.errors.NO_PERMISSION);
+        if (!this.checkPermission(localUser, post)) throw new ModelError(this.errors.NO_PERMISSION);
 
         // 检查 upload 的引用情况
         const images = uploadModel.getImageUrls(content);
@@ -339,9 +341,10 @@ export const postModel = {
         });
     },
     async delete({ user, id, isBySystem = false }) {
+        const localUser = { ...user };
         const post = await prisma.post.findUnique({ where: { id }, include: { discussion: true } });
         if (!post) throw new ModelError(this.errors.POST_NOT_FOUND);
-        if (!isBySystem && !this.checkPermission(user, post)) throw new ModelError(this.errors.NO_PERMISSION);
+        if (!isBySystem && !this.checkPermission(localUser, post)) throw new ModelError(this.errors.NO_PERMISSION);
 
         const isFirstPost = post.discussion.firstPostId === post.id;
         const isLastPost = post.discussion.lastPostId === post.id;
@@ -476,6 +479,33 @@ export const postModel = {
         });
         let [posts, count] = await Promise.all([fetchPosts, fetchCount]);
         return { posts, hasMore: count > skip + take };
+    },
+    async reaction({ user, postId, reactionId, isReact }) {
+        const localUser = { ...user };
+        const post = await prisma.post.findUnique({ where: { id: postId }, include: { discussion: true } });
+        if (!post) throw new ModelError(this.errors.POST_NOT_FOUND);
+
+        await prisma.$transaction(async (tx) => {
+            const data = { postId, reactionId, userId: localUser.id };
+            const ref = await tx.reactionPostRef.findUnique({ where: { reactionId_postId_userId: data } });
+            let inc = 0;
+            if (isReact && !ref) {
+                await tx.reactionPostRef.create({ data }); // 没有就创建一个
+                inc = 1;
+            }
+            if (!isReact && ref) {
+                await tx.reactionPostRef.delete({ where: { reactionId_postId_userId: data } }); // 有就删除
+                inc = -1;
+            }
+            // isReact && ref 和 !isReact && !ref 这两个情况不用处理
+
+            if (inc !== 0) { // 更新discussion
+                await tx.discussion.update({
+                    where: { id: post.discussion.id },
+                    data: { reactionCount: { increment: inc } }
+                });
+            }
+        });
     }
 };
 
@@ -541,7 +571,7 @@ export const discussionModel = {
 
         return { discussions, hasMore: count > skip + take };
     },
-    async incrementDiscussionView({ id }) {
+    async incrementView({ id }) {
         await prisma.discussion.update({
             where: { id },
             data: {
@@ -619,6 +649,7 @@ export const discussionModel = {
         return true;
     },
     async create({ user, title, text, content, categorySlug, tags: tagIds, ip }) {
+        const localUser = { ...user };
         const cat = await prisma.category.findUnique({ where: { slug: categorySlug } });
         if (!cat) throw new ModelError(this.errors.SCHEMA_CATEGORY);
 
@@ -630,7 +661,7 @@ export const discussionModel = {
                 data: {
                     title,
                     categoryId: cat.id,
-                    userId: user.id,
+                    userId: localUser.id,
                 }
             });
             // connect tag to discussion
@@ -640,7 +671,7 @@ export const discussionModel = {
                         id: { in: tagIds },
                     }
                 });
-                const data = tags.map(t => ({ tagId: t.id, discussionId: discussion.id, userId: user.id }));
+                const data = tags.map(t => ({ tagId: t.id, discussionId: discussion.id, userId: localUser.id }));
                 await tx.tagDiscussionRef.createMany({
                     data,
                     skipDuplicates: true
@@ -650,7 +681,7 @@ export const discussionModel = {
             const post = await tx.post.create({
                 data: {
                     content, text, discussionId: discussion.id, type: 'text',
-                    userId: user.id, ip,
+                    userId: localUser.id, ip,
                 }
             });
 
@@ -664,7 +695,6 @@ export const discussionModel = {
                         postId: post.id
                     }))
                 });
-
                 // first page is the poster
                 poster = uploads[0];
             }
@@ -684,10 +714,11 @@ export const discussionModel = {
 
         return data;
     },
-    async tagDiscussion({ user, id, tags: tagIds }) {
+    async tag({ user, id, tags: tagIds }) {
+        const localUser = { ...user };
         const discussion = await prisma.discussion.findUnique({ where: { id } });
         if (!discussion) throw new ModelError(this.errors.DISCUSSION_NOT_FOUND);
-        if (!this.checkPermission(user, discussion)) throw new ModelError(this.errors.NO_PERMISSION);
+        if (!this.checkPermission(localUser, discussion)) throw new ModelError(this.errors.NO_PERMISSION);
 
         tagIds = tagIds?.slice(0, 5);
 
@@ -703,13 +734,29 @@ export const discussionModel = {
                         id: { in: tagIds },
                     }
                 });
-                const data = tags.map(t => ({ tagId: t.id, discussionId: discussion.id, userId: user.id }));
+                const data = tags.map(t => ({ tagId: t.id, discussionId: discussion.id, userId: localUser.id }));
                 await tx.tagDiscussionRef.createMany({
                     data,
                     skipDuplicates: true
                 });
             }
         });
+    },
+    async lock({ user, discussionId, isLocked }) {
+        const localUser = { ...user };
+        const discussion = await prisma.discussion.findUnique({ where: { id: discussionId } });
+        if (!discussion) throw new ModelError(this.errors.DISCUSSION_NOT_FOUND);
+        if (!this.checkPermission(localUser, discussion)) throw new ModelError(this.errors.NO_PERMISSION);
+
+        await prisma.discussion.update({ where: { id: discussionId }, data: { isLocked } });
+    },
+    async sticky({ user, discussionId, isSticky }) {
+        const localUser = { ...user };
+        const discussion = await prisma.discussion.findUnique({ where: { id: discussionId } });
+        if (!discussion) throw new ModelError(this.errors.DISCUSSION_NOT_FOUND);
+        if (!this.checkPermission(localUser, discussion)) throw new ModelError(this.errors.NO_PERMISSION);
+
+        await prisma.discussion.update({ where: { id: discussionId }, data: { isSticky } });
     },
 };
 
@@ -856,8 +903,12 @@ export const reportModel = {
     async create({ userId, postId, type, reason }) {
         if (!this.types.includes(type)) throw new ModelError(this.errors.TYPE_INVALID);
         if (type === this.types.OTHER && reason.length < 4) throw new ModelError(this.errors.REASON_TOO_SHORT);
+        const post = await prisma.post.findUnique({ where: { id: postId } });
+        if (!post) throw new ModelError(postModel.errors.POST_NOT_FOUND);
+
         const report = await prisma.report.findFirst({ where: { userId, postId } });
         if (report) return; // 举报过了不用再次存储
+
         await prisma.report.create({
             data: { userId, postId, type, reason }
         });

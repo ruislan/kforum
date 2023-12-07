@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { ModelError, postModel } from '@/lib/models';
 import rest from '@/lib/rest';
+import logger from '@/lib/logger';
 
 export async function GET(request, { params }) {
     const { searchParams } = new URL(request.url)

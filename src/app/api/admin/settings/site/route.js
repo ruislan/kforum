@@ -8,6 +8,15 @@ export async function PUT(request, { params }) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.isAdmin) return rest.notFound();
     const { settings } = await request.json();
-    await siteSettingModel.updateSettings(settings);
-    return rest.updated();
+    try {
+        await siteSettingModel.updateSettings(settings);
+        return rest.updated();
+    } catch (err) {
+        if (err instanceof ModelError)
+            return rest.badRequest({ message: err.message });
+        else {
+            logger.warn(err);
+            return rest.badRequest();
+        }
+    }
 }

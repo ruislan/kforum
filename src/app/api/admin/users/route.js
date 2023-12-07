@@ -3,6 +3,7 @@ import authOptions from '@/lib/auth';
 import rest from '@/lib/rest';
 import { userModel } from '@/lib/models';
 import _ from 'lodash';
+import logger from '@/lib/logger';
 
 export async function GET(request, { params }) {
     // require admin

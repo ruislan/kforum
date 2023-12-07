@@ -19,7 +19,7 @@ export default async function Page({ params }) {
   const d = await discussionModel.getDiscussion({ id });
   if (!d) notFound();
   // we must assure the discussion exists
-  await discussionModel.incrementDiscussionView({ id: d.id });
+  await discussionModel.incrementView({ id: d.id });
 
   return (
     <div className='flex w-full h-full gap-6'>

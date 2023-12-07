@@ -21,7 +21,6 @@ export async function PUT(request, { params }) {
 
     try {
         await categoryModel.update({ id, name, slug, sequence, description, color });
-        // revalidateTag('categories');
         return rest.updated();
     } catch (err) {
         if (err instanceof ModelError)
