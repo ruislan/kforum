@@ -20,7 +20,7 @@ const handler = async function (request, params, method) {
         if (method === 'PUT') {
             const { content, text } = await request.json();
             const validateResult = postModel.validate({ text, content });
-            if (validateResult.error) return rest.badRequest({ message: validateResult.error.message });
+            if (validateResult.error) return rest.badRequest({ message: validateResult.message });
             await postModel.update({ user: session.user, id: postId, text, content });
             return rest.updated();
         }

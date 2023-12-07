@@ -12,7 +12,7 @@ import Button from '../ui/button';
 export default function PostUpdater({ post, onUpdated, onCanceled }) {
     const { data: session } = useSession();
     const [contentText, setContentText] = useState(post?.text);
-    const [contentJson, setContentJson] = useState(post?.content);
+    const [contentJson, setContentJson] = useState(JSON.parse(post?.content || '{}'));
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const [tiptap, setTipTap] = useState(null);
@@ -26,8 +26,8 @@ export default function PostUpdater({ post, onUpdated, onCanceled }) {
 
     const validateFields = () => {
         setError(null);
-        if (contentText?.length < 1) {
-            setError('请填写内容');
+        if (contentText?.length < 2) {
+            setError('内容应该不小于 2 个字符');
             return false;
         }
         return true;
@@ -85,7 +85,7 @@ export default function PostUpdater({ post, onUpdated, onCanceled }) {
                     }}>
                         取消
                     </Button>
-                    <Button size='sm' type='submit' isLoading={isSubmitting} disabled={contentText?.length <= 0}>
+                    <Button size='sm' type='submit' isLoading={isSubmitting} disabled={contentText?.length < 2}>
                         更新
                     </Button>
                 </div>

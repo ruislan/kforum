@@ -384,7 +384,8 @@ export function toHTML(stringContent) {
   if (!stringContent) return '';
   try {
     const json = JSON.parse(stringContent);
-    return generateHTML(json, extensions);
+    const html = generateHTML(json, extensions);
+    return html;
   } catch (_) {
     return stringContent;
   }
