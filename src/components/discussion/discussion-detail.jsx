@@ -57,7 +57,7 @@ export default function DiscussionDetail({ discussion }) {
             />
             {isLocked ?
                 <Box className='h-16 flex justify-center items-center'>
-                    <span className='text-base font-bold text-neutral-400'>该主题已经锁定</span>
+                    <span className='text-base font-bold text-neutral-400'>该话题已经锁定</span>
                 </Box> :
                 <PostCreator discussion={discussion} replyToPost={replyToPost} onCreated={({ post }) => {
                     setPosts([...posts, post]);

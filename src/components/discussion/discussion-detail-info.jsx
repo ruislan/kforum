@@ -165,8 +165,8 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                                     {/* edit:owner, moderator, admin */}
                                     <ActionButton onClick={() => setIsEditMode(true)}><Edit /></ActionButton>
                                     {/* delete:owner, moderator, admin */}
-                                    <ActionDelete // 删除首贴会自动删除整个主题（目前是这个规则）
-                                        confirmContent='你确定要删除这篇主题及其所有的回复吗？'
+                                    <ActionDelete // 删除首贴会自动删除整个话题（目前是这个规则）
+                                        confirmContent='你确定要删除这篇话题及其所有的回复吗？'
                                         post={firstPost}
                                         onDeleted={() => router.replace('/')}
                                     />

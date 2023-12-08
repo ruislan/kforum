@@ -352,7 +352,7 @@ export const postModel = {
             await tx.reactionPostRef.deleteMany({ where: { postId: post.id } });// delete reactions
             // 不用更新所有回复这贴的引用为null, 外键约束会自动设置为null
             if (isFirstPost) { // delete all
-                // XXX 所有主题的帖子的图片、举报等引用会级联删除
+                // XXX 所有话题的帖子的图片、举报等引用会级联删除
                 await tx.post.deleteMany({ where: { discussionId: post.discussion.id } });
                 await tx.discussion.delete({ where: { id: post.discussion.id } });
             } else {
@@ -514,7 +514,7 @@ export const discussionModel = {
         SCHEMA_TITLE: '标题是必填的，不小于 2 个字符。',
         SCHEMA_CONTENT: '内容是必填的，不小于 2 个字符。',
         SCHEMA_CATEGORY: '分类是必填的，请选择一个分类',
-        DISCUSSION_NOT_FOUND: '请指定要更新的主题',
+        DISCUSSION_NOT_FOUND: '请指定要更新的话题',
         NO_PERMISSION: '没有操作权限',
     },
     // XXX 后面可以可能要拆分一下user的话题，因为user的读取话题的排序逻辑可能有很大的不同
@@ -891,7 +891,7 @@ export const reportModel = {
         disagree: 'disagree',
     },
     types: { // 举报的分类
-        SPAM: 'spam', // 偏离主题，与当前话题无关，口水贴、价值不高等
+        SPAM: 'spam', // 偏离话题，与当前话题无关，口水贴、价值不高等
         RULES: 'rules', // 违反规则
         RUDELY: 'rudely', // 脏话、威胁、人身攻击等不当言论
         INFRINGEMENT: 'infringement', // 侵犯隐私、著作权等等

@@ -61,7 +61,7 @@ function ActionDelete({ id, onError }) {
             <ConfirmModal
                 show={isShow}
                 title='确认删除'
-                description='是否删除当前这个标签，这将会让所有使用该标签的主题都失去该标签。'
+                description='是否删除当前这个标签，这将会让所有使用该标签的话题都失去该标签。'
                 onCancel={() => setIsShow(false)}
                 onClose={() => setIsShow(false)}
                 onConfirm={() => handleDelete()}

@@ -13,7 +13,7 @@ import SplitBall from '../ui/split-ball';
 import { LoadingIcon, Locked, Pined } from '../icons';
 import Spinner from '../ui/spinner';
 
-// 只列出用户的主题主题（含首贴）
+// 只列出用户的话题（含首贴）
 export default function UserTabsDiscussions({ user }) {
     const [isLoading, setIsLoading] = useState(true);
     const [dataList, setDataList] = useState([]);

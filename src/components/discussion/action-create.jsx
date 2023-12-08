@@ -20,7 +20,7 @@ export default function ActionCreate({ category }) {
             } else {
                 router.push(category ? `/d/create?c=${category.slug}` : '/d/create');
             }
-        }}>发布新主题
+        }}>发布新话题
         </Button>
     );
 }

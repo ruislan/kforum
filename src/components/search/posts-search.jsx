@@ -50,7 +50,7 @@ export default function PostsSearch({ query }) {
             {dataList.map((item, i) => (
                 <Box key={i} className='flex flex-col text-sm pl-0 pr-0 pt-0 pb-0'>
                     <div className='inline align-middle p-2 border-b border-neutral-700'>
-                        <span className='inline align-middle text-xs whitespace-nowrap text-gray-400 mr-1.5 mt-0.5'>主题</span>
+                        <span className='inline align-middle text-xs whitespace-nowrap text-gray-400 mr-1.5 mt-0.5'>话题</span>
                         <Link
                             href={`/d/${item.discussion.id}`}
                             className={clsx(

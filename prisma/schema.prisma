@@ -164,9 +164,9 @@ model ReactionPostRef {
   userId     Int      @map("user_id") @db.UnsignedInt
   createdAt  DateTime @default(now()) @map("created_at")
 
-  post     Post     @relation(fields: [postId], references: [id])
-  reaction Reaction @relation(fields: [reactionId], references: [id])
-  user     User     @relation(fields: [userId], references: [id])
+  post     Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  reaction Reaction @relation(fields: [reactionId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([reactionId, postId, userId])
 }

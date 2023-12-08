@@ -1,7 +1,7 @@
 // 前后端的通用常量都可以放这里
 
 export const REPORT_TYPES = [
-    { name: '偏离主题', description: '此帖与当前话题无关，口水贴、价值不高等。', value: 'spam' },
+    { name: '偏离话题', description: '此帖与当前话题无关，口水贴、价值不高等。', value: 'spam' },
     { name: '违反规则', description: '此贴违反了社区规则。', value: 'rules' },
     { name: '不当言论', description: '此贴包含了脏话、威胁、仇恨、人身攻击等不当内容。', value: 'rudely' },
     { name: '侵犯权益', description: '此贴侵犯了隐私、肖像权、著作权等他人权益', value: 'infringement' },
