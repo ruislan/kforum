@@ -939,7 +939,7 @@ export const reportModel = {
 
         // 这里主要是以帖子为主体的举报
         const fetchCount = prisma.post.count({ where: whereClause });
-        const fetchList = await prisma.post.findMany({
+        const fetchList = prisma.post.findMany({
             where: whereClause,
             include: {
                 user: {

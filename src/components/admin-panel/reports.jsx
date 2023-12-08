@@ -182,7 +182,7 @@ export default function ReportList({ filter }) {
                                             u/{report.user.name}
                                         </Link>
                                         <span>&nbsp;于&nbsp;</span>
-                                        <span suppressHydrationWarning>{dateUtils.fromNow(item.createdAt)}&nbsp;举报此贴，认为此贴&nbsp;</span>
+                                        <span suppressHydrationWarning>{dateUtils.fromNow(report.createdAt)}&nbsp;举报此贴，认为此贴&nbsp;</span>
                                         <span className='font-semibold '>{REPORT_TYPES.find(r => r.value === report.type).name}</span>
                                         <span>。</span>
                                         {report.ignoredUser && (
