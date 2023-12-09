@@ -246,7 +246,7 @@ export const postModel = {
         return true;
     },
     async create({ user, content, text, discussionId, replyPostId, ip }) {
-        const localUser = {...user};
+        const localUser = { ...user };
         const discussion = await prisma.discussion.findUnique({ where: { id: discussionId } });
         if (!discussion) throw new ModelError(this.errors.DISCUSSION_NOT_FOUND);
         if (discussion.isLocked) throw new ModelError(this.errors.DISCUSSION_IS_LOCKED);
@@ -319,7 +319,7 @@ export const postModel = {
         return data;
     },
     async update({ user, id, content, text }) {
-        const localUser = {...user};
+        const localUser = { ...user };
         const post = await prisma.post.findUnique({ where: { id } });
         if (!post) throw new ModelError(this.errors.POST_NOT_FOUND);
         if (!this.checkPermission(localUser, post)) throw new ModelError(this.errors.NO_PERMISSION);
@@ -541,7 +541,7 @@ export const discussionModel = {
                 title: { contains: queryTitle || '' },
                 userId: userId || undefined,
                 categoryId: categoryId || undefined,
-                tagId: tagId ? { tags: { some: { tagId } } } : undefined
+                tags: tagId ? { some: { tagId } } : undefined
             },
             orderBy,
             include: {
