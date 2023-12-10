@@ -20,3 +20,6 @@ export const SITE_SETTING_TYPES = {
     text: 'text',
     html: 'html'
 };
+
+export const MIN_LENGTH_TITLE = 2;
+export const MIN_LENGTH_CONTENT = 2;

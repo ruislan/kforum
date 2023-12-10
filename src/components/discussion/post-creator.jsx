@@ -13,11 +13,13 @@ import Tiptap from '../ui/tiptap';
 import Button from '../ui/button';
 import PostDetailPopover from './post-detail-popover';
 import UserAvatar from '../ui/user-avatar';
+import { MIN_LENGTH_CONTENT } from '@/lib/constants';
 
 export default function PostCreator({ discussion, replyToPost, onCreated }) {
     const { data: session } = useSession();
     const [contentText, setContentText] = useState('');
-    const [contentJson, setContentJson] = useState('');
+    const [contentJson, setContentJson] = useState({});
+    const [hasImage, setHasImage] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const [tiptap, setTipTap] = useState(null);
@@ -31,8 +33,8 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
 
     const validateFields = () => {
         setError(null);
-        if (contentText?.length < 1) {
-            setError('请填写内容');
+        if (!hasImage && contentText?.length < MIN_LENGTH_CONTENT) {
+            setError(`内容应该不小于 ${MIN_LENGTH_CONTENT} 个字符`);
             return false;
         }
         return true;
@@ -81,6 +83,12 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
         }
     }, [replyToPost, tiptap]);
 
+    useEffect(() => {
+        if (!contentJson) return;
+        const has = contentJson.content?.some(node => node.type === 'image');
+        setHasImage(has);
+    }, [contentJson]);
+
     if (!session || !discussion) return null;
 
     return (
@@ -109,7 +117,12 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
                         }}
                             endActionEnhancer={
                                 <div className='flex items-center ml-2'>
-                                    <Button size='sm' type='submit' isLoading={isSubmitting} disabled={contentText?.length <= 0}>
+                                    <Button
+                                        size='sm'
+                                        type='submit'
+                                        isLoading={isSubmitting}
+                                        disabled={!hasImage && contentText?.length < MIN_LENGTH_CONTENT}
+                                    >
                                         回复
                                     </Button>
                                 </div>

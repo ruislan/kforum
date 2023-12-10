@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import _ from 'lodash';
@@ -11,16 +11,19 @@ import Tiptap from '../ui/tiptap';
 import Select from '../ui/select';
 import Input from '../ui/input';
 import TagsInput from './tags-input';
+import { MIN_LENGTH_CONTENT, MIN_LENGTH_TITLE } from '@/lib/constants';
 
 export default function DiscussionCreator({ categories, initCategorySlug }) {
     const router = useRouter();
     const [categorySlug, setCategorySlug] = useState(initCategorySlug);
     const [title, setTitle] = useState('');
     const [contentText, setContentText] = useState('');
-    const [contentJson, setContentJson] = useState('');
+    const [contentJson, setContentJson] = useState({});
+    const [hasImage, setHasImage] = useState(false);
     const [tags, setTags] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
+
     const options = useMemo(() =>
         categories.map(c => ({
             value: c.slug,
@@ -36,24 +39,23 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
     const resetFields = () => {
         setCategorySlug('');
         setTitle('');
-        setContentJson('');
+        setContentJson({});
         setContentText('');
         setError(null);
     };
 
     const validateFields = () => {
         setError(null);
-        if (!categorySlug || categorySlug?.length < 1) {
+        if (_.isEmpty(categorySlug)) {
             setError('请选择分类');
             return false;
         }
-        if (title?.length < 1) {
-            setError('请填写标题');
+        if (title?.length < MIN_LENGTH_TITLE) {
+            setError(`标题应该不小于 ${MIN_LENGTH_TITLE} 个字符`);
             return false;
         }
-
-        if (contentText?.length < 1) {
-            setError('请填写内容');
+        if (!hasImage && contentText?.length < MIN_LENGTH_CONTENT) {
+            setError(`内容应该不小于 ${MIN_LENGTH_CONTENT} 个字符`);
             return false;
         }
         return true;
@@ -97,6 +99,12 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
         }
     };
 
+    useEffect(() => {
+        if (!contentJson) return;
+        const has = contentJson.content?.some(node => node.type === 'image');
+        setHasImage(has);
+    }, [contentJson]);
+
     return (
         <Box>
             <form onSubmit={async e => { e.preventDefault(); handleSubmit(); }}>
@@ -137,8 +145,8 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
                             isLoading={isSubmitting}
                             disabled={
                                 (_.isEmpty(categorySlug)) ||
-                                contentText?.length < 1 ||
-                                title?.length < 1
+                                !hasImage && contentText?.length < 2 ||
+                                title?.length < 2
                             }>
                             发布
                         </Button>

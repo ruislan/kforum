@@ -1,11 +1,12 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 
 import { runIfFn } from '@/lib/fn';
+import { MIN_LENGTH_CONTENT } from '@/lib/constants';
 import Tiptap, { toHTML } from '../ui/tiptap';
 import Button from '../ui/button';
 
@@ -13,6 +14,7 @@ export default function PostUpdater({ post, onUpdated, onCanceled }) {
     const { data: session } = useSession();
     const [contentText, setContentText] = useState(post?.text);
     const [contentJson, setContentJson] = useState(JSON.parse(post?.content || '{}'));
+    const [hasImage, setHasImage] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const [tiptap, setTipTap] = useState(null);
@@ -26,8 +28,8 @@ export default function PostUpdater({ post, onUpdated, onCanceled }) {
 
     const validateFields = () => {
         setError(null);
-        if (contentText?.length < 2) {
-            setError('内容应该不小于 2 个字符');
+        if (!hasImage && contentText?.length < MIN_LENGTH_CONTENT) {
+            setError(`内容应该不小于 ${MIN_LENGTH_CONTENT} 个字符`);
             return false;
         }
         return true;
@@ -66,6 +68,12 @@ export default function PostUpdater({ post, onUpdated, onCanceled }) {
         }
     };
 
+    useEffect(() => {
+        if (!contentJson) return;
+        const has = contentJson.content?.some(node => node.type === 'image');
+        setHasImage(has);
+    }, [contentJson]);
+
     if (!session || !post) return null;
     return (
         <form className='my-2' ref={formRef} onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
@@ -85,7 +93,12 @@ export default function PostUpdater({ post, onUpdated, onCanceled }) {
                     }}>
                         取消
                     </Button>
-                    <Button size='sm' type='submit' isLoading={isSubmitting} disabled={contentText?.length < 2}>
+                    <Button
+                        size='sm'
+                        type='submit'
+                        isLoading={isSubmitting}
+                        disabled={!hasImage && contentText?.length < MIN_LENGTH_CONTENT}
+                    >
                         更新
                     </Button>
                 </div>

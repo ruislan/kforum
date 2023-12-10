@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt';
-import _ from 'lodash';
+import _, { result } from 'lodash';
 import CryptoJS from 'crypto-js';
 
 import prisma from './prisma';
 import pageUtils, { DEFAULT_PAGE_LIMIT } from './page-utils';
 import storage from './storage';
-import { SITE_SETTING_TYPES } from './constants';
+import { MIN_LENGTH_CONTENT, MIN_LENGTH_TITLE, SITE_SETTING_TYPES } from './constants';
 
 export class ModelError extends Error { }
 
@@ -226,7 +226,7 @@ export const categoryModel = {
 
 export const postModel = {
     errors: {
-        SCHEMA_CONTENT: '内容是必填的，不小于 2 个字符。',
+        SCHEMA_CONTENT: `内容是必填的，不小于 ${MIN_LENGTH_CONTENT} 个字符。`,
         DISCUSSION_NOT_FOUND: '请指定要回复的话题',
         DISCUSSION_IS_LOCKED: '话题已经被锁定',
         REPLY_TO_POST_NOT_FOUND: '回复的帖子已经删除或不存在',
@@ -234,8 +234,15 @@ export const postModel = {
         NO_PERMISSION: '没有操作权限',
     },
     validate({ text, content }) {
-        if (!content || content.length < 2) return { error: true, message: this.errors.SCHEMA_CONTENT };
-        if (!text || text.length < 2) return { error: true, message: this.errors.SCHEMA_CONTENT };
+        if (content?.length < MIN_LENGTH_CONTENT) return { error: true, message: this.errors.SCHEMA_CONTENT };
+        const hasImage = ((input) => {
+            try {
+                return JSON.parse(input).content?.some(node => node.type === 'image');
+            } catch (err) {
+                return false;
+            }
+        })(content);
+        if (!hasImage && text?.length < MIN_LENGTH_CONTENT) return { error: true, message: this.errors.SCHEMA_CONTENT };
         return { error: false };
     },
     checkPermission(user, post) {
@@ -511,8 +518,7 @@ export const postModel = {
 
 export const discussionModel = {
     errors: {
-        SCHEMA_TITLE: '标题是必填的，不小于 2 个字符。',
-        SCHEMA_CONTENT: '内容是必填的，不小于 2 个字符。',
+        SCHEMA_TITLE: `标题是必填的，不小于 ${MIN_LENGTH_TITLE} 个字符。`,
         SCHEMA_CATEGORY: '分类是必填的，请选择一个分类',
         DISCUSSION_NOT_FOUND: '请指定要更新的话题',
         NO_PERMISSION: '没有操作权限',
@@ -635,11 +641,10 @@ export const discussionModel = {
         return d;
     },
     validate({ title, text, content, categorySlug }) {
-        if (!title || title.length < 2) return { error: true, message: this.errors.SCHEMA_TITLE };
-        if (!content || content.length < 2) return { error: true, message: this.errors.SCHEMA_CONTENT };
-        if (!text || text.length < 2) return { error: true, message: this.errors.SCHEMA_CONTENT };
+        if (!title || title.length < MIN_LENGTH_TITLE) return { error: true, message: this.errors.SCHEMA_TITLE };
         if (!categorySlug) return { error: true, message: this.errors.SCHEMA_CATEGORY };
-        return { error: false };
+        const result = postModel.validate({ text, content }); // validate post
+        return result;
     },
     checkPermission(user, discussion) {
         const isAdmin = user.isAdmin;
