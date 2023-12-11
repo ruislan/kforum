@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import TagsModal from './tags-modal';
 import ActionButton from '../ui/action-button';
-import useTagsModal from '@/hooks/useTagsModal';
+import useTagsModal from '@/hooks/use-tags-modal';
 import { TagIcon } from '../icons';
 import { runIfFn } from '@/lib/fn';
 import toast from 'react-hot-toast';

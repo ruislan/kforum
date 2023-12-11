@@ -1,16 +1,16 @@
 'use client';
+import clsx from 'clsx';
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { Popover, Transition } from '@headlessui/react';
+import { Transition } from '@headlessui/react';
+import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 import toast from 'react-hot-toast';
 
-import { runIfFn } from '@/lib/fn';
-
-import { LoadingIcon, Heart } from '../icons';
 import ActionButton from '../ui/action-button';
-import clsx from 'clsx';
-import Image from 'next/image';
-import useLoginModal from '@/hooks/useLoginModal';
-import { useSession } from 'next-auth/react';
+import { runIfFn } from '@/lib/fn';
+import useLoginModal from '@/hooks/use-login-modal';
+import useOutsideClick from '@/hooks/use-outside-click';
+import { LoadingIcon, Heart } from '../icons';
 
 function ReactionItem({ reaction, post, isUserReacted, onReacted }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,7 +56,10 @@ function ReactionItem({ reaction, post, isUserReacted, onReacted }) {
                 handleReact();
             }}
         >
-            {isSubmitting ? <LoadingIcon className='w-4 h-4' /> : <Image width={18} height={18} src={reaction.icon} alt={reaction.name} />}
+            {isSubmitting ?
+                <LoadingIcon className='w-4 h-4' /> :
+                <Image width={18} height={18} src={reaction.icon} alt={reaction.name} />
+            }
         </button>
     );
 }
@@ -101,52 +104,38 @@ function ReactionList({ post, onReacted }) {
     );
 }
 
-function PopoverButtonWrapper({ open, isLoading }) {
-    const triggerRef = useRef();
+export default function ActionReact({ post, onReacted }) {
+    const ref = useRef();
     const { data } = useSession();
     const loginModal = useLoginModal();
-    const [openState, setOpenState] = useState(false);
-    useEffect(() => setOpenState(open), [open]); // listen open state
-
-    return (
-        <>
-            <Popover.Button ref={triggerRef} hidden></Popover.Button>
-            <ActionButton onClick={e => {
-                e.preventDefault();
-                if (!data?.user) loginModal.open();
-                else if (!openState) triggerRef.current?.click();
-            }} isActive={openState}>
-                {isLoading ? <LoadingIcon /> : <Heart />}
-            </ActionButton>
-        </>
-    );
-}
-
-export default function ActionReact({ post, onReacted }) {
+    const [isOpen, setIsOpen] = useState(false);
+    useOutsideClick(ref, () => setIsOpen(false));
     return (
         <div className='relative'>
-            <Popover>
-                {({ open }) => (
-                    <>
-                        <PopoverButtonWrapper open={open} />
-                        <Transition
-                            as={Fragment}
-                            enter='transition ease-out duration-200'
-                            enterFrom='opacity-0 translate-y-1'
-                            enterTo='opacity-100 translate-y-0'
-                            leave='transition ease-in duration-150'
-                            leaveFrom='opacity-100 translate-y-0'
-                            leaveTo='opacity-0 translate-y-1'
-                        >
-                            <Popover.Panel className={clsx('absolute bottom-full right-0 top-auto z-10',
-                                'flex items-center gap-1 p-1 mb-2 w-auto',
-                                'bg-clip-padding bg-neutral-800 border border-solid border-neutral-700 rounded-md shadow-xl')}>
-                                <ReactionList post={post} onReacted={onReacted} />
-                            </Popover.Panel>
-                        </Transition>
-                    </>
-                )}
-            </Popover>
+            <ActionButton onClick={e => {
+                e.preventDefault();
+                if (!data?.user) loginModal.open()
+                else setIsOpen(!isOpen);
+            }} isActive={isOpen}>
+                <Heart />
+            </ActionButton>
+            <Transition
+                as={Fragment}
+                appear
+                show={isOpen}
+                enter='transition ease-out duration-200'
+                enterFrom='opacity-0 translate-y-1'
+                enterTo='opacity-100 translate-y-0'
+                leave='transition ease-in duration-150'
+                leaveFrom='opacity-100 translate-y-0'
+                leaveTo='opacity-0 translate-y-1'
+            >
+                <div ref={ref} className={clsx('absolute bottom-full right-0 top-auto z-10',
+                    'grid grid-cols-8 gap-1 p-1 mb-2 w-max',
+                    'bg-clip-padding bg-neutral-800 border border-solid border-neutral-700 rounded-md shadow-xl')}>
+                    <ReactionList post={post} onReacted={onReacted} />
+                </div>
+            </Transition>
         </div>
     );
 }

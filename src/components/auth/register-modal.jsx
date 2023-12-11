@@ -3,11 +3,11 @@ import { useState, Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import toast from 'react-hot-toast';
 
-import useRegisterModal from '@/hooks/useRegisterModal';
+import useRegisterModal from '@/hooks/use-register-modal';
 
 import Button from '../ui/button';
 import { Close } from '../icons';
-import useLoginModal from '@/hooks/useLoginModal';
+import useLoginModal from '@/hooks/use-login-modal';
 
 export default function RegisterModal() {
     const registerModal = useRegisterModal();

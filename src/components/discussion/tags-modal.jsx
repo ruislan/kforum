@@ -5,7 +5,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import toast from 'react-hot-toast';
 
 import { runIfFn } from '@/lib/fn';
-import useTagsModal from '@/hooks/useTagsModal';
+import useTagsModal from '@/hooks/use-tags-modal';
 import Tag from '../ui/tag';
 import { Close } from '../icons';
 import Button from '../ui/button';

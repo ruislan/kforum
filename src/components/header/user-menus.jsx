@@ -1,8 +1,8 @@
 'use client';
 import { useSession } from 'next-auth/react';
 
-import useLoginModal from '@/hooks/useLoginModal';
-import useRegisterModal from '@/hooks/useRegisterModal';
+import useLoginModal from '@/hooks/use-login-modal';
+import useRegisterModal from '@/hooks/use-register-modal';
 
 import UserMenusDropdown from './user-menus-dropdown';
 

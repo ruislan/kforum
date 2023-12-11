@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
 import { Dialog, Transition } from '@headlessui/react';
 
-import useLoginModal from '@/hooks/useLoginModal';
+import useLoginModal from '@/hooks/use-login-modal';
 
 import { CheckIcon, Close, Flag } from '../icons';
 import ActionButton from '../ui/action-button';

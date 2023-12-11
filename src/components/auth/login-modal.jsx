@@ -5,8 +5,8 @@ import { Dialog, Transition } from '@headlessui/react';
 import { signIn } from 'next-auth/react';
 import toast from 'react-hot-toast';
 
-import useLoginModal from '@/hooks/useLoginModal';
-import useRegisterModal from '@/hooks/useRegisterModal';
+import useLoginModal from '@/hooks/use-login-modal';
+import useRegisterModal from '@/hooks/use-register-modal';
 
 import Button from '../ui/button';
 import { Close } from '../icons';

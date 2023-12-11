@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 
-import useLoginModal from '@/hooks/useLoginModal';
+import useLoginModal from '@/hooks/use-login-modal';
 
 import Button from '../ui/button';
 

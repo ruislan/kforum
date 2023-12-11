@@ -6,7 +6,7 @@ import Tag from '../ui/tag';
 import { TagIcon } from '../icons';
 import { runIfFn } from '@/lib/fn';
 import TagsModal from './tags-modal';
-import useTagsModal from '@/hooks/useTagsModal';
+import useTagsModal from '@/hooks/use-tags-modal';
 
 // 选择标签，如果没有输入搜索，则加载最火的前 10 个标签，如果输入搜索直接加载前 10 个搜索结果
 export default function TagsInput({ onSelected }) {

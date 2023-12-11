@@ -3,7 +3,6 @@ import bcrypt from 'bcrypt';
 import { parseArgs } from 'node:util';
 import casual from 'casual';
 import _ from 'lodash';
-import { SITE_SETTING_TYPES } from '@/lib/constants';
 
 const db = new prisma.PrismaClient({ log: ['error', 'warn'] });
 await db.$connect();
@@ -25,7 +24,7 @@ async function initBase() {
     const siteSettings = [
         {
             id: 1,
-            dataType: SITE_SETTING_TYPES.string,
+            dataType: 'string',
             key: 'site_title',
             name: '站点标题',
             description: '尽量用简单的词或者短句，对所有用户都可见。',
@@ -33,7 +32,7 @@ async function initBase() {
         },
         {
             id: 2,
-            dataType: SITE_SETTING_TYPES.string,
+            dataType: 'string',
             key: 'site_about',
             name: '关于本站',
             description: '用简单的一句话描述本站，对所有用户都可见。',
@@ -41,7 +40,7 @@ async function initBase() {
         },
         {
             id: 3,
-            dataType: SITE_SETTING_TYPES.image,
+            dataType: 'image',
             key: 'site_logo',
             name: '站点 Logo',
             description: '站点左上角的 Logo 图片，建议使用宽高比为 3:1 的矩形图片。设置为空则展示默认。',
@@ -49,7 +48,7 @@ async function initBase() {
         },
         {
             id: 4,
-            dataType: SITE_SETTING_TYPES.image,
+            dataType: 'image',
             key: 'site_favicon',
             name: '站点 Favicon',
             description: '站点的 Favicon 图片，建议使用128x128的 png 图片。设置为空则展示默认。',
@@ -85,13 +84,21 @@ async function initBase() {
     // init reactions
     const reactions = [
         { name: '爱心', icon: '/reactions/heart.png' },
-        { name: '微笑', icon: '/reactions/smiling.png' },
+        { name: '很棒', icon: '/reactions/good.png' },
+        { name: '大笑', icon: '/reactions/laughing.png' },
         { name: '亲亲', icon: '/reactions/kiss.png' },
-        { name: '心碎', icon: '/reactions/broken-heart.png' },
+        { name: '鼓掌', icon: '/reactions/clap.png' },
+        { name: '鲜花', icon: '/reactions/flowers.png' },
+        { name: '火焰', icon: '/reactions/fire.png' },
+        { name: '满分', icon: '/reactions/perfect.png' },
+        { name: '火箭', icon: '/reactions/rocket.png' },
+        { name: '眼睛', icon: '/reactions/eyes.png' },
+        { name: '眼冒星光', icon: '/reactions/stunning.png' },
+        { name: '很差', icon: '/reactions/bad.png' },
+        { name: '药丸', icon: '/reactions/medicine.png' },
         { name: '哭泣', icon: '/reactions/crying.png' },
         { name: '悲伤', icon: '/reactions/sad.png' },
         { name: '愤怒', icon: '/reactions/angry.png' },
-        { name: '小丑', icon: '/reactions/clown.png' },
     ];
     for (let i = 1; i <= reactions.length; i++) {
         const reaction = reactions[i - 1];

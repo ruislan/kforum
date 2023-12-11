@@ -1,7 +1,7 @@
 'use client';
 import { useSession } from 'next-auth/react';
 
-import useLoginModal from '@/hooks/useLoginModal';
+import useLoginModal from '@/hooks/use-login-modal';
 import { runIfFn } from '@/lib/fn';
 import ActionButton from '../ui/action-button';
 import { Reply } from '../icons';
