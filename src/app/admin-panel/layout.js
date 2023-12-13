@@ -14,6 +14,7 @@ const menus = [
   { label: '用户管理', path: '/admin-panel/users' },
   { label: '标签管理', path: '/admin-panel/tags' },
   { label: '站点设置', path: '/admin-panel/site' },
+  { label: '导航设置', path: '/admin-panel/menus' },
 ];
 
 export const metadata = {

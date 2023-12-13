@@ -1,16 +1,14 @@
 import Link from 'next/link';
-
-import prisma from '@/lib/prisma';
 import NavMenus from '@/components/header/nav-menus';
 
 import Search from './search';
 import UserMenus from './user-menus';
 import { Plus } from '../icons';
-import { siteSettingModel } from '@/lib/models';
+import { siteNavMenuModel, siteSettingModel } from '@/lib/models';
 import Image from 'next/image';
 
 async function getMenus() {
-    return await prisma.siteNavMenu.findMany({ orderBy: { sequence: 'asc' } });
+    return await siteNavMenuModel.getMenus();
 }
 async function getLogo() {
     return await siteSettingModel.getFieldValue(siteSettingModel.fields.siteLogo);

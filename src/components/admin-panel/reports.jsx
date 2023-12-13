@@ -83,10 +83,17 @@ export default function ReportList({ filter }) {
                 setDataList(prev => page > 1 ? [...prev, ...json.data] : json.data);
                 setHasMore(json.hasMore);
             } else {
-                toast.error('未知错误，请刷新重试');
+                if (res.status === 400) {
+                    const json = await res.json();
+                    toast.error(json.message);
+                } else if (res.status === 401) {
+                    toast.error('您的登录已过期，请重新登录');
+                } else {
+                    throw new Error();
+                }
             }
         } catch (err) {
-            toast.error('未知错误，请刷新重试');
+            toast.error('未知错误，请重新尝试，或者刷新页面');
         } finally {
             setIsLoading(false);
         }
