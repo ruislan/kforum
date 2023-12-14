@@ -1,10 +1,10 @@
 'use client';
 import clsx from 'clsx';
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Transition } from '@headlessui/react';
 
-import { Search as SearchIcon } from '../icons';
+import { Close, Search as SearchIcon } from '../icons';
 
 function SearchAction({ prefix, type, query }) {
     const router = useRouter();
@@ -80,7 +80,7 @@ export default function Search() {
                     'rounded-md focus-within:border-neutral-400 sm:w-72'
                 )}
             >
-                <span className='h-4 w-4 mr-2'><SearchIcon /></span>
+                <span className='h-4 w-4 min-w-[16px] mr-2'><SearchIcon /></span>
                 <input
                     onKeyUp={e => {
                         if (e.key === 'Enter') {
@@ -93,6 +93,19 @@ export default function Search() {
                     placeholder='搜索...'
                     className='w-full text-neutral-200 bg-transparent outline-none'
                 />
+                {query?.length > 0 && isFocus && (
+                    <div className='flex min-w-fit ml-2'>
+                        <span
+                            className='w-4 h-4 cursor-pointer'
+                            onMouseDown={e => {
+                                e.preventDefault();
+                                setQuery('');
+                            }}
+                        >
+                            <Close />
+                        </span>
+                    </div>
+                )}
             </div>
             <DropdownContent query={query} isFocus={isFocus} />
         </div>
