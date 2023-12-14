@@ -6,6 +6,7 @@ import UserMenus from './user-menus';
 import { Plus } from '../icons';
 import { siteNavMenuModel, siteSettingModel } from '@/lib/models';
 import Image from 'next/image';
+import NavMenusDropdown from './nav-menus-dropdown';
 
 async function getMenus() {
     return await siteNavMenuModel.getMenus();
@@ -30,7 +31,9 @@ export default async function Header() {
                         </>
                     }
                 </Link>
-                <NavMenus menus={menus} />
+                <NavMenus menus={menus.slice(0,4 )} />
+                {menus.length > 4 && <NavMenusDropdown menus={menus.slice(4)} />}
+
                 <div className='flex items-center flex-grow justify-end gap-4'>
                     <Search />
                     <Link href='/d/create' className='flex items-center justify-center w-9 h-9 text-gray-300 p-4 hover:bg-neutral-700 rounded-md'>
