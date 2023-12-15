@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
-import { tagModel, discussionModel } from '@/lib/models';
+import { tagModel, discussionModel } from '@/models';
 import { notFound } from 'next/navigation';
 import Box from '@/components/ui/box';
 

@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import rest from '@/lib/rest';
 import authOptions from '@/lib/auth';
 import logger from '@/lib/logger';
-import { ModelError, postModel } from '@/lib/models';
+import { ModelError, postModel } from '@/models';
 
 export async function GET(request, { params }) {
     const { searchParams } = new URL(request.url);

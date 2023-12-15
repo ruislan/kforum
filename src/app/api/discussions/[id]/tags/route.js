@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth';
 
 import authOptions from '@/lib/auth';
 import rest from '@/lib/rest';
-import { ModelError, discussionModel } from '@/lib/models';
+import { ModelError, discussionModel } from '@/models';
 import logger from '@/lib/logger';
 
 export async function PUT(request, { params }) {

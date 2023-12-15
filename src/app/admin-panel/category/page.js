@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 import Box from '@/components/ui/box';
 import { HeadingSmall } from '@/components/ui/heading';
-import { categoryModel } from '@/lib/models';
+import { categoryModel } from '@/models';
 import Link from 'next/link';
 import { Eye } from '@/components/icons';
 

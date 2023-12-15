@@ -4,7 +4,7 @@ import NavMenus from '@/components/header/nav-menus';
 import Search from './search';
 import UserMenus from './user-menus';
 import { Plus } from '../icons';
-import { siteNavMenuModel, siteSettingModel } from '@/lib/models';
+import { siteNavMenuModel, siteSettingModel } from '@/models';
 import Image from 'next/image';
 import NavMenusDropdown from './nav-menus-dropdown';
 

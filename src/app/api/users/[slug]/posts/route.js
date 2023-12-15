@@ -1,4 +1,4 @@
-import { postModel } from '@/lib/models';
+import { postModel } from '@/models';
 import prisma from '@/lib/prisma';
 import rest from '@/lib/rest';
 

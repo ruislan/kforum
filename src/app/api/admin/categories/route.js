@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/auth';
-import { ModelError, categoryModel } from '@/lib/models';
+import { ModelError, categoryModel } from '@/models';
 import rest from '@/lib/rest';
 import logger from '@/lib/logger';
 

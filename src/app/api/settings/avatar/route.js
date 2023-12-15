@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth';
 
 import authOptions from '@/lib/auth';
 import rest from '@/lib/rest';
-import { ModelError, userModel } from '@/lib/models';
+import { ModelError, userModel } from '@/models';
 import logger from '@/lib/logger';
 
 export async function POST(request, { params }) {

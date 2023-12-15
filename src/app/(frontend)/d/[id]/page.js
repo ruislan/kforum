@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
-import { discussionModel } from '@/lib/models';
+import { discussionModel } from '@/models';
 import Box from '@/components/ui/box';
 
 const DiscussionDetail = dynamic(() => import('@/components/discussion/discussion-detail'));

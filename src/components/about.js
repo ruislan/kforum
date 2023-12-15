@@ -1,4 +1,4 @@
-import { siteSettingModel } from '@/lib/models';
+import { siteSettingModel } from '@/models';
 import Box from './ui/box';
 import { HeadingSmall } from './ui/heading';
 

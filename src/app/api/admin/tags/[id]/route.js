@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/auth';
 import logger from '@/lib/logger';
 import rest from '@/lib/rest';
-import { ModelError, tagModel } from '@/lib/models';
+import { ModelError, tagModel } from '@/models';
 
 export async function PUT(request, { params }) {
     // require admin

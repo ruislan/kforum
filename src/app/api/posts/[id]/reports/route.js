@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/auth';
 import rest from '@/lib/rest';
 import prisma from '@/lib/prisma';
-import { ModelError, reportModel } from '@/lib/models';
+import { ModelError, reportModel } from '@/models';
 import logger from '@/lib/logger';
 
 export async function POST(request, { params }) {

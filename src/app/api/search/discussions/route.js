@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { ModelError, discussionModel } from '@/lib/models';
+import { ModelError, discussionModel } from '@/models';
 import rest from '@/lib/rest';
 import logger from '@/lib/logger';
 

@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 
 import authOptions from '@/lib/auth';
-import { userModel } from '@/lib/models';
+import { userModel } from '@/models';
 import Box from '@/components/ui/box';
 import { HeadingSmall } from '@/components/ui/heading';
 
@@ -23,7 +23,7 @@ export const dynamic = 'force-dynamic'; // no cache for this page
 
 export async function generateMetadata({ params, searchParams }, parent) {
   return {
-    title: `设置`, 
+    title: `设置`,
   };
 }
 

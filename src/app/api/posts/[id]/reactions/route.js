@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/auth';
 import rest from '@/lib/rest';
 import prisma from '@/lib/prisma';
-import { postModel } from '@/lib/models';
+import { postModel } from '@/models';
 
 // 获取这个帖子能够被使用的 reactions 和当前用户使用过的 reactions
 export async function GET(request, { params }) {

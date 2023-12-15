@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/auth';
 import rest from '@/lib/rest';
-import { reportModel } from '@/lib/models';
+import { reportModel } from '@/models';
 import _ from 'lodash';
 
 export async function GET(request, { params }) {

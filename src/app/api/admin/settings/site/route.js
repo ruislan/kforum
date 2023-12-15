@@ -1,5 +1,5 @@
 import authOptions from '@/lib/auth';
-import { siteSettingModel } from '@/lib/models';
+import { siteSettingModel } from '@/models';
 import rest from '@/lib/rest';
 import { getServerSession } from 'next-auth';
 

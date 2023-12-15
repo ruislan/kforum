@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
-import { siteSettingModel } from '@/lib/models';
+import { siteSettingModel } from '@/models';
 import Box from '@/components/ui/box';
 import { HeadingSmall } from '@/components/ui/heading';
 

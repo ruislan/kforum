@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/auth';
-import { ModelError, uploadModel } from '@/lib/models';
+import { ModelError, uploadModel } from '@/models';
 import rest from '@/lib/rest';
 import logger from '@/lib/logger';
 

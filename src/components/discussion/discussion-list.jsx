@@ -6,9 +6,11 @@ import { LoadingIcon } from '../icons';
 import Button from '../ui/button';
 import NoContent from '../ui/no-content';
 import DiscussionListItem from './discussion-list-item';
+import { DISCUSSION_COLLECTOR } from '@/lib/constants';
 
 export default function DiscussionList({
     discussions,
+    collector = DISCUSSION_COLLECTOR[0],
     skipFirstPage = true,
     isStickyFirst = false,
     categoryId, // 如果有category说明是某个分类下面的全部话题，则无需在Item上展示分类
@@ -24,7 +26,7 @@ export default function DiscussionList({
         (async () => {
             setIsLoading(true);
             try {
-                let url = `/api/discussions?page=${page}&isStickyFirst=${isStickyFirst}`;
+                let url = `/api/discussions?page=${page}&collector=${collector}&isStickyFirst=${isStickyFirst}`;
                 if (categoryId) url += `&categoryId=${categoryId}`;
                 const res = await fetch(url);
                 if (res.ok) {

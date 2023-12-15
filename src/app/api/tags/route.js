@@ -1,4 +1,4 @@
-import { tagModel } from '@/lib/models';
+import { tagModel } from '@/models';
 import rest from '@/lib/rest';
 
 export async function GET(request, { params }) {

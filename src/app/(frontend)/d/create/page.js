@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic';
-import { categoryModel } from '@/lib/models';
+import { categoryModel } from '@/models';
 import { HeadingSmall } from '@/components/ui/heading';
 import Box from '@/components/ui/box';
 

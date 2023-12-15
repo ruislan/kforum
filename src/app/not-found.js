@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { siteSettingModel } from '@/lib/models';
+import { siteSettingModel } from '@/models';
 
 async function getLogo() {
     return await siteSettingModel.getFieldValue(siteSettingModel.fields.siteLogo);

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { categoryModel } from '@/lib/models';
+import { categoryModel } from '@/models';
 
 import Box from '../ui/box';
 import { HeadingSmall } from '../ui/heading';

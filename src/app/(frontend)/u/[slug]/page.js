@@ -1,14 +1,14 @@
 import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 
-import { userModel } from '@/lib/models';
+import { userModel } from '@/models';
 
 const UserInfo = dynamic(() => import('@/components/user/user-info'));
 const UserTabs = dynamic(() => import('@/components/user/user-tabs'));
 
 export async function generateMetadata({ params, searchParams }, parent) {
   return {
-    title: `u/${params.slug}`, 
+    title: `u/${params.slug}`,
   };
 }
 

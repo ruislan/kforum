@@ -1,4 +1,5 @@
-import { discussionModel } from '@/lib/models';
+import { DISCUSSION_COLLECTOR } from '@/lib/constants';
+import { discussionModel } from '@/models';
 import prisma from '@/lib/prisma';
 import rest from '@/lib/rest';
 
@@ -15,7 +16,7 @@ export async function GET(request, { params }) {
         withFirstPost: false,
         withPoster: false,
         isStickyFirst: false,
-        isNewFirst: true,
+        collector: DISCUSSION_COLLECTOR[1],
         page
     })
 

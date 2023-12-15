@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 
 import authOptions from '@/lib/auth';
 import rest from '@/lib/rest';
-import { ModelError, tagModel } from '@/lib/models';
+import { ModelError, tagModel } from '@/models';
 
 export async function GET(request, { params }) {
     // require admin

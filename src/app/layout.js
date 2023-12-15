@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { siteSettingModel } from '@/lib/models';
+import { siteSettingModel } from '@/models';
 
 import './globals.css';
 
