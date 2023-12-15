@@ -29,7 +29,15 @@ const discussionModel = {
     }) {
         const orderBy = []; // 注意 orderBy 的顺序
         if (isStickyFirst) orderBy.push({ isSticky: 'desc' });
-        if (sort === DISCUSSION_SORT[0]) orderBy.push({ viewCount: 'desc' });
+        if (sort === DISCUSSION_SORT[0]) {
+            // TODO 使用一个热度算法来计算，然后存储到 hotnessScore 字段中，然后用 hotnessScore 排序即可。当前这个不太精确。
+            orderBy.push({ updatedAt: 'desc' });
+            orderBy.push({ reactionCount: 'desc' });
+            orderBy.push({ shareCount: 'desc' });
+            orderBy.push({ userCount: 'desc' });
+            orderBy.push({ postCount: 'desc' });
+            orderBy.push({ viewCount: 'desc' });
+        };
         if (sort === DISCUSSION_SORT[1]) orderBy.push({ createdAt: 'desc' });
 
         const queryCondition = {
