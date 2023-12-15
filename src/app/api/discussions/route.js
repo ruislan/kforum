@@ -5,20 +5,21 @@ import authOptions from '@/lib/auth';
 import { ModelError, discussionModel } from '@/models';
 import _ from 'lodash';
 import logger from '@/lib/logger';
-import { DISCUSSION_COLLECTOR } from '@/lib/constants';
+import { DISCUSSION_SORT } from '@/lib/constants';
 
 export async function GET(request, { params }) {
     const { searchParams } = new URL(request.url);
     const page = Number(searchParams.get('page')) || 1;
-    const isStickyFirst = searchParams.get('isStickyFirst');
     const categoryId = Number(searchParams.get('categoryId')) || null;
-    const collector = DISCUSSION_COLLECTOR.find(c => c === searchParams.get('collector')) || DISCUSSION_COLLECTOR[0];
+    const tagId = Number(searchParams.get('tagId')) || null;
+    const sort = DISCUSSION_SORT.find(c => c === searchParams.get('sort')) || DISCUSSION_SORT[0];
     const { discussions, hasMore } = await discussionModel.getDiscussions({
         categoryId, // 如果有categoryId说明是某个分类下面的全部话题，则无需在每个话题上携带自己的分类
-        collector,
+        sort,
+        tagId,
+        isStickyFirst: !!categoryId || !!tagId,
+        withFirstPost: true,
         page,
-        isStickyFirst,
-        withFirstPost: true
     });
     return rest.ok({ data: discussions, hasMore });
 }

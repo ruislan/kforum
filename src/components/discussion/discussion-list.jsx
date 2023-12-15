@@ -2,18 +2,18 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
+import { DISCUSSION_SORT } from '@/lib/constants';
 import { LoadingIcon } from '../icons';
 import Button from '../ui/button';
 import NoContent from '../ui/no-content';
 import DiscussionListItem from './discussion-list-item';
-import { DISCUSSION_COLLECTOR } from '@/lib/constants';
 
 export default function DiscussionList({
     discussions,
-    collector = DISCUSSION_COLLECTOR[0],
+    sort = DISCUSSION_SORT[0],
     skipFirstPage = true,
-    isStickyFirst = false,
     categoryId, // 如果有category说明是某个分类下面的全部话题，则无需在Item上展示分类
+    tagId, // 根据tagId过滤
     hasMore: initHasMore
 }) {
     const [isLoading, setIsLoading] = useState(!skipFirstPage);
@@ -26,8 +26,9 @@ export default function DiscussionList({
         (async () => {
             setIsLoading(true);
             try {
-                let url = `/api/discussions?page=${page}&collector=${collector}&isStickyFirst=${isStickyFirst}`;
+                let url = `/api/discussions?page=${page}&sort=${sort}`;
                 if (categoryId) url += `&categoryId=${categoryId}`;
+                if (tagId) url += `&tagId=${tagId}`;
                 const res = await fetch(url);
                 if (res.ok) {
                     const json = await res.json();
@@ -42,7 +43,7 @@ export default function DiscussionList({
                 setIsLoading(false);
             }
         })();
-    }, [page, skipFirstPage, isStickyFirst, categoryId]);
+    }, [page, skipFirstPage, sort, categoryId, tagId]);
 
     if (!isLoading && dataList.length === 0) return <NoContent text={`啊，现在是空空如也`} />;
 

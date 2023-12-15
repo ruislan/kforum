@@ -24,4 +24,4 @@ export const SITE_SETTING_TYPES = {
 export const MIN_LENGTH_TITLE = 2;
 export const MIN_LENGTH_CONTENT = 2;
 
-export const DISCUSSION_COLLECTOR = ['hot', 'new'];
+export const DISCUSSION_SORT = ['hot', 'recent'];

@@ -2,19 +2,18 @@ import dynamic from 'next/dynamic';
 
 import { discussionModel } from '@/models';
 import Box from '@/components/ui/box';
-import { DISCUSSION_COLLECTOR } from '@/lib/constants';
+import { DISCUSSION_SORT } from '@/lib/constants';
 
 const About = dynamic(() => import('@/components/about'));
 const DiscussionList = dynamic(() => import('@/components/discussion/discussion-list'));
 const CategoryBox = dynamic(() => import('@/components/category/category-box'));
 const ActionCreate = dynamic(() => import('@/components/discussion/action-create'));
-const FilterPanel = dynamic(() => import('@/components/discussion/filter-panel'));
+const SortPanel = dynamic(() => import('@/components/discussion/sort-panel'));
 
-async function getDiscussions() {
+async function getDiscussions(sort) {
   return await discussionModel.getDiscussions({
-    collector: DISCUSSION_COLLECTOR[0],
+    sort,
     withFirstPost: true,
-    isStickyFirst: false // 置顶帖只在分类中存在
   });
 }
 
@@ -22,17 +21,17 @@ export const metadata = {
   title: '首页'
 }
 
-export default async function Home() {
-  const { discussions, hasMore } = await getDiscussions();
+export default async function Home({ searchParams }) {
+  const sort = searchParams.sort || DISCUSSION_SORT[0];
+  const { discussions, hasMore } = await getDiscussions(sort);
 
   return (
     <div className='flex w-full h-full gap-6'>
       <div className='flex flex-col flex-1'>
-        <FilterPanel />
+        <SortPanel />
         <DiscussionList
           discussions={discussions}
           hasMore={hasMore}
-          isStickyFirst={false}
           categoryId={null}
         />
       </div>

@@ -3,9 +3,9 @@ import dynamic from 'next/dynamic';
 import { categoryModel, discussionModel } from '@/models';
 import { notFound } from 'next/navigation';
 import Box from '@/components/ui/box';
-import FilterPanel from '@/components/discussion/filter-panel';
-import { DISCUSSION_COLLECTOR } from '@/lib/constants';
+import { DISCUSSION_SORT } from '@/lib/constants';
 
+const SortPanel = dynamic(() => import('@/components/discussion/sort-panel'));
 const CategoryInfo = dynamic(() => import('@/components/category/category-info'));
 const DiscussionList = dynamic(() => import('@/components/discussion/discussion-list'));
 const CategoryBox = dynamic(() => import('@/components/category/category-box'));
@@ -15,9 +15,9 @@ async function getCategory(slug) {
   return await categoryModel.getCategory({ slug, withStats: true });
 }
 
-async function getDiscussions(categoryId) {
+async function getDiscussions(categoryId, sort) {
   return await discussionModel.getDiscussions({
-    collector: DISCUSSION_COLLECTOR[0],
+    sort,
     categoryId,
     withFirstPost: true,
     isStickyFirst: true
@@ -30,20 +30,20 @@ export async function generateMetadata({ params, searchParams }, parent) {
   };
 }
 
-export default async function Page({ params }) {
+export default async function Page({ params, searchParams }) {
   const category = await getCategory(params.slug);
   if (!category) notFound();
-  const { discussions, hasMore } = await getDiscussions(category.id);
+  const sort = searchParams.sort || DISCUSSION_SORT[0];
+  const { discussions, hasMore } = await getDiscussions(category.id, sort);
   return (
     <div className='flex w-full h-full gap-6'>
       {/* main container*/}
       <div className='flex flex-col flex-1'>
-        <FilterPanel category={category} />
+        <SortPanel />
         <DiscussionList
           categoryId={category.id}
           discussions={discussions}
           hasMore={hasMore}
-          isStickyFirst={true}
         />
       </div>
       {/* right side */}

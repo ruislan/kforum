@@ -34,10 +34,6 @@ const nextConfig = {
                 source: '/u/:slug/:path',
                 destination: '/u/:slug?tab=:path'
             },
-            {
-                source: '/settings',
-                destination: '/settings/general'
-            },
         ];
     },
     compiler: {

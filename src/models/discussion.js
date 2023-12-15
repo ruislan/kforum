@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma';
-import { DISCUSSION_COLLECTOR, MIN_LENGTH_TITLE } from '@/lib/constants';
+import { DISCUSSION_SORT, MIN_LENGTH_TITLE } from '@/lib/constants';
 import pageUtils, { DEFAULT_PAGE_LIMIT } from '@/lib/page-utils';
 import ModelError from './model-error';
 import userModel from './user';
@@ -19,7 +19,7 @@ const discussionModel = {
         categoryId = null, // 如果有categoryId，也即是进行分类过滤，那么无需在每个话题上携带分类 Join（都是这个分类）
         userId = null, // 如果有userId，也即是进行所有人过滤，那么无需在每个话题上携带用户 Join（都是这个人）
         tagId = null, // 如果有tagId，也即是根据标签进行过滤
-        collector,
+        sort, // 排序方式
         page = 1,
         pageSize = DEFAULT_PAGE_LIMIT,
         isStickyFirst = false,
@@ -29,8 +29,8 @@ const discussionModel = {
     }) {
         const orderBy = []; // 注意 orderBy 的顺序
         if (isStickyFirst) orderBy.push({ isSticky: 'desc' });
-        if (collector === DISCUSSION_COLLECTOR[0]) orderBy.push({ viewCount: 'desc' });
-        if (collector === DISCUSSION_COLLECTOR[1]) orderBy.push({ createdAt: 'desc' });
+        if (sort === DISCUSSION_SORT[0]) orderBy.push({ viewCount: 'desc' });
+        if (sort === DISCUSSION_SORT[1]) orderBy.push({ createdAt: 'desc' });
 
         const queryCondition = {
             where: {
