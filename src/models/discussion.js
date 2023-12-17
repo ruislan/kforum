@@ -13,7 +13,6 @@ const discussionModel = {
         DISCUSSION_NOT_FOUND: '请指定要更新的话题',
         NO_PERMISSION: '没有操作权限',
     },
-    // XXX 后面可以可能要拆分一下user的话题，因为user的读取话题的排序逻辑可能有很大的不同
     async getDiscussions({
         queryTitle = null, // 如果存在 queryTitle 则即是要进行模糊搜索
         categoryId = null, // 如果有categoryId，也即是进行分类过滤，那么无需在每个话题上携带分类 Join（都是这个分类）
@@ -261,6 +260,15 @@ const discussionModel = {
         if (!this.checkPermission(localUser, discussion)) throw new ModelError(this.errors.NO_PERMISSION);
 
         await prisma.discussion.update({ where: { id: discussionId }, data: { isSticky } });
+    },
+    async calculateHotnessScore({ createdAt, postCount, userCount, reactionCount, viewCount }) {
+        const now = new Date();
+        const age = (now - new Date(createdAt)) / 1000;
+        const interactionHotness = postCount * 10 + reactionCount * 5 + viewCount; // 计算帖子的互动热度
+        const userHotness = userCount * 2; // 计算帖子的用户热度
+        const decayFactor = 1 / (age ** 0.5); // 衰减热度
+        const hotness = (interactionHotness + userHotness) * decayFactor;
+        return hotness;
     },
 };
 

@@ -7,7 +7,7 @@
     "dev:turbo": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "start:seed": "npx prisma db push && node prisma/seed.mjs --cmd prod && next start",
+    "start:prod": "npx prisma db push && node prisma/seed.mjs --cmd prod && next start",
     "lint": "next lint",
     "seed:base": "node prisma/seed.mjs --cmd base",
     "seed:dev": "node prisma/seed.mjs --cmd dev",

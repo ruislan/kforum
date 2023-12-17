@@ -18,4 +18,4 @@ RUN yarn build
 
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
-ENTRYPOINT ["yarn", "start:seed"]
+ENTRYPOINT ["yarn", "start:prod"]
