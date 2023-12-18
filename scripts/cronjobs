@@ -1,10 +1,4 @@
 # do some cron job
 # all cron api need an random secret that generated on startup, the random secret will save in ENV so that all apps can read it.
-
-# 1. clean useless upload images.
-# fetch http://127.0.0.1/api/cron/uploads/cleanup every 1 hour
-
-# 2. recalculate discussion hotness score (not all discussions, just updated_at <= 7 days), and set other discussions hotness score to zero.
-# fetch http://127.0.0.1/api/cron/discussions/hotness every 5 minutes
-
-0 1 * * * curl $APP_URL/api/cron/uploads/cleanup -X POST -H 'content-type: application/json' -H 'x-api-key: '"$CRON_SECRET"''
+0 1 * * * curl $APP_URL/api/cron/uploads/cleanup -X POST -H 'content-type: application/json' -H 'x-secret: '"$CRON_API_SECRET"''
+0 */5 * * * curl $APP_URL/api/cron/discussions/hotness -X POST -H 'content-type: application/json' -H 'x-secret: '"$CRON_API_SECRET"''

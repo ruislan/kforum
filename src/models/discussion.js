@@ -28,15 +28,7 @@ const discussionModel = {
     }) {
         const orderBy = []; // 注意 orderBy 的顺序
         if (isStickyFirst) orderBy.push({ isSticky: 'desc' });
-        if (sort === DISCUSSION_SORT[0]) {
-            // TODO 使用一个热度算法来计算，然后存储到 hotnessScore 字段中，然后用 hotnessScore 排序即可。当前这个不太精确。
-            orderBy.push({ updatedAt: 'desc' });
-            orderBy.push({ reactionCount: 'desc' });
-            orderBy.push({ shareCount: 'desc' });
-            orderBy.push({ userCount: 'desc' });
-            orderBy.push({ postCount: 'desc' });
-            orderBy.push({ viewCount: 'desc' });
-        };
+        if (sort === DISCUSSION_SORT[0]) orderBy.push({ hotnessScore: 'desc' });
         if (sort === DISCUSSION_SORT[1]) orderBy.push({ createdAt: 'desc' });
 
         const queryCondition = {
@@ -267,9 +259,52 @@ const discussionModel = {
         const interactionHotness = postCount * 10 + reactionCount * 5 + viewCount; // 计算帖子的互动热度
         const userHotness = userCount * 2; // 计算帖子的用户热度
         const decayFactor = 1 / (age ** 0.5); // 衰减热度
-        const hotness = (interactionHotness + userHotness) * decayFactor;
+        const hotness = Math.floor((interactionHotness + userHotness) * decayFactor * 10000);
         return hotness;
     },
+    async updateHotnessScore() {
+        // 更新 discussion 的分数
+        // 将 7 天之内都没有动静的 discussion 得分都设置为 0，这些帖子已经完全冷掉了。
+        // 7 天之内有动静的进行计算并批量更新。
+        const now = new Date();
+        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const fadeCount = await prisma.discussion.updateMany({
+            where: {
+                updatedAt: { lt: sevenDaysAgo },
+            },
+            data: {
+                hotnessScore: 0
+            }
+        });
+        const discussions = await prisma.discussion.findMany({
+            where: {
+                updatedAt: { gte: sevenDaysAgo },
+            }
+        });
+        for (const d of discussions) {
+            const hotnessScore = await this.calculateHotnessScore({
+                createdAt: d.createdAt,
+                postCount: d.postCount,
+                userCount: d.userCount,
+                reactionCount: d.reactionCount,
+                viewCount: d.viewCount,
+            });
+            d.hotnessScore = hotnessScore;
+        }
+
+        await prisma.$transaction(
+            discussions
+                .filter(d => d.hotnessScore > 0)
+                .map(d => {
+                    return prisma.discussion.update({
+                        where: { id: d.id },
+                        data: { hotnessScore: d.hotnessScore }
+                    });
+                })
+        );
+
+        return { fade: fadeCount.count, updated: discussions.length };
+    }
 };
 
 export default discussionModel;

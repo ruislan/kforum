@@ -45,6 +45,7 @@ model Discussion {
   shareCount    Int     @default(0) @map("share_count") @db.UnsignedInt // 分享链接的统计
   reactionCount Int     @default(0) @map("reaction_count") @db.UnsignedInt // 全部帖子的反馈统计
   postCount     Int     @default(1) @map("post_count") // 帖子统计
+  hotnessScore  Int     @default(0) @map("hotness_score") // 热度分数
 
   posterId        Int?      @map("poster_id") @db.UnsignedInt
   userId          Int       @map("user_id") @db.UnsignedInt
