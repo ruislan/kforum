@@ -47,14 +47,16 @@ model Discussion {
   postCount     Int     @default(1) @map("post_count") // 帖子统计
   hotnessScore  Int     @default(0) @map("hotness_score") // 热度分数
 
-  posterId        Int?      @map("poster_id") @db.UnsignedInt
-  userId          Int       @map("user_id") @db.UnsignedInt
-  firstPostId     Int?      @unique @map("first_post_id") @db.UnsignedInt
-  lastPostId      Int?      @unique @map("last_post_id") @db.UnsignedInt
-  lastPostedAt    DateTime? @map("last_posted_at") // 最后一个回复的
-  categoryId      Int       @map("category_id") @db.UnsignedInt
-  lastUpdatedUser Int?      @map("last_updated_user") @db.UnsignedInt // 最后一个编辑的用户（不一定是本人，也可能是版主）
-  lastUpdatedAt   DateTime? @map("last_updated_at") // 最后一次编辑的时间
+  posterId          Int?      @map("poster_id") @db.UnsignedInt
+  userId            Int       @map("user_id") @db.UnsignedInt
+  firstPostId       Int?      @unique @map("first_post_id") @db.UnsignedInt
+  lastPostId        Int?      @unique @map("last_post_id") @db.UnsignedInt
+  lastPostedAt      DateTime? @map("last_posted_at") // 最后一个回复的
+  categoryId        Int       @map("category_id") @db.UnsignedInt
+  lastUpdatedUserId Int?      @map("last_updated_user_id") @db.UnsignedInt // 最后一个编辑的用户（不一定是本人，也可能是版主）
+  lastUpdatedAt     DateTime? @map("last_updated_at") // 最后一次编辑的时间
+  deletedAt         DateTime? @map("deleted_at") // 什么时间删除的
+  deletedUserId     Int?      @map("deleted_user_id") @db.UnsignedInt // 谁删除的
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -69,23 +71,25 @@ model Discussion {
   tags      TagDiscussionRef[]
 
   @@index([createdAt, isSticky])
+  @@index([deletedAt])
+  @@index([id, deletedAt])
 }
 
 model Post {
-  id          Int     @id @default(autoincrement()) @db.UnsignedInt
-  content     String  @db.Text // 内容，富文本框修饰之后的
-  text        String  @db.Text // 内容，去掉富文本框之后的只有文本的内容
-  type        String  @db.VarChar(64) // 类型，有可能有投票之类的
-  ip          String? @db.VarChar(64) // 发布人的 IP 地址
-  replyPostId Int?    @map("reply_post_id") @db.UnsignedInt // 回复哪一贴
-
-  discussionId    Int       @map("discussion_id") @db.UnsignedInt
-  userId          Int       @map("user_id") @db.UnsignedInt
-  lastUpdatedUser Int?      @map("last_updated_user") @db.UnsignedInt // 最后一个编辑的用户（不一定是本人，也可能是版主）
-  lastUpdatedAt   DateTime? @map("last_updated_at") // 最后一次编辑的时间
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id                Int       @id @default(autoincrement()) @db.UnsignedInt
+  content           String    @db.Text // 内容，富文本框修饰之后的
+  text              String    @db.Text // 内容，去掉富文本框之后的只有文本的内容
+  type              String    @db.VarChar(64) // 类型，有可能有投票之类的
+  ip                String?   @db.VarChar(64) // 发布人的 IP 地址
+  replyPostId       Int?      @map("reply_post_id") @db.UnsignedInt // 回复哪一贴
+  discussionId      Int       @map("discussion_id") @db.UnsignedInt
+  userId            Int       @map("user_id") @db.UnsignedInt
+  lastUpdatedUserId Int?      @map("last_updated_user_id") @db.UnsignedInt // 最后一个编辑的用户（不一定是本人，也可能是版主）
+  lastUpdatedAt     DateTime? @map("last_updated_at") // 最后一次编辑的时间
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  deletedAt         DateTime? @map("deleted_at") // 什么时间删除的
+  deletedUserId     Int?      @map("deleted_user_id") @db.UnsignedInt // 谁删除的
 
   // ref
   user                User              @relation(fields: [userId], references: [id])
@@ -101,6 +105,8 @@ model Post {
   @@index([id, discussionId])
   @@index([discussionId, createdAt])
   @@index([userId, createdAt])
+  @@index([deletedAt])
+  @@index([id, deletedAt])
 }
 
 model Upload {

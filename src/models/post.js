@@ -125,7 +125,15 @@ const postModel = {
                     }))
                 });
             }
-            await tx.post.update({ where: { id }, data: { content, text } });
+            await tx.post.update({
+                where: { id },
+                data: {
+                    content,
+                    text,
+                    lastUpdatedUserId: localUser.id,
+                    lastUpdatedAt: new Date()
+                }
+            });
         });
     },
     async delete({ user, id, isBySystem = false }) {
