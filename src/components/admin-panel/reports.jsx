@@ -162,7 +162,9 @@ export default function ReportList({ filter }) {
                             {item.discussion.isLocked && (<span className='h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}
                         </div>
                         <div className='relative mb-1'>
-                            <Link href={`/d/${item.discussion.id}`} className='inline text-gray-50 text-lg font-bold break-words'>{item.discussion.title}</Link>
+                            <Link href={`/d/${item.discussion.id}`} className='inline text-gray-50 text-lg font-bold break-words'>
+                                {item.discussion.deletedAt ? '该话题已被删除' : item.discussion.title}
+                            </Link>
                         </div>
                         <div className='flex p-2.5 bg-zinc-700 rounded-md'>
                             <div className='flex flex-col items-center mr-2'>
@@ -174,7 +176,7 @@ export default function ReportList({ filter }) {
                                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                                     <span className='text-xs' suppressHydrationWarning>{dateUtils.fromNow(item.createdAt)}</span>
                                 </div>
-                                <ProseContent className='my-1' content={item.content} />
+                                <ProseContent className='my-1' content={item.deletedAt ? '该帖子已被删除' : item.content} />
                             </div>
                         </div>
                         <h3 className='text-sm text-gray-300 font-semibold'>举报内容</h3>
@@ -196,14 +198,28 @@ export default function ReportList({ filter }) {
                                             <>
                                                 <span>&nbsp;管理员&nbsp;</span>
                                                 <Link
-                                                    href={`/u/${report.user.name}`}
+                                                    href={`/u/${report.ignoredUser.name}`}
                                                     onClick={e => e.stopPropagation()}
                                                     className='hover:underline underline-offset-2 cursor-pointer'>
-                                                    u/{report.user.name}
+                                                    u/{report.ignoredUser.name}
                                                 </Link>
                                                 <span>&nbsp;于&nbsp;</span>
                                                 <span suppressHydrationWarning>{dateUtils.fromNow(report.ignoredAt)}</span>
                                                 <span className='font-semibold'>&nbsp;忽略了此举报&nbsp;</span>
+                                            </>
+                                        )}
+                                        {report.agreedUser && (
+                                            <>
+                                                <span>&nbsp;管理员&nbsp;</span>
+                                                <Link
+                                                    href={`/u/${report.agreedUser.name}`}
+                                                    onClick={e => e.stopPropagation()}
+                                                    className='hover:underline underline-offset-2 cursor-pointer'>
+                                                    u/{report.agreedUser.name}
+                                                </Link>
+                                                <span>&nbsp;于&nbsp;</span>
+                                                <span suppressHydrationWarning>{dateUtils.fromNow(report.agreedAt)}</span>
+                                                <span className='font-semibold'>&nbsp;认可了此举报&nbsp;</span>
                                             </>
                                         )}
                                     </div>
@@ -215,12 +231,12 @@ export default function ReportList({ filter }) {
                                 </div>
                             ))}
                         </div>
-                        {item.reports.every(r => !r.ignored) && (
+                        {item.reports.every(r => !r.ignored && !r.agreed) && (
                             <>
                                 <h3 className='text-sm text-gray-300 font-semibold'>是否认可上述{item.reports.length > 1 && '这些'}举报内容?</h3>
                                 <div className='flex items-center text-gray-300 gap-2'>
                                     <ActionPerform action='agree' label='是' reportIds={item.reports.map(r => r.id)} onPerformed={() => handlePerformed(item)} />
-                                    <ActionPerform action='disagree' label='否' reportIds={item.reports.map(r => r.id)} onPerformed={() => handlePerformed(item)} />
+                                    <ActionPerform action='ignore' label='否' reportIds={item.reports.map(r => r.id)} onPerformed={() => handlePerformed(item)} />
                                 </div>
                                 <span className='text-xs text-gray-400'>认可将会删除该贴及其所有关联的内容，帖子的回复、图片、举报等；不认可将会忽略掉这些举报</span>
                             </>

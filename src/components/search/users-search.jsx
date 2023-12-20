@@ -11,6 +11,7 @@ import Spinner from '../ui/spinner';
 import Button from '../ui/button';
 import SplitBall from '../ui/split-ball';
 import dateUtils from '@/lib/date-utils';
+import UserAvatar from '../ui/user-avatar';
 
 export default function UsersSearch({ query }) {
     const [isLoading, setIsLoading] = useState(true);
@@ -46,11 +47,9 @@ export default function UsersSearch({ query }) {
             {dataList.map((item, i) => (
                 <Box key={i} className='flex items-center gap-2'>
                     <div className='flex justify-center items-center'>
-                        <Image className='rounded'
-                            src={item.avatarUrl}
-                            width={36}
-                            height={36}
-                            alt={item.name}
+                        <UserAvatar
+                            avatar={item.avatarUrl}
+                            name={item.name}
                         />
                     </div>
                     <div className='flex items-center text-xs'>

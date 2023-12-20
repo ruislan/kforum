@@ -136,6 +136,13 @@ const postModel = {
             });
         });
     },
+    /**
+     * 帖子的删除：
+     *  帖子的删除都是软删除。
+     *  无需删除帖子与反馈的链接，因为帖子将无法读取，所以反馈也无需读取。
+     *  无需删除帖子与图片的链接，因为帖子将无法读取，所以图片也无需读取。
+     *  TODO 帖子删除后，帖子无法被查看，除非管理员，可以在后台查看已经删除的帖子和主题。
+    */
     async delete({ user, id, isBySystem = false }) {
         const localUser = { ...user };
         const post = await prisma.post.findUnique({ where: { id }, include: { discussion: true } });
@@ -145,25 +152,37 @@ const postModel = {
         const isFirstPost = post.discussion.firstPostId === post.id;
         const isLastPost = post.discussion.lastPostId === post.id;
         await prisma.$transaction(async tx => {
-            await tx.reactionPostRef.deleteMany({ where: { postId: post.id } });// delete reactions
-            // 不用更新所有回复这贴的引用为null, 外键约束会自动设置为null
-            if (isFirstPost) { // delete all
-                // XXX 所有话题的帖子的图片、举报等引用会级联删除
-                await tx.post.deleteMany({ where: { discussionId: post.discussion.id } });
-                await tx.discussion.delete({ where: { id: post.discussion.id } });
+            // 真实删除，将会清空所有的反馈
+            // await tx.reactionPostRef.deleteMany({ where: { postId: post.id } });// real delete reactions
+            const deletedAt = new Date();
+            if (isFirstPost) {
+                // 首贴删除将会同时删除所有的discussion
+                // XXX 如果是真实删除，那么所有话题的帖子的图片、反馈、举报等引用会级联删除
+                // await tx.post.deleteMany({ where: { discussionId: post.discussion.id } }); // real delete
+                // await tx.discussion.delete({ where: { id: post.discussion.id } }); // real delete
+
+                // 软删除，首贴不用减去反馈数量，因为话题整个已经被删除了。
+                await tx.post.updateMany({ where: { discussionId: post.discussion.id }, data: { deletedAt, deletedUserId: localUser.id } });
+                await tx.discussion.update({ where: { id: post.discussion.id }, data: { deletedAt, deletedUserId: localUser.id } });
             } else {
-                // XXX 此贴的图片、举报等引用会级联删除
-                await tx.post.delete({ where: { id: post.id } }); // delete one
+                // XXX 如果是真实删除，此贴的图片、反馈、举报等引用会级联删除
+                // await tx.post.delete({ where: { id: post.id } }); // real delete one
+
+                await tx.post.update({ where: { id: post.id }, data: { deletedAt, deletedUserId: localUser.id } });
                 let lastPost = null;
                 if (isLastPost) { // 查找新的最后一贴，并设置
                     lastPost = await tx.post.findFirst({ where: { discussionId: post.discussionId }, orderBy: { createdAt: 'desc' } });
                 }
+
+                // 软删除，非首贴需要减去反馈数量，如果恢复了删帖反馈数量需要加回来
+                const reactionCount = await tx.reactionPostRef.count({ where: { postId: post.id } });
                 await tx.discussion.update({
                     where: { id: post.discussionId },
                     data: {
                         lastPostId: lastPost?.id,
                         lastPostedAt: lastPost?.createdAt,
                         postCount: { increment: -1 },
+                        reactionCount: { increment: -reactionCount },
                     }
                 });
 
@@ -177,6 +196,7 @@ const postModel = {
         withUser = true,
         withReactions = true,
         withReplyPosts = true,
+        isDeleted = false,
         page = 1,
         pageSize = DEFAULT_PAGE_LIMIT
     }) {
@@ -184,7 +204,8 @@ const postModel = {
             where: {
                 discussionId: discussionId || { gt: 0 }, // 没有discussionId，就用 discussionId作为 index
                 firstPostDiscussion: discussionId ? null : undefined, // 有discussionId则表示要去掉首贴，XXX 后面如果追加字段post_number可以直接用post_number > 1，效率会更快
-                text: { contains: queryText || '' }
+                text: { contains: queryText || '' },
+                deletedAt: isDeleted ? { not: null } : null,
             },
             orderBy: {
                 createdAt: isNewFirst ? 'desc' : undefined
@@ -245,11 +266,18 @@ const postModel = {
                 }
             });
             post.reactions.sort((a, b) => b.count - a.count);
+
+            // handle deleted reply
+            if (post.replyPost && post.replyPost.deletedAt) {
+                post.replyPost.content = '';
+                post.replyPost.text = '';
+            }
         }
         return { posts, hasMore: count > skip + take };
     },
     async getUserReplyPosts({
         userId,
+        isDeleted = false,
         isNewFirst = true,
         page = 1,
         pageSize = DEFAULT_PAGE_LIMIT
@@ -257,7 +285,11 @@ const postModel = {
         const skip = pageUtils.getSkip(page, pageSize);
         const take = pageSize;
 
-        const whereClause = { userId, firstPostDiscussion: null }; // 只有回帖不包含主贴
+        const whereClause = {
+            userId,
+            firstPostDiscussion: null, // 只有回帖不包含主贴
+            deletedAt: isDeleted ? { not: null } : null,
+        };
 
         const fetchCount = prisma.post.count({ where: whereClause });
         const fetchPosts = prisma.post.findMany({

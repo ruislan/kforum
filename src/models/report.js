@@ -8,10 +8,11 @@ const reportModel = {
     errors: {
         TYPE_INVALID: '不支持的举报理由，建议选择“其他”，并说明举报原因',
         REASON_TOO_SHORT: '请说明举报的原因，至少 4 个字',
+        ACTION_NOT_SUPPORT: '不支持的操作',
     },
     actions: {
         agree: 'agree',
-        disagree: 'disagree',
+        ignore: 'ignore',
     },
     types: { // 举报的分类
         SPAM: 'spam', // 偏离话题，与当前话题无关，口水贴、价值不高等
@@ -50,15 +51,23 @@ const reportModel = {
                 }
             }
         };
+        console.log(filter);
         switch (filter) {
             case 'pending':
-                whereClause.reports.some.ignored = null;
+                whereClause.deletedAt = null,
+                    whereClause.reports.some.ignored = null;
+                break;
+            case 'agreed':
+                whereClause.reports.some.agreed = true;
                 break;
             case 'ignored':
-                whereClause.reports.some.ignored = true;
+                whereClause.deletedAt = null,
+                    whereClause.reports.some.ignored = true;
                 break;
             default: break;
         }
+
+        console.log(whereClause);
 
         // 这里主要是以帖子为主体的举报
         const fetchCount = prisma.post.count({ where: whereClause });
@@ -84,6 +93,9 @@ const reportModel = {
                         ignoredUser: {
                             select: userModel.fields.simple,
                         },
+                        agreedUser: {
+                            select: userModel.fields.simple,
+                        }
                     }
                 },
             },
@@ -95,15 +107,37 @@ const reportModel = {
         });
 
         let [posts, count] = await Promise.all([fetchList, fetchCount]);
+        for (const post of posts) {
+            if (!!post.discussion.deletedAt) {
+                post.discussion.title = '';
+            }
+            if (!!post.deletedAt) {
+                post.text = '';
+                post.content = '';
+            }
+        }
         return { posts, hasMore: count > skip + take };
     },
     async perform({ action, userId, reportIds }) {
-        if (![this.actions.agree, this.actions.disagree].includes(action)) throw new ModelError('action not support');
+        if (![this.actions.agree, this.actions.ignore].includes(action)) throw new ModelError(this.errors.ACTION_NOT_SUPPORT);
         if (action === this.actions.agree) {
             const report = await prisma.report.findFirst({
                 where: { id: reportIds[0] }
             });
             await postModel.delete({ id: report.postId, isBySystem: true });
+            // 批量更新这一批为已经同意
+            await prisma.report.updateMany({
+                where: {
+                    id: {
+                        in: reportIds,
+                    }
+                },
+                data: {
+                    agreedUserId: userId,
+                    agreedAt: new Date(),
+                    agreed: true,
+                }
+            });
         } else {
             await prisma.report.updateMany({
                 where: {

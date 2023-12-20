@@ -11,6 +11,7 @@ export const REPORT_TYPES = [
 export const REPORT_FILTERS = [
     { name: '待处理', value: 'pending' },
     { name: '已忽略', value: 'ignored' },
+    { name: '已处理', value: 'agreed' },
     { name: '全部', value: 'all' },
 ];
 

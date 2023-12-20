@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -50,7 +50,11 @@ function PostReplyContent({ replyPost }) {
                     </div>}
                 </div>
                 <div className={expend ? '' : 'max-h-[64px] overflow-hidden'}>
-                    <ProseContent isSummary={!expend} limit={limit} content={replyPost.content} />
+                    <ProseContent
+                        isSummary={!expend}
+                        limit={limit}
+                        content={replyPost.deletedAt ? '该帖子已经被删除' : replyPost.content}
+                    />
                 </div>
             </div>
         </div>

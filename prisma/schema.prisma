@@ -25,13 +25,16 @@ model User {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // ref
-  discussions    Discussion[]
-  posts          Post[]
-  reactions      ReactionPostRef[]
-  avatar         UploadAvatarRef?
-  reports        Report[]           @relation(name: "userReports")
-  ignoredReports Report[]           @relation(name: "ignoredReports")
-  tags           TagDiscussionRef[]
+  discussions        Discussion[]       @relation(name: "userDiscussions")
+  deletedDiscussions Discussion[]       @relation(name: "userDeletedDiscussions")
+  posts              Post[]             @relation(name: "userPosts")
+  deletedPosts       Post[]             @relation(name: "userDeletedPosts")
+  reactions          ReactionPostRef[]
+  avatar             UploadAvatarRef?
+  reports            Report[]           @relation(name: "userReports")
+  ignoredReports     Report[]           @relation(name: "userIgnoredReports")
+  agreedReports      Report[]           @relation(name: "userAgreedReports")
+  tags               TagDiscussionRef[]
 }
 
 model Discussion {
@@ -62,13 +65,14 @@ model Discussion {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // ref
-  category  Category           @relation(fields: [categoryId], references: [id])
-  user      User               @relation(fields: [userId], references: [id])
-  lastPost  Post?              @relation(name: "last_post", fields: [lastPostId], references: [id])
-  firstPost Post?              @relation(name: "first_post", fields: [firstPostId], references: [id])
-  posts     Post[]             @relation(name: "posts")
-  poster    Upload?            @relation(fields: [posterId], references: [id])
-  tags      TagDiscussionRef[]
+  category    Category           @relation(fields: [categoryId], references: [id])
+  user        User               @relation(name: "userDiscussions", fields: [userId], references: [id])
+  deletedUser User?              @relation(name: "userDeletedDiscussions", fields: [deletedUserId], references: [id])
+  firstPost   Post?              @relation(name: "firstPost", fields: [firstPostId], references: [id])
+  lastPost    Post?              @relation(name: "lastPost", fields: [lastPostId], references: [id])
+  posts       Post[]             @relation(name: "posts")
+  poster      Upload?            @relation(fields: [posterId], references: [id])
+  tags        TagDiscussionRef[]
 
   @@index([createdAt, isSticky])
   @@index([deletedAt])
@@ -92,11 +96,12 @@ model Post {
   deletedUserId     Int?      @map("deleted_user_id") @db.UnsignedInt // 谁删除的
 
   // ref
-  user                User              @relation(fields: [userId], references: [id])
+  user                User              @relation(name: "userPosts", fields: [userId], references: [id])
+  deletedUser         User?             @relation(name: "userDeletedPosts", fields: [deletedUserId], references: [id])
   replyPost           Post?             @relation(name: "replies", fields: [replyPostId], references: [id])
   discussion          Discussion        @relation(name: "posts", fields: [discussionId], references: [id])
-  firstPostDiscussion Discussion?       @relation(name: "first_post")
-  lastPostDiscussion  Discussion?       @relation(name: "last_post")
+  firstPostDiscussion Discussion?       @relation(name: "firstPost")
+  lastPostDiscussion  Discussion?       @relation(name: "lastPost")
   reactions           ReactionPostRef[]
   replies             Post[]            @relation(name: "replies")
   uploads             UploadPostRef[]
@@ -136,7 +141,7 @@ model UploadAvatarRef {
 
   // ref
   upload Upload @relation(fields: [uploadId], references: [id])
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade) // delete user will also delete all uploads refs
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // 图片帖子引用 多对多
@@ -147,7 +152,7 @@ model UploadPostRef {
 
   // ref
   upload Upload @relation(fields: [uploadId], references: [id])
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade) // delete post will also delete all uploads refs
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@id([uploadId, postId])
 }
@@ -171,6 +176,7 @@ model ReactionPostRef {
   userId     Int      @map("user_id") @db.UnsignedInt
   createdAt  DateTime @default(now()) @map("created_at")
 
+  // ref
   post     Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   reaction Reaction @relation(fields: [reactionId], references: [id], onDelete: Cascade)
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -201,6 +207,9 @@ model Report {
   reason        String    @db.VarChar(512)
   postId        Int       @map("post_id") @db.UnsignedInt
   userId        Int       @map("user_id") @db.UnsignedInt
+  agreed        Boolean? // 同意举报
+  agreedUserId  Int?      @map("agreed_user_id") @db.UnsignedInt
+  agreedAt      DateTime? @default(now()) @map("agreed_at")
   ignored       Boolean? // 忽略举报
   ignoredUserId Int?      @map("ignored_user_id") @db.UnsignedInt // 忽略的操作人
   ignoredAt     DateTime? @default(now()) @map("ignored_at")
@@ -210,7 +219,8 @@ model Report {
   // ref
   post        Post  @relation(fields: [postId], references: [id], onDelete: Cascade) // delete post will also delete all related reports
   user        User  @relation(name: "userReports", fields: [userId], references: [id], onDelete: Cascade)
-  ignoredUser User? @relation(name: "ignoredReports", fields: [ignoredUserId], references: [id])
+  agreedUser  User? @relation(name: "userAgreedReports", fields: [agreedUserId], references: [id])
+  ignoredUser User? @relation(name: "userIgnoredReports", fields: [ignoredUserId], references: [id])
 
   @@unique([userId, postId]) // 一个用户只能对一个帖子进行举报
 }

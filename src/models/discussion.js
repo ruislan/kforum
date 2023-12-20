@@ -14,14 +14,19 @@ const discussionModel = {
         NO_PERMISSION: '没有操作权限',
     },
     async getDiscussions({
+        // filter
         queryTitle = null, // 如果存在 queryTitle 则即是要进行模糊搜索
         categoryId = null, // 如果有categoryId，也即是进行分类过滤，那么无需在每个话题上携带分类 Join（都是这个分类）
         userId = null, // 如果有userId，也即是进行所有人过滤，那么无需在每个话题上携带用户 Join（都是这个人）
         tagId = null, // 如果有tagId，也即是根据标签进行过滤
-        sort, // 排序方式
+        isDeleted = false,
+        // page
         page = 1,
         pageSize = DEFAULT_PAGE_LIMIT,
+        // sort
+        sort, // 排序方式
         isStickyFirst = false,
+        // include
         withTags = true,
         withPoster = true, // 带海报
         withFirstPost = false, // 带首贴
@@ -37,7 +42,8 @@ const discussionModel = {
                 title: { contains: queryTitle || '' },
                 userId: userId || undefined,
                 categoryId: categoryId || undefined,
-                tags: tagId ? { some: { tagId } } : undefined
+                tags: tagId ? { some: { tagId } } : undefined,
+                deletedAt: isDeleted ? { not: null } : null,
             },
             orderBy,
             include: {
@@ -76,7 +82,10 @@ const discussionModel = {
         });
     },
     async getDiscussion({
+        // filter
         id,
+        isDeleted = false,
+        // include
         withFirstPost = true,
         withLastPost = true,
         withUser = true,
@@ -85,7 +94,10 @@ const discussionModel = {
     }) {
         if (!id) return null;
         const queryCondition = {
-            where: { id },
+            where: {
+                id ,
+                deletedAt: isDeleted ? { not: null } : null,
+            },
             include: {
                 category: withCategory,
                 firstPost: withFirstPost,
