@@ -1,3 +1,5 @@
+import 'server-only';
+
 const jsonHeaders = { 'Content-Type': 'application/json' };
 
 const rest = {

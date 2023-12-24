@@ -1,3 +1,4 @@
+import 'server-only';
 export { default as categoryModel } from './category';
 export { default as discussionModel } from './discussion';
 export { default as postModel } from './post';

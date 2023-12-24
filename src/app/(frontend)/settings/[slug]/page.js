@@ -13,12 +13,6 @@ const ProfileForm = dynamicImport(() => import('@/components/settings/profile-fo
 const SecurityForm = dynamicImport(() => import('@/components/settings/security-form'));
 const AvatarUploader = dynamicImport(() => import('@/components/settings/avatar-uploader'));
 
-const menus = [
-  { label: '基本', path: '/settings' },
-  { label: '个性化', path: '/settings/profile' },
-  { label: '安全', path: '/settings/security' },
-];
-
 export const dynamic = 'force-dynamic'; // no cache for this page
 
 export async function generateMetadata({ params, searchParams }, parent) {
@@ -36,7 +30,11 @@ export default async function Page({ params }) {
     <div className='flex w-full min-h-screen gap-6'>
       {/* left side menus */}
       <div className='flex flex-col w-80 gap-4'>
-        <SideNav menus={menus} />
+        <SideNav menus={[
+          { label: '基本', path: '/settings/general' },
+          { label: '个性化', path: '/settings/profile' },
+          { label: '安全', path: '/settings/security' },
+        ]} />
       </div>
       {/* main container*/}
       <div className='flex flex-col flex-1'>

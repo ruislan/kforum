@@ -1,4 +1,5 @@
 'use strict';
+import 'server-only';
 import fs from 'fs';
 import logger from './logger';
 
