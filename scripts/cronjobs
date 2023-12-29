@@ -1,4 +1,2 @@
-# do some cron job
-# all cron api need an random secret that generated on startup, the random secret will save in ENV so that all apps can read it.
-0 1 * * * curl $APP_URL/api/cron/uploads/cleanup -X POST -H 'content-type: application/json' -H 'x-secret: '"$CRON_API_SECRET"''
-0 */5 * * * curl $APP_URL/api/cron/discussions/hotness -X POST -H 'content-type: application/json' -H 'x-secret: '"$CRON_API_SECRET"''
+0 1 * * * *   curl http://127.0.0.1:3000/api/cron/uploads/cleanup -X POST -H 'content-type: application/json' -H 'x-secret: '"$CRON_API_SECRET"''
+*/5 * * * * * curl http://127.0.0.1:3000/api/cron/discussions/hotness -X POST -H 'content-type: application/json' -H 'x-secret: '"$CRON_API_SECRET"''

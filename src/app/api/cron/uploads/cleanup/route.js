@@ -8,7 +8,9 @@ export async function POST() {
     const secret = process.env.CRON_API_SECRET;
     if (headerSecret !== secret) return rest.notFound();
     try {
-        await uploadModel.cleanup();
+        logger.info('cleaning unused uploaded files...');
+        const data = await uploadModel.cleanup();
+        logger.info(`cleaned ${data.count}, size ${data.size}`);
         return rest.ok();
     } catch (err) {
         if (err instanceof ModelError)

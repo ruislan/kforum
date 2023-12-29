@@ -1,21 +1,14 @@
-FROM node:20-alpine AS base
-
-FROM base AS deps
-RUN apk add --no-cache libc6-compat
-WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
-RUN yarn global add pnpm && pnpm i --frozen-lockfile
-
-FROM base AS runner
+FROM node:20-alpine
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+RUN apk add --no-cache libc6-compat curl
 
-RUN yarn prisma generate
-RUN yarn build
+WORKDIR /app
+COPY . .
+COPY scripts/cronjobs /etc/crontabs/root
+RUN yarn global add pnpm && pnpm i --frozen-lockfile
 
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
-ENTRYPOINT ["yarn", "start:prod"]
+
+CMD crond && pnpm prisma db push && pnpm seed:base && pnpm build && pnpm start

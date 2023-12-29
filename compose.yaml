@@ -22,7 +22,6 @@ services:
     env_file:
       - ./.env
     environment:
-      - NODE_ENV=production
       - DATABASE_URL=mysql://root:passwd@db:3306/kforum?useUnicode=true&autoReconnect=true
     depends_on:
       wait-for-db:
