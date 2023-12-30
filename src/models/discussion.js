@@ -95,7 +95,7 @@ const discussionModel = {
         if (!id) return null;
         const queryCondition = {
             where: {
-                id ,
+                id,
                 deletedAt: isDeleted ? { not: null } : null,
             },
             include: {
@@ -276,13 +276,20 @@ const discussionModel = {
     },
     async updateHotnessScore() {
         // 更新 discussion 的分数
-        // 将 7 天之内都没有动静的 discussion 得分都设置为 0，这些帖子已经完全冷掉了。
-        // 7 天之内有动静的进行计算并批量更新。
+        // 将 7 天之内都没有动静或已经被删除的 discussion 得分都设置为 0，这些帖子已经完全冷掉了。
+        // 7 天之内有动静的且没有删除的进行计算并批量更新。
         const now = new Date();
         const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         const fadeCount = await prisma.discussion.updateMany({
             where: {
-                updatedAt: { lt: sevenDaysAgo },
+                AND: {
+                    hotnessScore: { gt: 0 },
+                    OR: [
+                        { updatedAt: { lt: sevenDaysAgo } },
+                        { deletedAt: { not: null } }
+                    ]
+                }
+
             },
             data: {
                 hotnessScore: 0
@@ -291,6 +298,7 @@ const discussionModel = {
         const discussions = await prisma.discussion.findMany({
             where: {
                 updatedAt: { gte: sevenDaysAgo },
+                deletedAt: null,
             }
         });
         for (const d of discussions) {

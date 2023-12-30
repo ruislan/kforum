@@ -10,8 +10,8 @@ export async function GET(request, { params }) {
 
     const fetchStatsAdmins = prisma.user.count({ where: { isAdmin: true } });
     const fetchStatsUsers = prisma.user.count();
-    const fetchStatsDiscussions = prisma.discussion.count();
-    const fetchStatsPosts = prisma.post.count();
+    const fetchStatsDiscussions = prisma.discussion.count({ where: { deletedAt: null } });
+    const fetchStatsPosts = prisma.post.count({ where: { deletedAt: null } });
     const fetchStatsReactions = prisma.reactionPostRef.count();
     const fetchStatsUploads = prisma.upload.count();
     const fetchStatsReports = prisma.report.count();
