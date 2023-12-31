@@ -14,7 +14,7 @@ import ActionButton from '../ui/action-button';
 import ReactionGroup from '../ui/reaction-group';
 import NoContent from '../ui/no-content';
 import Button from '../ui/button';
-import { Link as LinkIcon, Flag, Markup, Edit, DeleteBin, Reply, ArrowDownS, ArrowUpS, LoadingIcon } from '../icons';
+import { Link as LinkIcon, Flag, Markup, Edit, DeleteBin, Reply, ArrowDownS, ArrowUpS, LoadingIcon, MoreIcon } from '../icons';
 import ActionDelete from './action-delete';
 import ActionReact from './action-react';
 import ActionReply from './action-reply';
@@ -70,6 +70,7 @@ function PostItem({ isDiscussionLocked, item, onReplyClick }) {
     const [reactions, setReactions] = useState(item.reactions || []);
     const [isDeleted, setIsDeleted] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
+    const [isExpendAction, setIsExpendAction] = useState(false);
 
     const handleUserReacted = async ({ reaction, isReacted }) => {
         let arr = [...reactions];
@@ -121,27 +122,37 @@ function PostItem({ isDiscussionLocked, item, onReplyClick }) {
                                 {!isDiscussionLocked && <ActionReply onClick={() => runIfFn(onReplyClick, { post })} />}
                                 {/* give reaction  */}
                                 <ActionReact post={post} onReacted={handleUserReacted} />
-                                {isAuthenticated && <>
-                                    <ActionReport post={post} />
-                                    {/* copy url to share  */}
-                                    {/* <ActionButton><LinkIcon /></ActionButton> */}
-                                    {/* save to bookmark */}
-                                    {/* <ActionButton><Bookmark /></ActionButton><ActionButton><UnBookmark /></ActionButton> */}
-                                    {/* report: owner, moderator and the user who has reported don't show this flag icon */}
-                                    {/* hide */}
-                                    {/* <ActionButton><EyeOff /></ActionButton> */}
-                                </>}
-                                {/* report: owner, moderator and the user who has reported don't show this flag icon */}
-                                {/* <ActionButton><Flag /></ActionButton> */}
-                                {/* define this port: owner, moderator. multi choose, items: spoiler(剧透)，NSFW(少儿不宜)，fake（假的），approved（实锤），spam（水贴）, OC（原创）, official（官方）*/}
-                                {/* <ActionButton><Markup /></ActionButton> */}
-                                {(isOwner || isAdmin) &&
-                                    <>
-                                        {/* edit:owner, moderator */}
-                                        <ActionButton onClick={() => setIsEditMode(true)}><Edit /></ActionButton>
-                                        {/* delete:owner, moderator */}
-                                        <ActionDelete post={post} onDeleted={() => setIsDeleted(true)} />
-                                    </>
+
+                                {
+                                    isExpendAction ?
+                                        (<>
+                                            {isAuthenticated && <>
+                                                <ActionReport post={post} />
+                                                {/* copy url to share  */}
+                                                {/* <ActionButton><LinkIcon /></ActionButton> */}
+                                                {/* save to bookmark */}
+                                                {/* <ActionButton><Bookmark /></ActionButton><ActionButton><UnBookmark /></ActionButton> */}
+                                                {/* report: owner, moderator and the user who has reported don't show this flag icon */}
+                                                {/* hide */}
+                                                {/* <ActionButton><EyeOff /></ActionButton> */}
+                                            </>}
+                                            {/* report: owner, moderator and the user who has reported don't show this flag icon */}
+                                            {/* <ActionButton><Flag /></ActionButton> */}
+                                            {/* define this port: owner, moderator. multi choose, items: spoiler(剧透)，NSFW(少儿不宜)，fake（假的），approved（实锤），spam（水贴）, OC（原创）, official（官方）*/}
+                                            {/* <ActionButton><Markup /></ActionButton> */}
+                                            {(isOwner || isAdmin) &&
+                                                <>
+                                                    {/* edit:owner, moderator */}
+                                                    <ActionButton onClick={() => setIsEditMode(true)}><Edit /></ActionButton>
+                                                    {/* delete:owner, moderator */}
+                                                    <ActionDelete post={post} onDeleted={() => setIsDeleted(true)} />
+                                                </>
+                                            }
+                                        </>
+                                        ) :
+                                        (
+                                            <ActionButton onClick={() => setIsExpendAction(true)}><MoreIcon /></ActionButton>
+                                        )
                                 }
                             </div>
                         </div>

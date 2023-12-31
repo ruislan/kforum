@@ -10,7 +10,7 @@ import { useSession } from 'next-auth/react';
 import dateUtils from '@/lib/date-utils';
 import { runIfFn } from '@/lib/fn';
 import Box from '../ui/box';
-import { Blank, Heart, Locked, Pined, Link as LinkIcon, Bookmark, Flag, EyeOff, Markup, UnBookmark, Pin, Lock, Edit, DeleteBin, Reply } from '../icons';
+import { Blank, Heart, Locked, Pined, Link as LinkIcon, Bookmark, Flag, EyeOff, Markup, UnBookmark, Pin, Lock, Edit, DeleteBin, Reply, MoreIcon } from '../icons';
 import SplitBall from '../ui/split-ball';
 import ActionButton from '../ui/action-button';
 import ProseContent from '../ui/prose-content';
@@ -42,6 +42,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
     const [isSticky, setIsSticky] = useState(discussion?.isSticky);
     const [isLocked, setIsLocked] = useState(discussion?.isLocked);
     const [isEditMode, setIsEditMode] = useState(false);
+    const [isExpendAction, setIsExpendAction] = useState(false);
 
     const isAuthenticated = status === 'authenticated';
     const isOwner = isAuthenticated && data.user.id === discussion?.user.id;
@@ -145,32 +146,41 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                             <ActionReact post={firstPost} onReacted={handleUserReacted} />
                             {/* copy url to share  */}
                             {/* <ActionButton><LinkIcon /></ActionButton> */}
-                            {isAuthenticated && <>
-                                <ActionReport post={firstPost} />
-                                {/* save to bookmark */}
-                                {/* <ActionButton><Bookmark /></ActionButton>
-                            <ActionButton><UnBookmark /></ActionButton> */}
-                                {/* report: owner, moderator and the user who has reported don't show this flag icon */}
-                                {/* hide */}
-                                {/* <ActionButton><EyeOff /></ActionButton> */}
-                            </>}
-                            {(isOwner || isAdmin) &&
-                                <>
-                                    {/* give discussion tags: admin, moderator, owner */}
-                                    <ActionTags discussion={discussion} onSelected={tags => { setTags(tags); discussion.tags = tags; }} />
-                                    {/* let discussion stay top of the discussion list: admin, moderator */}
-                                    {isAdmin && <ActionSticky discussion={discussion} onSticky={(sticky) => { setIsSticky(sticky); discussion.isSticky = sticky; }} />}
-                                    {/* lock all: admin, owner, moderator */}
-                                    {<ActionLock discussion={discussion} onLocked={handleLockClick}><Lock /></ActionLock>}
-                                    {/* edit:owner, moderator, admin */}
-                                    <ActionButton onClick={() => setIsEditMode(true)}><Edit /></ActionButton>
-                                    {/* delete:owner, moderator, admin */}
-                                    <ActionDelete // 删除首贴会自动删除整个话题（目前是这个规则）
-                                        confirmContent='你确定要删除这篇话题及其所有的回复吗？'
-                                        post={firstPost}
-                                        onDeleted={() => router.replace('/')}
-                                    />
-                                </>
+                            {
+                                isExpendAction ?
+                                    (
+                                        <>
+                                            {isAuthenticated && <>
+                                                <ActionReport post={firstPost} />
+                                                {/* save to bookmark */}
+                                                {/* <ActionButton><Bookmark /></ActionButton><ActionButton><UnBookmark /></ActionButton> */}
+                                                {/* report: owner, moderator and the user who has reported don't show this flag icon */}
+                                                {/* hide */}
+                                                {/* <ActionButton><EyeOff /></ActionButton> */}
+                                            </>}
+                                            {(isOwner || isAdmin) &&
+                                                <>
+                                                    {/* give discussion tags: admin, moderator, owner */}
+                                                    <ActionTags discussion={discussion} onSelected={tags => { setTags(tags); discussion.tags = tags; }} />
+                                                    {/* let discussion stay top of the discussion list: admin, moderator */}
+                                                    {isAdmin && <ActionSticky discussion={discussion} onSticky={(sticky) => { setIsSticky(sticky); discussion.isSticky = sticky; }} />}
+                                                    {/* lock all: admin, owner, moderator */}
+                                                    <ActionLock discussion={discussion} onLocked={handleLockClick}><Lock /></ActionLock>
+                                                    {/* edit:owner, moderator, admin */}
+                                                    <ActionButton onClick={() => setIsEditMode(true)}><Edit /></ActionButton>
+                                                    {/* delete:owner, moderator, admin */}
+                                                    <ActionDelete // 删除首贴会自动删除整个话题（目前是这个规则）
+                                                        confirmContent='你确定要删除这篇话题及其所有的回复吗？'
+                                                        post={firstPost}
+                                                        onDeleted={() => router.replace('/')}
+                                                    />
+                                                </>
+                                            }
+                                        </>
+                                    ) :
+                                    (
+                                        <ActionButton onClick={() => setIsExpendAction(true)}><MoreIcon /></ActionButton>
+                                    )
                             }
                         </div>
                     </div>

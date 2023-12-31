@@ -7,7 +7,7 @@ A simple and modern forum.
 ## Build With
 
 * Framework: NextJS
-* Database: MySQL(^v0.6.0)
+* Database: MySQL
 * ORM: Prisma
 * Auth: Next Auth
 * State: Zustand
@@ -36,6 +36,8 @@ pass: 123123
 ```
 
 ## Running Docker
+
+1. Rename .env.example to .env
 
 ```shell
 docker compose up -d
