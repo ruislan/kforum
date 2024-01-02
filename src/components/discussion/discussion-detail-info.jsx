@@ -10,7 +10,7 @@ import { useSession } from 'next-auth/react';
 import dateUtils from '@/lib/date-utils';
 import { runIfFn } from '@/lib/fn';
 import Box from '../ui/box';
-import { Blank, Heart, Locked, Pined, Link as LinkIcon, Bookmark, Flag, EyeOff, Markup, UnBookmark, Pin, Lock, Edit, DeleteBin, Reply, MoreIcon } from '../icons';
+import { Blank, Heart, Locked, Pined, Link as LinkIcon, Bookmark, Flag, EyeOff, Markup, UnBookmark, Pin, Lock, Edit, DeleteBin, Reply, MoreIcon, ModeratorFilledIcon } from '../icons';
 import SplitBall from '../ui/split-ball';
 import ActionButton from '../ui/action-button';
 import ProseContent from '../ui/prose-content';
@@ -25,6 +25,7 @@ import Tag from '../ui/tag';
 import UserAvatar from '../ui/user-avatar';
 import ActionReport from './action-report';
 import ActionTags from './action-tags';
+import UserMark from '../ui/user-mark';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -89,6 +90,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                     <div className='flex items-center'>
                         <UserAvatar className='mr-1.5' size='xs' name={discussion.user.name} avatar={discussion.user.avatarUrl} />
                         <Link href={`/u/${discussion.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{discussion.user.name}</Link>
+                        <UserMark isAdmin={discussion.user.isAdmin} isModerator={discussion.user.isModerator} isLocked={discussion.user.isLocked} />
                     </div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                     <span className='text-xs' suppressHydrationWarning>{dateUtils.fromNow(discussion.createdAt)}</span>

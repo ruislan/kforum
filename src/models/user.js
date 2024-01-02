@@ -12,7 +12,7 @@ const userModel = {
         CREDENTIAL_NOT_VALID: '用户名或密码不正确',
     },
     fields: {
-        simple: { id: true, name: true, email: true, gender: true, avatarUrl: true },
+        simple: { id: true, name: true, email: true, gender: true, avatarUrl: true, isAdmin: true, isModerator: true, isLocked: true },
         passport: { id: true, name: true, email: true, gender: true, avatarUrl: true, isAdmin: true }
     },
     hashPassword(pwd) {
@@ -122,6 +122,14 @@ const userModel = {
         await prisma.user.update({
             where: { id: userId, },
             data: { isLocked }
+        });
+    },
+    async updateModerator({ userId, isModerator }) {
+        const user = await prisma.user.findUnique({ where: { id: userId } });
+        if (!user) throw new ModelError(this.errors.USER_NOT_FOUND);
+        await prisma.user.update({
+            where: { id: userId, },
+            data: { isModerator }
         });
     },
     async updateAvatar({ userId, file, checksum }) {

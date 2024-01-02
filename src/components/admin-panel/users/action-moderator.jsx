@@ -4,28 +4,27 @@ import toast from 'react-hot-toast';
 
 import { runIfFn } from '@/lib/fn';
 import ActionButton from '@/components/ui/action-button';
-import { LoadingIcon, Lock, Locked } from '@/components/icons';
+import { LoadingIcon, ModeratorFilledIcon, ModeratorIcon } from '@/components/icons';
 
-
-export default function ActionLock({ user, onUpdated }) {
-    const [isLocked, setIsLocked] = useState(user.isLocked);
+export default function ActionModerator({ user, onUpdated }) {
+    const [isModerator, setIsModerator] = useState(user.isModerator);
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleLock = async () => {
+    const handleClick = async () => {
         if (isLoading) return;
         setIsLoading(true);
         try {
-            const newLockState = !isLocked;
-            const res = await fetch(`/api/admin/users/${user.id}/lock`,
+            const newState = !isModerator;
+            const res = await fetch(`/api/admin/users/${user.id}/moderator`,
                 {
                     method: 'PUT',
-                    body: JSON.stringify({ isLocked: newLockState }),
+                    body: JSON.stringify({ isModerator: newState }),
                     headers: { 'Content-Type': 'application/json' }
                 });
             if (res.ok) {
-                toast.success(newLockState ? '已经成功锁定' : '已经成功解锁');
-                setIsLocked(newLockState);
-                runIfFn(onUpdated, newLockState);
+                toast.success(newState ? '已经成功设置为版主' : '已经成功取消版主');
+                setIsModerator(newState);
+                runIfFn(onUpdated, newState);
             } else {
                 if (res.status === 400) {
                     const json = await res.json();
@@ -45,10 +44,10 @@ export default function ActionLock({ user, onUpdated }) {
     return (
         <ActionButton onClick={e => {
             e.preventDefault();
-            handleLock();
+            handleClick();
         }}>
             {isLoading ? <LoadingIcon /> :
-                (isLocked ? <Locked /> : <Lock />)
+                (isModerator ? <ModeratorFilledIcon /> : <ModeratorIcon />)
             }
         </ActionButton>
     );

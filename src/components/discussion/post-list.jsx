@@ -22,6 +22,7 @@ import PostUpdater from './post-updater';
 import Spinner from '../ui/spinner';
 import UserAvatar from '../ui/user-avatar';
 import ActionReport from './action-report';
+import UserMark from '../ui/user-mark';
 
 function PostReplyContent({ replyPost }) {
     const limit = 100;
@@ -99,6 +100,7 @@ function PostItem({ isDiscussionLocked, item, onReplyClick }) {
                 : <div className='flex flex-col flex-1'>
                     <div className='flex items-center text-gray-300'>
                         <Link href={`/u/${post.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{post.user.name}</Link>
+                        <UserMark isAdmin={post.user.isAdmin} isModerator={post.user.isModerator} isLocked={post.user.isLocked} />
                         <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                         <span className='text-xs' suppressHydrationWarning>{dateUtils.fromNow(post.createdAt)}</span>
                     </div>

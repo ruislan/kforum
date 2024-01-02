@@ -8,15 +8,16 @@ datasource db {
 }
 
 model User {
-  id        Int     @id @default(autoincrement()) @db.UnsignedInt
-  email     String  @unique @db.VarChar(256)
-  name      String  @unique @db.VarChar(64)
-  password  String  @db.VarChar(256)
-  avatarUrl String? @map("avatar_url") @db.VarChar(2048) // 通常是 UploadAvatarRef 对应的 Upload 的 Url，但是也有可能是一个 Avatar 服务的地址呢？
-  bio       String? @db.VarChar(512)
-  gender    String? @db.VarChar(16)
-  isLocked  Boolean @default(false) @map("is_locked")
-  isAdmin   Boolean @default(false) @map("is_admin")
+  id          Int     @id @default(autoincrement()) @db.UnsignedInt
+  email       String  @unique @db.VarChar(256)
+  name        String  @unique @db.VarChar(64)
+  password    String  @db.VarChar(256)
+  avatarUrl   String? @map("avatar_url") @db.VarChar(2048) // 通常是 UploadAvatarRef 对应的 Upload 的 Url，但是也有可能是一个 Avatar 服务的地址呢？
+  bio         String? @db.VarChar(512)
+  gender      String? @db.VarChar(16)
+  isLocked    Boolean @default(false) @map("is_locked") // 锁定的用户无法登录，管理员和版主无法被锁定
+  isAdmin     Boolean @default(false) @map("is_admin") // 是否是管理员，管理员管理网站
+  isModerator Boolean @default(false) @map("is_moderator") // 是否是版主，版主管理内容
 
   lastLoginAt DateTime? @map("last_login_at")
   lastLoginIp String?   @map("last_login_ip")

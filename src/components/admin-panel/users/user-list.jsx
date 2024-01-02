@@ -2,19 +2,21 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
+import Link from 'next/link';
+import toast from 'react-hot-toast';
 
+import NoContent from '@/components/ui/no-content';
 import Box from '../../ui/box';
 import Button from '../../ui/button';
 import { HeadingSmall } from '../../ui/heading';
 import Spinner from '../../ui/spinner';
-import Link from 'next/link';
 import UserAvatar from '../../ui/user-avatar';
 import Input from '../../ui/input';
-import { Locked } from '../../icons';
+import { Locked, ModeratorFilledIcon } from '../../icons';
 import SplitBall from '../../ui/split-ball';
 import ActionLock from './action-lock';
-import toast from 'react-hot-toast';
-import NoContent from '@/components/ui/no-content';
+import ActionModerator from './action-moderator';
+import UserMark from '@/components/ui/user-mark';
 
 
 export default function UserList() {
@@ -24,12 +26,20 @@ export default function UserList() {
     const [hasMore, setHasMore] = useState(false);
     const queryRef = useRef();
 
-    const handleLockClick = async (userId, lockState) => {
+    const handleLockClick = async (userId, state) => {
         setDataList(prev => {
             const u = prev.find(u => u.id === userId);
-            u.isLocked = lockState;
+            u.isLocked = state;
             return [...prev];
-        })
+        });
+    }
+
+    const handleModeratorClick = async (userId, state) => {
+        setDataList(prev => {
+            const u = prev.find(u => u.id === userId);
+            u.isModerator = state;
+            return [...prev];
+        });
     }
 
     const fetchDataList = useCallback(async () => {
@@ -103,9 +113,9 @@ export default function UserList() {
                                         className='text-sm hover:underline underline-offset-2 cursor-pointer'>
                                         u/{user.name}
                                     </Link>
+                                    <UserMark isAdmin={user.isAdmin} isModerator={user.isModerator} isLocked={user.isLocked} />
                                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                                     <span className='text-sm text-gray-200'>{user.email}</span>
-                                    {user.isLocked && (<span className='h-3.5 w-3.5 ml-1.5 text-yellow-400'><Locked /></span>)}
                                 </div>
                                 <span className='text-xs text-gray-400' suppressHydrationWarning>
                                     注册于 {new Date(user.createdAt).toLocaleString()}
@@ -113,13 +123,14 @@ export default function UserList() {
                             </div>
                         </div>
                         <div className='flex items-center text-gray-300 gap-2'>
-                            {!user.isAdmin && <ActionLock user={user} onLocked={(lockState) => handleLockClick(user.id, lockState)} />}
+                            {!user.isAdmin && !user.isModerator && <ActionLock user={user} onUpdated={(state) => handleLockClick(user.id, state)} />}
+                            {!user.isAdmin && <ActionModerator user={user} onUpdated={(state) => handleModeratorClick(user.id, state)} />}
                         </div>
                     </div>
                 ))}
                 {!isLoading && dataList.length === 0 && <NoContent noWrap text='没有数据' />}
             </div>
-            {isLoading && <Spinner　className='self-center' />}
+            {isLoading && <Spinner className='self-center' />}
             {hasMore && (
                 <div className='self-center py-2'>
                     <Button kind='ghost' disabled={isLoading} onClick={() => setPage(prev => prev + 1)}>查看更多</Button>

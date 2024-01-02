@@ -11,6 +11,7 @@ import SplitBall from '../ui/split-ball';
 import Tag from '../ui/tag';
 import ProseContent from '../ui/prose-content';
 import UserAvatar from '../ui/user-avatar';
+import UserMark from '../ui/user-mark';
 
 export default function DiscussionListItem({ discussion }) {
     const router = useRouter();
@@ -48,6 +49,7 @@ export default function DiscussionListItem({ discussion }) {
                             className='text-xs hover:underline underline-offset-2 cursor-pointer'>
                             u/{discussion.user?.name}
                         </Link>
+                        <UserMark isAdmin={discussion.user?.isAdmin} isModerator={discussion.user?.isModerator} isLocked={discussion.user?.isLocked} />
                     </div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                     <span className='text-xs' suppressHydrationWarning>{dateUtils.fromNow(discussion.createdAt)}</span>
