@@ -8,4 +8,4 @@ export { default as siteSettingModel } from './site-setting';
 export { default as tagModel } from './tag';
 export { default as uploadModel } from './upload';
 export { default as userModel } from './user';
-export * as ModelError from './model-error';
+export { default as ModelError } from './model-error';

@@ -26,6 +26,7 @@ import UserAvatar from '../ui/user-avatar';
 import ActionReport from './action-report';
 import ActionTags from './action-tags';
 import UserMark from '../ui/user-mark';
+import DiscussionMark from '../ui/discussion-mark';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -100,9 +101,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                             <span className='text-xs'>{`编辑于 ${dateUtils.fromNow(discussion.lastUpdatedAt)}`}</span>
                         </>
                     )}
-                    <span className='ml-1' />
-                    {isSticky && (<span className='h-4 w-4 ml-0.5 text-green-400'><Pined /></span>)}
-                    {isLocked && (<span className='h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}
+                    <DiscussionMark isSticky={isSticky} isLocked={isLocked} />
                 </div>
                 <div className='inline-block relative mb-1'>
                     <h2 className='inline text-xl font-bold break-words text-gray-50'>{discussion.title}</h2>

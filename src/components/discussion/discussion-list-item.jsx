@@ -12,6 +12,7 @@ import Tag from '../ui/tag';
 import ProseContent from '../ui/prose-content';
 import UserAvatar from '../ui/user-avatar';
 import UserMark from '../ui/user-mark';
+import DiscussionMark from '../ui/discussion-mark';
 
 export default function DiscussionListItem({ discussion }) {
     const router = useRouter();
@@ -53,9 +54,7 @@ export default function DiscussionListItem({ discussion }) {
                     </div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                     <span className='text-xs' suppressHydrationWarning>{dateUtils.fromNow(discussion.createdAt)}</span>
-                    <span className='ml-1' />
-                    {discussion.isSticky && (<span className='h-4 w-4 ml-0.5 text-green-400'><Pined /></span>)}
-                    {discussion.isLocked && (<span className='h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}
+                    <DiscussionMark isSticky={discussion.isSticky} isLocked={discussion.isLocked} />
                 </div>
                 <div className='inline-block relative mb-2'>
                     <div className='inline text-gray-50 text-lg font-bold break-words'>{discussion.title}</div>

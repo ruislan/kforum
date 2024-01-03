@@ -4,9 +4,9 @@ export default async function Footer() {
     return (
         <div className='w-screen flex justify-center py-12'>
             <div className='flex flex-col-reverse md:flex-row gap-3 items-center justify-center md:gap-8 text-sm'>
-                <span className='text-gray-400'>@2023&nbsp;
+                <span className='text-gray-400'>@2024&nbsp;
                     <Link href='https://github.com/ruislan/kforum' className='underline underline-offset-2'>KForum</Link>
-                    &nbsp;. Built with Love By&nbsp;
+                    &nbsp;. Built with Love ❤️ By&nbsp;
                     <Link href='https://ruislan.com' className='underline underline-offset-2'>Rui</Link>
                 </span>
                 <div className='flex items-center gap-2'>
