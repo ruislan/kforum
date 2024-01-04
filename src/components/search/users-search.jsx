@@ -55,7 +55,7 @@ export default function UsersSearch({ query }) {
                     <div className='flex items-center text-xs'>
                         <Link
                             href={`/u/${item.name}`}
-                            className='font-semibold text-gray-300 hover:text-gray-200 underline underline-offset-2'
+                            className='font-semibold text-gray-300 hover:underline hover:underline-offset-2'
                         >
                             u/{item.name}
                         </Link>

@@ -9,6 +9,7 @@ const DiscussionList = dynamic(() => import('@/components/discussion/discussion-
 const CategoryBox = dynamic(() => import('@/components/category/category-box'));
 const ActionCreate = dynamic(() => import('@/components/discussion/action-create'));
 const SortPanel = dynamic(() => import('@/components/discussion/sort-panel'));
+const ModeratorBox = dynamic(() => import('@/components/user/moderator-box'));
 
 async function getDiscussions(sort) {
   return await discussionModel.getDiscussions({
@@ -38,7 +39,8 @@ export default async function Home({ searchParams }) {
       <div className='flex flex-col w-80 gap-4'>
         <About />
         <Box className='flex flex-col gap-3'><ActionCreate category={null} /></Box>
-        <CategoryBox isSticky />
+        <CategoryBox />
+        <ModeratorBox />
       </div>
     </div>
   )

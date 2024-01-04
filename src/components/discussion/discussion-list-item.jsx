@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 
 import dateUtils from '@/lib/date-utils';
 
-import { Blank, Lock, Locked, Pin, Pined, Post as PostIcon } from '../icons';
 import Box from '../ui/box';
 import SplitBall from '../ui/split-ball';
 import Tag from '../ui/tag';
@@ -13,15 +12,20 @@ import ProseContent from '../ui/prose-content';
 import UserAvatar from '../ui/user-avatar';
 import UserMark from '../ui/user-mark';
 import DiscussionMark from '../ui/discussion-mark';
+import clsx from 'clsx';
 
-export default function DiscussionListItem({ discussion }) {
+export default function DiscussionListItem({
+    discussion,
+    isCardStyle = false
+}) {
     const router = useRouter();
     const c = discussion.category;
     if (!discussion) return null;
     return (
         <Box
             className='flex flex-col hover:border-neutral-500 cursor-pointer'
-            onClick={() => location.href = '/d/' + discussion.id}>
+            onClick={() => location.href = '/d/' + discussion.id}
+        >
             <div className='flex flex-col flex-1'>
                 <div className='flex items-center mb-2 text-gray-300'>
                     {c && (
@@ -56,37 +60,48 @@ export default function DiscussionListItem({ discussion }) {
                     <span className='text-xs' suppressHydrationWarning>{dateUtils.fromNow(discussion.createdAt)}</span>
                     <DiscussionMark isSticky={discussion.isSticky} isLocked={discussion.isLocked} />
                 </div>
-                <div className='inline-block relative mb-2'>
-                    <div className='inline text-gray-50 text-lg font-bold break-words'>{discussion.title}</div>
-                    <div className='inline-flex flex-wrap ml-2 gap-1 align-text-top'>
-                        {discussion.tags.map(tag => (
-                            <Tag
-                                key={tag.id}
-                                color={tag.textColor}
-                                bgColor={tag.bgColor}
-                                onClick={e => {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                    router.push(`/t/${tag.name}`);
-                                }}
-                            >
-                                {tag.name}
-                            </Tag>
-                        ))}
+                <div className={clsx(
+                    'mb-2 gap-1',
+                    isCardStyle ?
+                        'flex justify-between' :
+                        'flex flex-col'
+                )}>
+                    <div className='inline-block relative'>
+                        <div className='inline text-gray-50 text-lg font-bold break-words'>{discussion.title}</div>
+                        <div className='inline-flex flex-wrap ml-2 gap-1 align-text-top'>
+                            {discussion.tags.map(tag => (
+                                <Tag
+                                    key={tag.id}
+                                    color={tag.textColor}
+                                    bgColor={tag.bgColor}
+                                    onClick={e => {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                        router.push(`/t/${tag.name}`);
+                                    }}
+                                >
+                                    {tag.name}
+                                </Tag>
+                            ))}
+                        </div>
                     </div>
+                    {discussion.poster ?
+                        <div className='relative flex justify-center'>
+                            <Image
+                                className={clsx(
+                                    isCardStyle ?
+                                        'max-h-24 w-36' :
+                                        'max-h-[496px] w-auto'
+                                )}
+                                width={640} height={380}
+                                src={discussion.poster.url}
+                                alt={discussion.poster.originalFileName}
+                            />
+                        </div> :
+                        <ProseContent className='max-h-64 overflow-hidden content-mask-b' content={discussion.firstPost?.text} />
+                    }
                 </div>
-                {discussion.poster ?
-                    <div className='relative flex w-full justify-center pb-2'>
-                        <Image
-                            className='max-h-[496px] w-auto'
-                            width={640} height={380}
-                            src={discussion.poster.url}
-                            alt={discussion.poster.originalFileName}
-                        />
-                    </div> :
-                    <ProseContent className='pb-2 max-h-64 overflow-hidden content-mask-b' content={discussion.firstPost?.text} />
-                }
-                <div className='text-xs inline-flex items-center text-gray-300 mt-2'>
+                <div className='text-xs inline-flex items-center text-gray-300 mt-1'>
                     <div className='flex items-center'><span>参与 {discussion.userCount}</span></div>
                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                     <div className='flex items-center'><span>帖子 {discussion.postCount}</span></div>

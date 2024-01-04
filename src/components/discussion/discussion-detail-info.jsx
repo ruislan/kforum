@@ -10,7 +10,7 @@ import { useSession } from 'next-auth/react';
 import dateUtils from '@/lib/date-utils';
 import { runIfFn } from '@/lib/fn';
 import Box from '../ui/box';
-import { Blank, Heart, Locked, Pined, Link as LinkIcon, Bookmark, Flag, EyeOff, Markup, UnBookmark, Pin, Lock, Edit, DeleteBin, Reply, MoreIcon, ModeratorFilledIcon } from '../icons';
+import { Lock, Edit, MoreIcon } from '../icons';
 import SplitBall from '../ui/split-ball';
 import ActionButton from '../ui/action-button';
 import ProseContent from '../ui/prose-content';

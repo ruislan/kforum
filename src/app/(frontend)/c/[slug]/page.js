@@ -10,6 +10,7 @@ const CategoryInfo = dynamic(() => import('@/components/category/category-info')
 const DiscussionList = dynamic(() => import('@/components/discussion/discussion-list'));
 const CategoryBox = dynamic(() => import('@/components/category/category-box'));
 const ActionCreate = dynamic(() => import('@/components/discussion/action-create'));
+const ModeratorBox = dynamic(() => import('@/components/user/moderator-box'));
 
 async function getCategory(slug) {
   return await categoryModel.getCategory({ slug, withStats: true });
@@ -50,7 +51,8 @@ export default async function Page({ params, searchParams }) {
       <div className='flex flex-col w-80 gap-4'>
         <CategoryInfo category={category} />
         <Box className='flex flex-col gap-3'><ActionCreate category={category} /></Box>
-        <CategoryBox isSticky />
+        <CategoryBox />
+        <ModeratorBox />
       </div>
     </div>
   )

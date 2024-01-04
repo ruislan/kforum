@@ -12,6 +12,7 @@ const userModel = {
         CREDENTIAL_NOT_VALID: '用户名或密码不正确',
     },
     fields: {
+        short: { id: true, name: true, gender: true, avatarUrl: true },
         simple: { id: true, name: true, email: true, gender: true, avatarUrl: true, isAdmin: true, isModerator: true, isLocked: true },
         passport: { id: true, name: true, email: true, gender: true, avatarUrl: true, isAdmin: true }
     },
@@ -156,6 +157,15 @@ const userModel = {
             return user;
         });
         return result;
+    },
+    async getModerators() {
+        const moderators = await prisma.user.findMany({
+            where: { isModerator: true },
+            select: {
+                ...this.fields.short, createdAt: true
+            }
+        });
+        return moderators;
     }
 };
 

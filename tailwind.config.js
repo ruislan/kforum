@@ -2,19 +2,19 @@ const proseCss = {
   css: {
     maxWidth: 'none',
     p: {
-      marginTop: '2px',
-      marginBottom: '2px',
+      marginTop: '4px',
+      marginBottom: '4px',
     },
     ul: {
-      marginTop: '2px',
-      marginBottom: '2px',
+      marginTop: '4px',
+      marginBottom: '4px',
     },
     'ul > li > *': {
-      marginTop: '2px',
-      marginBottom: '2px',
+      marginTop: '4px',
+      marginBottom: '4px',
     },
     img: {
-      maxHeight: '700px',
+      maxHeight: '698px',
       margin: '2px auto',
     }
   }

@@ -10,6 +10,7 @@ const TagInfo = dynamic(() => import('@/components/tags/tag-info'));
 const DiscussionList = dynamic(() => import('@/components/discussion/discussion-list'));
 const CategoryBox = dynamic(() => import('@/components/category/category-box'));
 const ActionCreate = dynamic(() => import('@/components/discussion/action-create'));
+const ModeratorBox = dynamic(() => import('@/components/user/moderator-box'));
 
 async function getTag(name) {
     return await tagModel.getTag({ name, withStats: true });
@@ -50,7 +51,8 @@ export default async function Page({ params, searchParams }) {
             <div className='flex flex-col w-80 gap-4'>
                 <TagInfo tag={tag} />
                 <Box className='flex flex-col gap-3'><ActionCreate /></Box>
-                <CategoryBox isSticky />
+                <CategoryBox />
+                <ModeratorBox />
             </div>
         </div>
     )

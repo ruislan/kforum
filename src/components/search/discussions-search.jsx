@@ -38,16 +38,22 @@ export default function DiscussionsSearch({ query }) {
     if (!isLoading && dataList.length === 0) return <NoContent text='没有搜索到结果，换个词试试？' />;
 
     return (
-        <div className='flex flex-col gap-2'>
-            {dataList.map((item, i) => <DiscussionListItem key={i} discussion={item} />)}
-            {isLoading && <Spinner center />}
-            {
-                hasMore && (
-                    <div className='self-center py-2'>
-                        <Button kind='ghost' onClick={() => setPage(prev => prev + 1)}>查看更多</Button>
-                    </div>
-                )
-            }
+        <div className='flex w-full gap-6'>
+            <div className='flex flex-1 flex-col gap-2'>
+                {dataList.map((item, i) => <DiscussionListItem key={i} discussion={item} isCardStyle />)}
+                {isLoading && <Spinner center />}
+                {
+                    hasMore && (
+                        <div className='self-center py-2'>
+                            <Button kind='ghost' onClick={() => setPage(prev => prev + 1)}>查看更多</Button>
+                        </div>
+                    )
+                }
+            </div>
+            {/* sorter(by new/by pop) and filter(category) */}
+            <div className='flex flex-col w-80 gap-4'>
+
+            </div>
         </div>
     );
 }
