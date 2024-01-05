@@ -99,7 +99,7 @@ export default function PostsSearch({ query }) {
                     </div>
                 )}
             </div>
-            {/* sorter(by new/by pop) and filter(category) */}
+            {/*  */}
             <div className='flex flex-col w-80 gap-4'>
 
             </div>
