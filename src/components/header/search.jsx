@@ -8,14 +8,13 @@ import { Close, Search as SearchIcon } from '../icons';
 
 function SearchAction({ prefix, type, query }) {
     const router = useRouter();
-    const url = useMemo(() => {
-        let u = `/search?q=${query}`;
-        if (type) u += `&type=${type}`;
-        return u;
-    }, [type, query]);
     return (
         <div
-            onClick={() => router.push(url)}
+            onClick={() => {
+                let url = `/search?q=${query}`;
+                if (type) url += `&type=${type}`;
+                router.push(url);
+            }}
             className={clsx(
                 'flex gap-0.5 items-center cursor-pointer w-full',
                 'hover:bg-neutral-700 p-2'
@@ -85,6 +84,7 @@ export default function Search() {
                     onKeyUp={e => {
                         if (e.key === 'Enter') {
                             router.push(`/search?q=${query}`);
+                            e.target.blur();
                         }
                     }}
                     value={query}
