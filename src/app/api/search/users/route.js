@@ -7,6 +7,7 @@ export async function GET(request, { params }) {
     const { searchParams } = new URL(request.url)
     const page = Number(searchParams.get('page')) || 1;
     const q = searchParams.get('q');
+    const sort = searchParams.get('sort');
     if (_.isEmpty(q)) return rest.ok({ data: [] });
     const query = {
         OR: [
@@ -15,7 +16,7 @@ export async function GET(request, { params }) {
         ]
     };
     try {
-        const { users, hasMore } = await userModel.getUsers({ query, page });
+        const { users, hasMore } = await userModel.getUsers({ query, sort, page });
         return rest.ok({ data: users, hasMore });
     } catch (err) {
         if (err instanceof ModelError)

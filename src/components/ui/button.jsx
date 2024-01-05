@@ -7,7 +7,7 @@ const variants = {
     base: 'inline-flex whitespace-nowrap items-center justify-center font-bold transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
     kind: {
         default: 'bg-gray-300 text-gray-900 hover:bg-gray-300/90',
-        ghost: 'hover:bg-neutral-700 hover:text-neutral-300',
+        ghost: 'hover:bg-neutral-700 hover:text-gray-300',
         outline: 'border border-neutral-400 text-gray-100 hover:border-neutral-400/90 hover:text-gray-100/90',
     },
     shape: {
@@ -17,7 +17,7 @@ const variants = {
     },
     active: {
         default: 'bg-gray-300/90',
-        ghost: 'bg-neutral-700 text-neutral-300',
+        ghost: 'bg-neutral-700 text-gray-300',
         outline: 'border-neutral-400/90 text-gray-100/90',
     },
     size: {

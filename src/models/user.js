@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import ModelError from './model-error';
 import pageUtils from '@/lib/page-utils';
 import uploadModel from './upload';
+import { USER_SORT } from '@/lib/constants';
 
 const userModel = {
     errors: {
@@ -57,18 +58,25 @@ const userModel = {
     },
     async getUsers({
         page = 1,
+        sort, // 排序
         ignoreSensitive = true,
         query
     }) {
+        // count
         const countCondition = {};
         if (query) countCondition.where = query;
         const fetchCount = prisma.user.count(countCondition);
 
+        // query
+        const orderBy = [];
+        if (!sort || sort === USER_SORT[0]) orderBy.push({ createdAt: 'desc' });
+        if (sort === USER_SORT[1]) orderBy.push({ createdAt: 'asc' });
         const queryCondition = {};
         const { limit: take, skip } = pageUtils.getDefaultLimitAndSkip(page);
         queryCondition.take = take;
         queryCondition.skip = skip;
         if (query) queryCondition.where = query;
+        if (orderBy.length > 0) queryCondition.orderBy = orderBy;
 
         const fetchUsers = prisma.user.findMany(queryCondition);
         const [users, count] = await Promise.all([fetchUsers, fetchCount]);

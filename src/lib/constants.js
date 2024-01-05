@@ -25,4 +25,22 @@ export const SITE_SETTING_TYPES = {
 export const MIN_LENGTH_TITLE = 2;
 export const MIN_LENGTH_CONTENT = 2;
 
-export const DISCUSSION_SORT = ['hot', 'recent'];
+export const DISCUSSION_SORT = ['hot', 'recent', 'oldest', 'posts'];
+export const DISCUSSION_SORT_NAMES = {
+    hot: '最热',
+    recent: '最新',
+    oldest: '最早',
+    posts: '最多回帖'
+};
+
+export const POST_SORT = ['recent', 'oldest'];
+export const POST_SORT_NAMES = {
+    recent: '最新',
+    oldest: '最早',
+};
+
+export const USER_SORT = ['recent', 'oldest'];
+export const USER_SORT_NAMES = {
+    recent: '最新',
+    oldest: '最早',
+};

@@ -35,6 +35,8 @@ const discussionModel = {
         if (isStickyFirst) orderBy.push({ isSticky: 'desc' });
         if (sort === DISCUSSION_SORT[0]) orderBy.push({ hotnessScore: 'desc' });
         if (sort === DISCUSSION_SORT[1]) orderBy.push({ createdAt: 'desc' });
+        if (sort === DISCUSSION_SORT[2]) orderBy.push({ createdAt: 'asc' });
+        if (sort === DISCUSSION_SORT[3]) orderBy.push({ postCount: 'desc' });
 
         const queryCondition = {
             where: {

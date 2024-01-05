@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import clsx from 'clsx';
 import Link from 'next/link';
-import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 
 import Box from '../ui/box';
 import NoContent from '../ui/no-content';
@@ -12,8 +13,12 @@ import Button from '../ui/button';
 import SplitBall from '../ui/split-ball';
 import dateUtils from '@/lib/date-utils';
 import UserAvatar from '../ui/user-avatar';
+import { USER_SORT, USER_SORT_NAMES } from '@/lib/constants';
 
 export default function UsersSearch({ query }) {
+    const searchParams = useSearchParams();
+    const sort = searchParams.get('sort') || USER_SORT[0];
+
     const [isLoading, setIsLoading] = useState(true);
     const [dataList, setDataList] = useState([]);
     const [page, setPage] = useState(1);
@@ -23,7 +28,7 @@ export default function UsersSearch({ query }) {
         (async () => {
             setIsLoading(true);
             try {
-                const res = await fetch(`/api/search/users?q=${query}&page=${page}`);
+                const res = await fetch(`/api/search/users?q=${query}&sort=${sort}&page=${page}`);
                 if (res.ok) {
                     const json = await res.json();
                     setDataList(prev => page < 2 ? json.data : [...prev, ...json.data]);
@@ -37,13 +42,27 @@ export default function UsersSearch({ query }) {
                 setIsLoading(false);
             }
         })();
-    }, [page, query]);
+    }, [page, query, sort]);
 
     if (!query) return <NoContent text='没有提供搜索词，输入搜索词试试？' />;
-    if (!isLoading && dataList.length === 0) return <NoContent text='没有搜索到结果，换个词试试？' />
 
     return (
         <div className='flex flex-col gap-2'>
+            <div className='flex items-center gap-1 mb-2'>
+                {USER_SORT.map((v, i) => (
+                    <Link
+                        key={i}
+                        className={clsx(
+                            'px-3 py-2 rounded-lg font-semibold',
+                            'hover:text-gray-200 hover:bg-neutral-700',
+                            v === sort ? 'text-gray-200 bg-neutral-700' : 'text-gray-400'
+                        )}
+                        href={`/search?q=${query}&type=users&sort=${v}`}
+                    >
+                        {USER_SORT_NAMES[v]}
+                    </Link>
+                ))}
+            </div>
             {dataList.map((item, i) => (
                 <Box key={i} className='flex items-center gap-2'>
                     <div className='flex justify-center items-center'>
@@ -64,7 +83,11 @@ export default function UsersSearch({ query }) {
                     </div>
                 </Box>
             ))}
-            {isLoading && <Spinner center />}
+            {
+                isLoading ?
+                    <Spinner center /> :
+                    (dataList.length === 0 && <NoContent text='没有搜索到结果，换个词试试？' />)
+            }
             {
                 hasMore && (
                     <div className='self-center py-2'>
