@@ -1,16 +1,16 @@
-import dynamic from 'next/dynamic';
+import dynamicImport from 'next/dynamic';
 
 import { tagModel, discussionModel } from '@/models';
 import { notFound } from 'next/navigation';
 import Box from '@/components/ui/box';
 import { DISCUSSION_SORT } from '@/lib/constants';
 
-const SortPanel = dynamic(() => import('@/components/discussion/sort-panel'));
-const TagInfo = dynamic(() => import('@/components/tags/tag-info'));
-const DiscussionList = dynamic(() => import('@/components/discussion/discussion-list'));
-const CategoryBox = dynamic(() => import('@/components/category/category-box'));
-const ActionCreate = dynamic(() => import('@/components/discussion/action-create'));
-const ModeratorBox = dynamic(() => import('@/components/user/moderator-box'));
+const SortPanel = dynamicImport(() => import('@/components/discussion/sort-panel'));
+const TagInfo = dynamicImport(() => import('@/components/tags/tag-info'));
+const DiscussionList = dynamicImport(() => import('@/components/discussion/discussion-list'));
+const CategoryBox = dynamicImport(() => import('@/components/category/category-box'));
+const ActionCreate = dynamicImport(() => import('@/components/discussion/action-create'));
+const ModeratorBox = dynamicImport(() => import('@/components/user/moderator-box'));
 
 async function getTag(name) {
     return await tagModel.getTag({ name, withStats: true });

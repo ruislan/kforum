@@ -15,7 +15,6 @@ const userModel = {
     fields: {
         short: { id: true, name: true, gender: true, avatarUrl: true },
         simple: { id: true, name: true, email: true, gender: true, avatarUrl: true, isAdmin: true, isModerator: true, isLocked: true },
-        passport: { id: true, name: true, email: true, gender: true, avatarUrl: true, isAdmin: true }
     },
     hashPassword(pwd) {
         return bcrypt.hashSync(pwd, 10);
@@ -33,7 +32,7 @@ const userModel = {
                     { name: username }
                 ]
             },
-            select: { ...userModel.fields.passport, isLocked: true, password: true }
+            select: { ...userModel.fields.simple, password: true }
         });
         if (user.isLocked) throw new ModelError(this.errors.USER_WAS_LOCKED);
         if (!user) throw new ModelError(this.errors.CREDENTIAL_NOT_VALID);
@@ -41,6 +40,7 @@ const userModel = {
         const isPasswordMatched = userModel.comparePassword(password, user.password);
         if (!isPasswordMatched) throw new ModelError(this.errors.CREDENTIAL_NOT_VALID);
 
+        delete user.password;
         return user;
     },
     async getUser({ id, fields, ignoreSensitive = true }) {

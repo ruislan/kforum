@@ -1,12 +1,15 @@
+import dynamicImport from 'next/dynamic';
 import Link from 'next/link';
 import NavMenus from '@/components/header/nav-menus';
+import Image from 'next/image';
 
 import Search from './search';
 import UserMenus from './user-menus';
 import { Plus } from '../icons';
 import { siteNavMenuModel, siteSettingModel } from '@/models';
-import Image from 'next/image';
-import NavMenusDropdown from './nav-menus-dropdown';
+
+const NavMenusDropdown = dynamicImport(() => import('./nav-menus-dropdown'));
+
 
 async function getMenus() {
     return await siteNavMenuModel.getMenus();

@@ -6,9 +6,9 @@ import rest from '@/lib/rest';
 import { ModelError, tagModel } from '@/models';
 
 export async function GET(request, { params }) {
-    // require admin
+    // require admin or moderator
     const session = await getServerSession(authOptions);
-    if (!session?.user?.isAdmin) return rest.notFound();
+    if (!session?.user?.isAdmin && !session?.user?.isModerator) return rest.notFound();
 
     const { searchParams } = new URL(request.url);
     const page = Number(searchParams.get('page')) || 1;
@@ -20,9 +20,9 @@ export async function GET(request, { params }) {
 
 
 export async function POST(request, { params }) {
-    // require admin
+    // require admin or moderator
     const session = await getServerSession(authOptions);
-    if (!session?.user?.isAdmin) return rest.notFound();
+    if (!session?.user?.isAdmin && !session?.user?.isModerator) return rest.notFound();
 
     let { name, textColor, bgColor} = await request.json();
     name = _.trim(name);

@@ -7,9 +7,9 @@ import { ModelError, reportModel } from '@/models';
 import logger from '@/lib/logger';
 
 export async function PUT(request, { params }) {
-    // require admin
+    // require admin or moderator
     const session = await getServerSession(authOptions);
-    if (!session?.user?.isAdmin) return rest.notFound();
+    if (!session?.user?.isAdmin && !session?.user?.isModerator) return rest.notFound();
 
     const { action, reportIds, } = await request.json();
 

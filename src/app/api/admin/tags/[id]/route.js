@@ -8,9 +8,9 @@ import rest from '@/lib/rest';
 import { ModelError, tagModel } from '@/models';
 
 export async function PUT(request, { params }) {
-    // require admin
+    // require admin or moderator
     const session = await getServerSession(authOptions);
-    if (!session?.user?.isAdmin) return rest.notFound();
+    if (!session?.user?.isAdmin && !session?.user?.isModerator) return rest.notFound();
 
     let id = params.id;
     let { name, textColor, bgColor } = await request.json();
@@ -38,9 +38,9 @@ export async function PUT(request, { params }) {
 
 
 export async function DELETE(request, { params }) {
-    // require admin
+    // require admin or moderator
     const session = await getServerSession(authOptions);
-    if (!session?.user?.isAdmin) return rest.notFound();
+    if (!session?.user?.isAdmin && !session?.user?.isModerator) return rest.notFound();
 
     let id = params.id;
     id = Number(id) || 0;

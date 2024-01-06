@@ -1,11 +1,12 @@
-import dynamic from 'next/dynamic';
+import dynamicImport from 'next/dynamic';
+import Link from 'next/link';
+
 import Box from '@/components/ui/box';
 import { HeadingSmall } from '@/components/ui/heading';
 import { categoryModel } from '@/models';
-import Link from 'next/link';
 import { Eye } from '@/components/icons';
 
-const CategoryForm = dynamic(() => import('@/components/admin-panel/category/category-form'));
+const CategoryForm = dynamicImport(() => import('@/components/admin-panel/category/category-form'));
 
 export default async function Page({ searchParams }) {
     const slug = searchParams.slug;

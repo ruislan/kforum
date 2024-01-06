@@ -1,4 +1,6 @@
-import RegisterForm from '@/components/auth/register-form';
+import dynamicImport from 'next/dynamic';
+
+const RegisterForm = dynamicImport(() => import('@/components/auth/register-form'));
 
 export const metadata = {
   title: '注册'

@@ -1,4 +1,6 @@
-import SearchTabs from '@/components/search/search-tabs';
+import dynamicImport from 'next/dynamic';
+
+const SearchTabs = dynamicImport(() => import('@/components/search/search-tabs'));
 
 export async function generateMetadata({ params, searchParams }, parent) {
   return {

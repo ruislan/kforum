@@ -1,12 +1,12 @@
-import dynamic from 'next/dynamic';
+import dynamicImport from 'next/dynamic';
 import { notFound } from 'next/navigation';
 import { discussionModel } from '@/models';
 import Box from '@/components/ui/box';
 
-const DiscussionDetail = dynamic(() => import('@/components/discussion/discussion-detail'));
-const DiscussionStats = dynamic(() => import('@/components/discussion/discussion-detail-stats'));
-const CategoryBox = dynamic(() => import('@/components/category/category-box'));
-const ActionCreate = dynamic(() => import('@/components/discussion/action-create'));
+const DiscussionDetail = dynamicImport(() => import('@/components/discussion/discussion-detail'));
+const DiscussionStats = dynamicImport(() => import('@/components/discussion/discussion-detail-stats'));
+const CategoryBox = dynamicImport(() => import('@/components/category/category-box'));
+const ActionCreate = dynamicImport(() => import('@/components/discussion/action-create'));
 
 export async function generateMetadata({ params, searchParams }, parent) {
   return {

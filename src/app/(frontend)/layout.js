@@ -1,12 +1,16 @@
+import dynamicImport from 'next/dynamic';
+
 import { getServerSession } from 'next-auth';
 import { Toaster } from 'react-hot-toast';
 
 import authOptions from '@/lib/auth';
-import Header from '@/components/header/header';
 import Providers from '@/components/providers';
 import LoginModal from '@/components/auth/login-modal';
 import RegisterModal from '@/components/auth/register-modal';
-import Footer from '@/components/footer/footer';
+
+const Header = dynamicImport(() => import('@/components/header/header'));
+const Footer = dynamicImport(() => import('@/components/footer/footer'));
+
 
 export default async function Layout({ children }) {
   const session = await getServerSession(authOptions);

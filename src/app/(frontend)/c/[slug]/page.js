@@ -1,16 +1,16 @@
-import dynamic from 'next/dynamic';
+import dynamicImport from 'next/dynamic';
 
 import { categoryModel, discussionModel } from '@/models';
 import { notFound } from 'next/navigation';
 import Box from '@/components/ui/box';
 import { DISCUSSION_SORT } from '@/lib/constants';
 
-const SortPanel = dynamic(() => import('@/components/discussion/sort-panel'));
-const CategoryInfo = dynamic(() => import('@/components/category/category-info'));
-const DiscussionList = dynamic(() => import('@/components/discussion/discussion-list'));
-const CategoryBox = dynamic(() => import('@/components/category/category-box'));
-const ActionCreate = dynamic(() => import('@/components/discussion/action-create'));
-const ModeratorBox = dynamic(() => import('@/components/user/moderator-box'));
+const SortPanel = dynamicImport(() => import('@/components/discussion/sort-panel'));
+const CategoryInfo = dynamicImport(() => import('@/components/category/category-info'));
+const DiscussionList = dynamicImport(() => import('@/components/discussion/discussion-list'));
+const CategoryBox = dynamicImport(() => import('@/components/category/category-box'));
+const ActionCreate = dynamicImport(() => import('@/components/discussion/action-create'));
+const ModeratorBox = dynamicImport(() => import('@/components/user/moderator-box'));
 
 async function getCategory(slug) {
   return await categoryModel.getCategory({ slug, withStats: true });

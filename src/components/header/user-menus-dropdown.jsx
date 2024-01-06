@@ -17,7 +17,7 @@ export default function UserMenusDropdown({ user }) {
             { href: `/u/${user.name}`, label: '个人', icon: <UserIcon /> },
             { href: '/settings', label: '设置' },
         ];
-        if (user.isAdmin) {
+        if (user.isAdmin || user.isModerator) {
             items.push({ type: 'separator' });
             items.push({ href: '/admin-panel', label: '管理员' });
         }

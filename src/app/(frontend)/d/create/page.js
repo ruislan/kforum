@@ -1,8 +1,9 @@
-import dynamic from 'next/dynamic';
+import dynamicImport from 'next/dynamic';
+
 import { categoryModel } from '@/models';
 
-const DiscussionCreator = dynamic(() => import('@/components/discussion/discussion-creator'));
-const Suggests = dynamic(() => import('@/components/discussion/suggests'));
+const DiscussionCreator = dynamicImport(() => import('@/components/discussion/discussion-creator'));
+const Suggests = dynamicImport(() => import('@/components/discussion/suggests'));
 
 export async function generateMetadata({ params, searchParams }, parent) {
   return {

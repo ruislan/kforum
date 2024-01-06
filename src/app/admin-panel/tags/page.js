@@ -1,4 +1,5 @@
-import TagList from '@/components/admin-panel/tags/tag-list';
+import dynamicImport from 'next/dynamic';
+const TagList = dynamicImport(() => import('@/components/admin-panel/tags/tag-list'));
 
 export default async function Page() {
     return (

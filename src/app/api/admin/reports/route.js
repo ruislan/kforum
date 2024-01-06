@@ -5,9 +5,9 @@ import { reportModel } from '@/models';
 import _ from 'lodash';
 
 export async function GET(request, { params }) {
-    // require admin
+    // require admin or moderator
     const session = await getServerSession(authOptions);
-    if (!session?.user?.isAdmin) return rest.notFound();
+    if (!session?.user?.isAdmin && !session?.user?.isModerator) return rest.notFound();
 
     const { searchParams } = new URL(request.url);
     const page = Number(searchParams.get('page')) || 1;

@@ -4,9 +4,9 @@ import prisma from '@/lib/prisma';
 import rest from '@/lib/rest';
 
 export async function GET(request, { params }) {
-    // require admin
+    // require admin or moderator
     const session = await getServerSession(authOptions);
-    if (!session?.user?.isAdmin) return rest.notFound();
+    if (!session?.user?.isAdmin && !session?.user?.isModerator) return rest.notFound();
 
     const fetchStatsAdmins = prisma.user.count({ where: { isAdmin: true } });
     const fetchStatsUsers = prisma.user.count();

@@ -7,7 +7,7 @@ import { userModel } from '@/models';
 import Box from '@/components/ui/box';
 import { HeadingSmall } from '@/components/ui/heading';
 
-const SideNav = dynamicImport(() => import('@/components/settings/side-nav'));
+const SideNav = dynamicImport(() => import('@/components/ui/side-nav'));
 const GeneralForm = dynamicImport(() => import('@/components/settings/general-form'));
 const ProfileForm = dynamicImport(() => import('@/components/settings/profile-form'));
 const SecurityForm = dynamicImport(() => import('@/components/settings/security-form'));

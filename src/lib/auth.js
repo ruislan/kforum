@@ -25,6 +25,7 @@ const authOptions = {
                 token.id = user.id;
                 token.avatarUrl = user.avatarUrl;
                 token.isAdmin = user.isAdmin;
+                token.isModerator = user.isModerator;
             }
             if (trigger === 'update') {
                 if (session?.email) token.email = session.email;
@@ -38,7 +39,7 @@ const authOptions = {
             session.user.id = token.id;
             session.user.avatarUrl = token.avatarUrl;
             session.user.isAdmin = token.isAdmin;
-
+            session.user.isModerator = token.isModerator;
             return session;
         }
     },
