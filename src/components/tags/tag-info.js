@@ -21,7 +21,7 @@ export default async function TagInfo({ tag }) {
                     {tag.name}
                 </Tag>
                 <div className='ml-4 flex items-center text-gray-400 gap-6'>
-                    {session?.user?.isAdmin && (
+                    {(session?.user?.isAdmin || session?.user?.isModerator) && (
                         <Link
                             href={`/admin-panel/tags/${tag.id}`}
                             className='w-4 h-4 cursor-pointer text-gray-400 hover:text-gray-50 transition-all'
