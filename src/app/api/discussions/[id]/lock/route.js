@@ -6,7 +6,6 @@ import { ModelError, discussionModel } from '@/models';
 import logger from '@/lib/logger';
 
 export async function PUT(request, { params }) {
-    // require user
     const session = await getServerSession(authOptions);
     if (!session.user?.id || session.user?.isLocked) return rest.unauthorized();
 

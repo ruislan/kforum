@@ -31,7 +31,7 @@ export async function GET(request, { params }) {
 
 
 export async function PUT(request, { params }) {
-    // require user
+    // require user and not locked
     const session = await getServerSession(authOptions);
     if (!session.user?.id || session.user?.isLocked) return rest.unauthorized();
 

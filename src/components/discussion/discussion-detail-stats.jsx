@@ -12,7 +12,7 @@ export default function DiscussionStats({ discussion }) {
     const reaction = useMemo(() => maxBy(discussion.firstPost.reactions, 'count'), [discussion.firstPost.reactions]);
     return (
         <Box className='flex flex-col'>
-            <HeadingSmall>话题分析</HeadingSmall>
+            <HeadingSmall>关于话题</HeadingSmall>
             {/* trend ? */}
             {/* positive vs negative ? */}
             <div className='grid grid-cols-3 gap-2 mt-2'>

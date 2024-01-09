@@ -30,7 +30,7 @@ const postModel = {
         const isAdmin = user.isAdmin;
         const isModerator = user.isModerator;
         const isOwner = post.userId === user.id;
-        if (!isAdmin && !isOwner && !isModerator) return false;
+        if (!isAdmin && !isModerator && !isOwner) return false;
         return true;
     },
     async create({ user, content, text, discussionId, replyPostId, ip }) {

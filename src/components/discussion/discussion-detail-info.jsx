@@ -164,10 +164,6 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                                                 <>
                                                     {/* give discussion tags: admin, moderator, owner */}
                                                     <ActionTags discussion={discussion} onSelected={tags => { setTags(tags); discussion.tags = tags; }} />
-                                                    {/* let discussion stay top of the discussion list: admin, moderator */}
-                                                    {(isAdmin || isModerator) && <ActionSticky discussion={discussion} onSticky={(sticky) => { setIsSticky(sticky); discussion.isSticky = sticky; }} />}
-                                                    {/* lock all: admin, owner, moderator */}
-                                                    <ActionLock discussion={discussion} onLocked={handleLockClick}><Lock /></ActionLock>
                                                     {/* edit:owner, moderator, admin */}
                                                     <ActionButton onClick={() => setIsEditMode(true)}><Edit /></ActionButton>
                                                     {/* delete:owner, moderator, admin */}
@@ -176,6 +172,10 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                                                         post={firstPost}
                                                         onDeleted={() => router.replace('/')}
                                                     />
+                                                    {/* let discussion stay top of the discussion list: admin, moderator */}
+                                                    {(isAdmin || isModerator) && <ActionSticky discussion={discussion} onSticky={(sticky) => { setIsSticky(sticky); discussion.isSticky = sticky; }} />}
+                                                    {/* lock all: admin, owner, moderator */}
+                                                    <ActionLock discussion={discussion} onLocked={handleLockClick}><Lock /></ActionLock>
                                                 </>
                                             }
                                         </>

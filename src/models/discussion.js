@@ -13,6 +13,9 @@ const discussionModel = {
         DISCUSSION_NOT_FOUND: '请指定要更新的话题',
         NO_PERMISSION: '没有操作权限',
     },
+    actions: {
+        STICKY: 'sticky',
+    },
     async getDiscussions({
         // filter
         queryTitle = null, // 如果存在 queryTitle 则即是要进行模糊搜索
@@ -150,12 +153,16 @@ const discussionModel = {
         const result = postModel.validate({ text, content }); // validate post
         return result;
     },
-    checkPermission(user, discussion) {
+    checkPermission(user, discussion, action) {
         const isAdmin = user.isAdmin;
+        const isModerator = user.isModerator;
         const isOwner = discussion.userId === user.id;
-        // isModerator ...
-        if (!isAdmin && !isOwner) return false;
-        return true;
+        switch (action) {
+            case this.actions.STICKY:
+                return isAdmin || isModerator;
+            default:
+                return isAdmin || isModerator || isOwner;
+        }
     },
     async create({ user, title, text, content, categorySlug, tags: tagIds, ip }) {
         const localUser = { ...user };
@@ -223,6 +230,8 @@ const discussionModel = {
 
         return data;
     },
+    // 贴标签
+    // roles: admin, moderator, owner
     async tag({ user, id, tags: tagIds }) {
         const localUser = { ...user };
         const discussion = await prisma.discussion.findUnique({ where: { id } });
@@ -251,6 +260,8 @@ const discussionModel = {
             }
         });
     },
+    // 锁帖
+    // roles: admin, moderator, owner
     async lock({ user, discussionId, isLocked }) {
         const localUser = { ...user };
         const discussion = await prisma.discussion.findUnique({ where: { id: discussionId } });
@@ -259,11 +270,13 @@ const discussionModel = {
 
         await prisma.discussion.update({ where: { id: discussionId }, data: { isLocked } });
     },
+    // 置顶
+    // roles: admin, moderator
     async sticky({ user, discussionId, isSticky }) {
         const localUser = { ...user };
         const discussion = await prisma.discussion.findUnique({ where: { id: discussionId } });
         if (!discussion) throw new ModelError(this.errors.DISCUSSION_NOT_FOUND);
-        if (!this.checkPermission(localUser, discussion)) throw new ModelError(this.errors.NO_PERMISSION);
+        if (!this.checkPermission(localUser, discussion, this.actions.STICKY)) throw new ModelError(this.errors.NO_PERMISSION);
 
         await prisma.discussion.update({ where: { id: discussionId }, data: { isSticky } });
     },

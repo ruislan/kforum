@@ -1,9 +1,9 @@
 import { getServerSession } from 'next-auth';
+import _ from 'lodash';
 
 import rest from '@/lib/rest';
 import authOptions from '@/lib/auth';
 import { ModelError, discussionModel } from '@/models';
-import _ from 'lodash';
 import logger from '@/lib/logger';
 import { DISCUSSION_SORT } from '@/lib/constants';
 

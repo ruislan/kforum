@@ -6,6 +6,7 @@ import Box from '@/components/ui/box';
 const DiscussionDetail = dynamicImport(() => import('@/components/discussion/discussion-detail'));
 const DiscussionStats = dynamicImport(() => import('@/components/discussion/discussion-detail-stats'));
 const CategoryBox = dynamicImport(() => import('@/components/category/category-box'));
+const ModeratorBox = dynamicImport(() => import('@/components/user/moderator-box'));
 const ActionCreate = dynamicImport(() => import('@/components/discussion/action-create'));
 
 export async function generateMetadata({ params, searchParams }, parent) {
@@ -32,6 +33,7 @@ export default async function Page({ params }) {
         <DiscussionStats discussion={d} />
         <Box className='flex flex-col gap-3'><ActionCreate /></Box>
         <CategoryBox />
+        <ModeratorBox />
       </div>
     </div>
   )

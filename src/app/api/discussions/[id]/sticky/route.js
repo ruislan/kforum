@@ -5,10 +5,8 @@ import { ModelError, discussionModel } from '@/models';
 import logger from '@/lib/logger';
 
 export async function PUT(request, { params }) {
-    // require admin & moderator
     const session = await getServerSession(authOptions);
     if (!session.user?.id || session.user?.isLocked) return rest.unauthorized();
-    if (!session.user?.isAdmin) return rest.badRequest({ message: '没有权限' });
 
     const discussionId = Number(params.id) || 0;
     const { isSticky } = await request.json();
