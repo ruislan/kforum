@@ -28,9 +28,9 @@ const postModel = {
     },
     checkPermission(user, post) {
         const isAdmin = user.isAdmin;
+        const isModerator = user.isModerator;
         const isOwner = post.userId === user.id;
-        // isModerator ...
-        if (!isAdmin && !isOwner) return false;
+        if (!isAdmin && !isOwner && !isModerator) return false;
         return true;
     },
     async create({ user, content, text, discussionId, replyPostId, ip }) {

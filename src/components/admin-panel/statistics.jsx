@@ -48,6 +48,7 @@ export default function Statistics() {
                     <Spinner size='sm' tight /> :
                     <>
                         <Stats name='管理员' value={stats.admins || '-'} />
+                        <Stats name='版主' value={stats.moderators || '-'} />
                         <Stats name='用户' value={stats.users || '-'} />
                         <Stats name='话题' value={stats.discussions || '-'} />
                         <Stats name='帖子' value={stats.posts || '-'} />

@@ -14,7 +14,7 @@ import ActionButton from '../ui/action-button';
 import ReactionGroup from '../ui/reaction-group';
 import NoContent from '../ui/no-content';
 import Button from '../ui/button';
-import { Link as LinkIcon, Flag, Markup, Edit, DeleteBin, Reply, ArrowDownS, ArrowUpS, LoadingIcon, MoreIcon } from '../icons';
+import { Edit, ArrowDownS, ArrowUpS, MoreIcon } from '../icons';
 import ActionDelete from './action-delete';
 import ActionReact from './action-react';
 import ActionReply from './action-reply';
@@ -67,6 +67,7 @@ function PostItem({ isDiscussionLocked, item, onReplyClick }) {
     const isAuthenticated = status === 'authenticated';
     const isOwner = isAuthenticated && data.user.id === item.user.id;
     const isAdmin = isAuthenticated && data.user.isAdmin;
+    const isModerator = isAuthenticated && data.user.isModerator;
     const [post, setPost] = useState(item);
     const [reactions, setReactions] = useState(item.reactions || []);
     const [isDeleted, setIsDeleted] = useState(false);
@@ -134,15 +135,12 @@ function PostItem({ isDiscussionLocked, item, onReplyClick }) {
                                                 {/* <ActionButton><LinkIcon /></ActionButton> */}
                                                 {/* save to bookmark */}
                                                 {/* <ActionButton><Bookmark /></ActionButton><ActionButton><UnBookmark /></ActionButton> */}
-                                                {/* report: owner, moderator and the user who has reported don't show this flag icon */}
                                                 {/* hide */}
                                                 {/* <ActionButton><EyeOff /></ActionButton> */}
                                             </>}
-                                            {/* report: owner, moderator and the user who has reported don't show this flag icon */}
-                                            {/* <ActionButton><Flag /></ActionButton> */}
                                             {/* define this port: owner, moderator. multi choose, items: spoiler(剧透)，NSFW(少儿不宜)，fake（假的），approved（实锤），spam（水贴）, OC（原创）, official（官方）*/}
                                             {/* <ActionButton><Markup /></ActionButton> */}
-                                            {(isOwner || isAdmin) &&
+                                            {(isOwner || isAdmin || isModerator) &&
                                                 <>
                                                     {/* edit:owner, moderator */}
                                                     <ActionButton onClick={() => setIsEditMode(true)}><Edit /></ActionButton>

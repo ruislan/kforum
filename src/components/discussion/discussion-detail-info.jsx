@@ -49,6 +49,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
     const isAuthenticated = status === 'authenticated';
     const isOwner = isAuthenticated && data.user.id === discussion?.user.id;
     const isAdmin = isAuthenticated && data.user.isAdmin;
+    const isModerator = isAuthenticated && data.user.isModerator;
     const c = discussion.category;
 
     const handleUserReacted = async ({ reaction, isReacted }) => {
@@ -159,12 +160,12 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                                                 {/* hide */}
                                                 {/* <ActionButton><EyeOff /></ActionButton> */}
                                             </>}
-                                            {(isOwner || isAdmin) &&
+                                            {(isOwner || isAdmin || isModerator) &&
                                                 <>
                                                     {/* give discussion tags: admin, moderator, owner */}
                                                     <ActionTags discussion={discussion} onSelected={tags => { setTags(tags); discussion.tags = tags; }} />
                                                     {/* let discussion stay top of the discussion list: admin, moderator */}
-                                                    {isAdmin && <ActionSticky discussion={discussion} onSticky={(sticky) => { setIsSticky(sticky); discussion.isSticky = sticky; }} />}
+                                                    {(isAdmin || isModerator) && <ActionSticky discussion={discussion} onSticky={(sticky) => { setIsSticky(sticky); discussion.isSticky = sticky; }} />}
                                                     {/* lock all: admin, owner, moderator */}
                                                     <ActionLock discussion={discussion} onLocked={handleLockClick}><Lock /></ActionLock>
                                                     {/* edit:owner, moderator, admin */}
