@@ -18,18 +18,18 @@
     "seed": "node prisma/seed.mjs"
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.17",
-    "@prisma/client": "^5.7.1",
-    "@tiptap/extension-color": "^2.1.13",
-    "@tiptap/extension-image": "^2.1.13",
-    "@tiptap/extension-link": "^2.1.13",
-    "@tiptap/extension-list-item": "^2.1.13",
-    "@tiptap/extension-text-style": "^2.1.13",
-    "@tiptap/extension-underline": "^2.1.13",
-    "@tiptap/html": "^2.1.13",
-    "@tiptap/pm": "^2.1.13",
-    "@tiptap/react": "^2.1.13",
-    "@tiptap/starter-kit": "^2.1.13",
+    "@headlessui/react": "^1.7.18",
+    "@prisma/client": "^5.8.0",
+    "@tiptap/extension-color": "^2.1.15",
+    "@tiptap/extension-image": "^2.1.15",
+    "@tiptap/extension-link": "^2.1.15",
+    "@tiptap/extension-list-item": "^2.1.15",
+    "@tiptap/extension-text-style": "^2.1.15",
+    "@tiptap/extension-underline": "^2.1.15",
+    "@tiptap/html": "^2.1.15",
+    "@tiptap/pm": "^2.1.15",
+    "@tiptap/react": "^2.1.15",
+    "@tiptap/starter-kit": "^2.1.15",
     "autoprefixer": "10.4.15",
     "bcrypt": "^5.1.1",
     "clsx": "^2.1.0",
@@ -51,6 +51,6 @@
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",
     "casual": "^1.6.2",
-    "prisma": "^5.7.1"
+    "prisma": "^5.8.0"
   }
 }
