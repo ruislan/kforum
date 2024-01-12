@@ -177,7 +177,7 @@ export default function PostList({ isDiscussionLocked, isLoading, posts, hasMore
                 </Box>
             }
             {isLoading && <Spinner center />}
-            {hasMore && (
+            {hasMore && !isLoading && (
                 <div className='self-center py-2'>
                     <Button kind='ghost' disabled={isLoading} onClick={onMoreClick}>查看更多</Button>
                 </div>

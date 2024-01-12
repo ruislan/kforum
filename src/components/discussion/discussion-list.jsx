@@ -51,7 +51,7 @@ export default function DiscussionList({
         <div className='flex flex-col gap-2'>
             {dataList.map((d, i) => <DiscussionListItem key={i} discussion={d} />)}
             {isLoading && <div className='flex justify-center mt-4'><LoadingIcon className='w-8 h-8' /></div>}
-            {hasMore && (
+            {hasMore && !isLoading && (
                 <div className='self-center py-2'>
                     <Button kind='ghost' disabled={isLoading} onClick={() => setPage(prev => prev + 1)}>查看更多</Button>
                 </div>

@@ -115,7 +115,7 @@ export default function PostsSearch({ query }) {
                     <Spinner center /> :
                     (dataList.length === 0 && <NoContent text='没有搜索到结果，换个词试试？' />)
             }
-            {hasMore && (
+            {hasMore && !isLoading && (
                 <div className='self-center py-2'>
                     <Button kind='ghost' onClick={() => setPage(prev => prev + 1)}>查看更多</Button>
                 </div>

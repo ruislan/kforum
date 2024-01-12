@@ -115,7 +115,23 @@ async function initDev() {
 }
 
 // 用于生成一个中型活跃论坛的数据
-// 注册用户在数万-数十万，每日发帖数在数百，一年在数十万贴左右
+// 一些不错的论坛的数据
+// discourse meta
+//        24 小时 7 天 30 天 所有时间
+// 话题    19 88 476 48.4k
+// 帖子    619 2.3k 14.4k 1.3M
+// 注册    60 193 929 73.9k
+// 活跃用户 558 1.1k 2.2k —
+// 赞      504 1.7k 9.1k 1.4M
+// ruby - china
+// 会员数：56029 个
+// 话题数：39211 篇
+// 回帖数：377305 条
+// 测试之家
+// 社区会员: 81347 人
+// 帖子数: 36005 个
+// 回帖数: 235207 条
+//
 // Mac i9 16G 386.178s
 async function initFaker() {
     console.log('开始进行faker数据填充，这会会花费一些时间：');
@@ -144,7 +160,7 @@ async function initFaker() {
     await db.user.createMany({ data: users });
     console.log(`已完成初始化 ${userCount} 个用户`);
 
-    // 1000 个用户，每个生成 20 个话题，共20000个话题
+    // 1000 个用户，每个生成 20 个话题，共30000个话题
     let userLimit = 1000;
     let totalDiscussion = 20_000;
     let dIds = _.shuffle(_.range(1, 20001, 1));

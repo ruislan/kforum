@@ -246,7 +246,7 @@ export default function ReportList({ filter }) {
                 {!isLoading && dataList.length === 0 && <NoContent noWrap text='没有数据' />}
             </div>
             {isLoading && <Spinner className='self-center' />}
-            {hasMore && (
+            {hasMore && !isLoading && (
                 <div className='self-center py-2'>
                     <Button kind='ghost' disabled={isLoading} onClick={() => setPage(prev => prev + 1)}>查看更多</Button>
                 </div>

@@ -22,7 +22,7 @@ export default async function ModeratorBox() {
             {
                 moderators.length === 0 ?
                     <div className='text-sm text-gray-500'>暂无版主</div> :
-                    <div className='flex flex-col gap-1'>
+                    <div className='flex flex-col gap-2'>
                         {moderators.map((u, index) => (
                             <div key={index} className='flex items-center gap-2'>
                                 <div className='flex justify-center items-center'>

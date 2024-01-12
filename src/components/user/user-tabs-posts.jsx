@@ -99,7 +99,7 @@ export default function UserTabsPosts({ user }) {
                 </Box>
             ))}
             {isLoading && <Spinner center />}
-            {hasMore && (
+            {hasMore && !isLoading && (
                 <div className='self-center py-2'>
                     <Button kind='ghost' onClick={() => setPage(prev => prev + 1)}>查看更多</Button>
                 </div>
