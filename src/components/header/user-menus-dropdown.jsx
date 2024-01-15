@@ -38,7 +38,7 @@ export default function UserMenusDropdown({ user }) {
     return (
         <Menu as='div' className='relative inline-flex text-left'>
             <Menu.Button className='flex justify-end gap-1.5 items-center py-0.5 px-1 rounded hover:bg-neutral-700'>
-                <span className='text-base text-neutral-200'>{user?.name}</span>
+                <span className='hidden md:block text-base text-neutral-200'>{user?.name}</span>
                 <UserAvatar
                     name={user.name}
                     avatar={user.avatarUrl}

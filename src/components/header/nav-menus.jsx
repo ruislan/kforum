@@ -11,7 +11,7 @@ export default function NavMenus({ menus }) {
     const pathname = usePathname() || '/';
 
     return (
-        <div className='flex items-center gap-4 overflow-hidden max-w-xs py-1 h-full'>
+        <div className='hidden md:flex items-center gap-4 overflow-hidden max-w-xs py-1 h-full'>
             {menus.map(({ url, name, isTargetBlank }) => (
                 <Link
                     key={url}

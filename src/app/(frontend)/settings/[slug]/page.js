@@ -27,9 +27,9 @@ export default async function Page({ params }) {
   if (!user) redirect('/');
 
   return (
-    <div className='flex w-full min-h-screen gap-6'>
+    <div className='flex md:flex-row flex-col w-full min-h-screen gap-6'>
       {/* left side menus */}
-      <div className='flex flex-col w-80 gap-4'>
+      <div className='flex flex-col md:w-80 w-full gap-4'>
         <SideNav menus={[
           { label: '基本', path: '/settings/general' },
           { label: '个性化', path: '/settings/profile' },
@@ -37,7 +37,7 @@ export default async function Page({ params }) {
         ]} />
       </div>
       {/* main container*/}
-      <div className='flex flex-col flex-1'>
+      <div className='flex flex-col md:flex-1'>
         {params.slug === 'general' && (
           <Box className='flex flex-col'>
             <HeadingSmall>账号信息</HeadingSmall>

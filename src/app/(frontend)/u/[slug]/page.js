@@ -17,9 +17,9 @@ export default async function Page({ params, searchParams }) {
   if (!user) notFound();
 
   return (
-    <div className='flex w-full h-full gap-6'>
+    <div className='flex md:flex-row flex-col w-full h-full gap-6'>
       {/* main container*/}
-      <div className='flex flex-col flex-1'>
+      <div className='flex flex-col flex-1 order-2 md:order-1'>
         {/* user tabs
             1. overview(activities) v3
             2. discussions v1
@@ -31,7 +31,7 @@ export default async function Page({ params, searchParams }) {
         <UserTabs user={user} tab={searchParams.tab} />
       </div>
       {/* right side */}
-      <div className='flex flex-col w-80 gap-4'>
+      <div className='flex flex-col md:w-80 w-full order-1 md:order-2 gap-4'>
         {/* user info card v1 */}
         <UserInfo user={user} />
       </div>

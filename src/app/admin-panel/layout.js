@@ -37,9 +37,9 @@ export default async function Layout({ children }) {
   return (
     <Providers session={session}>
       <Header />
-      <div className='mx-auto max-w-5xl flex md:pt-12 md:pl-0 md:pr-0 pl-4 pr-4'>
-        <div className='flex my-5 min-h-screen w-full gap-6'>
-          <div className='flex flex-col w-64 gap-4'>
+      <div className='mx-auto max-w-5xl flex pt-12 md:pl-0 md:pr-0 pl-4 pr-4'>
+        <div className='flex md:flex-row flex-col my-5 min-h-screen w-full gap-6'>
+          <div className='flex flex-col md:w-64 w-full gap-4'>
             <SideNav menus={menus} />
           </div>
           <div className='flex flex-col flex-1'>

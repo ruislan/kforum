@@ -23,21 +23,21 @@ export default function SearchTabs() {
     const query = searchParams.get('q') || '';
 
     return (
-        <div className='flex w-full h-full gap-6'>
-            <div className='flex flex-col flex-1'>
+        <div className='flex md:flex-row flex-col w-full h-full gap-6'>
+            <div className='flex flex-col md:flex-1 order-2 md:order-1'>
                 {type === 'default' && <DiscussionsSearch query={query} />}
                 {type === 'posts' && <PostsSearch query={query} />}
                 {type === 'users' && <UsersSearch query={query} />}
             </div>
-            <div className='flex flex-col w-80'>
-                <Box className='flex flex-col'>
-                    <div className='flex flex-col gap-1'>
+            <div className='flex flex-col md:w-80 w-full order-1 md:order-2'>
+                <Box className='flex md:flex-col flex-row'>
+                    <div className='flex md:flex-col flex-row gap-1'>
                         {tabs.map((tab, index) => {
                             const isChecked = tab.value === type;
                             return (<div
                                 key={index}
                                 className={clsx(
-                                    'flex items-center justify-between p-2',
+                                    'flex items-center md:justify-between gap-1 p-2',
                                     'rounded text-sm font-semibold cursor-pointer ',
                                     isChecked ? 'bg-neutral-700 text-gray-200' : 'hover:bg-neutral-700 text-gray-400'
                                 )}

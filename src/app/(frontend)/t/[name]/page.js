@@ -37,7 +37,7 @@ export default async function Page({ params, searchParams }) {
     const sort = searchParams.sort || DISCUSSION_SORT[0];
     const { discussions, hasMore } = await getDiscussions(tag.id, sort);
     return (
-        <div className='flex w-full h-full gap-6'>
+        <div className='flex md:flex-row flex-col w-full h-full gap-6'>
             {/* main container*/}
             <div className='flex flex-col flex-1'>
                 <SortPanel />
@@ -48,7 +48,7 @@ export default async function Page({ params, searchParams }) {
                 />
             </div>
             {/* right side */}
-            <div className='flex flex-col w-80 gap-4'>
+            <div className='flex flex-col md:w-80 w-full gap-4'>
                 <TagInfo tag={tag} />
                 <Box className='flex flex-col gap-3'><ActionCreate /></Box>
                 <CategoryBox />

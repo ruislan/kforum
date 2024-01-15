@@ -23,13 +23,13 @@ export default async function Page({ params }) {
   await discussionModel.incrementView({ id: d.id });
 
   return (
-    <div className='flex w-full h-full gap-6'>
+    <div className='flex md:flex-row flex-col w-full h-full gap-6'>
       {/* main container */}
-      <div className='flex flex-col flex-1 gap-2'>
+      <div className='flex flex-col md:flex-1 gap-2'>
         <DiscussionDetail discussion={d} />
       </div>
       {/* right side */}
-      <div className='flex flex-col w-80 gap-4'>
+      <div className='flex flex-col md:w-80 w-full gap-4'>
         <DiscussionStats discussion={d} />
         <Box className='flex flex-col gap-3'><ActionCreate /></Box>
         <CategoryBox />

@@ -74,9 +74,9 @@ export default function Search() {
             onBlur={() => setIsFocus(false)}>
             <div
                 className={clsx(
-                    'flex items-center text-sm focus:outline-none',
+                    'flex items-center text-sm focus:outline-none transition-all',
                     'bg-neutral-800 p-2 border border-solid border-neutral-700',
-                    'rounded-md focus-within:border-neutral-400 sm:w-72'
+                    'rounded-md focus-within:border-neutral-400 w-32 sm:w-72'
                 )}
             >
                 <span className='h-4 w-4 min-w-[16px] mr-2'><SearchIcon /></span>

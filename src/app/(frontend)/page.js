@@ -27,7 +27,7 @@ export default async function Home({ searchParams }) {
   const { discussions, hasMore } = await getDiscussions(sort);
 
   return (
-    <div className='flex w-full h-full gap-6'>
+    <div className='flex md:flex-row flex-col w-full h-full gap-6'>
       <div className='flex flex-col flex-1'>
         <SortPanel />
         <DiscussionList
@@ -36,7 +36,7 @@ export default async function Home({ searchParams }) {
           categoryId={null}
         />
       </div>
-      <div className='flex flex-col w-80 gap-4'>
+      <div className='flex flex-col md:w-80 w-full gap-4'>
         <About />
         <Box className='flex flex-col gap-3'><ActionCreate category={null} /></Box>
         <CategoryBox />
