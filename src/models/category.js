@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import prisma from '@/lib/prisma';
 import ModelError from './model-error';
 
