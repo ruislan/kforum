@@ -8,6 +8,7 @@ const DiscussionStats = dynamicImport(() => import('@/components/discussion/disc
 const CategoryBox = dynamicImport(() => import('@/components/category/category-box'));
 const ModeratorBox = dynamicImport(() => import('@/components/user/moderator-box'));
 const ActionCreate = dynamicImport(() => import('@/components/discussion/action-create'));
+const BackToTop = dynamicImport(() => import('@/components/ui/back-to-top'));
 
 export async function generateMetadata({ params, searchParams }, parent) {
   return {
@@ -34,6 +35,7 @@ export default async function Page({ params }) {
         <Box className='flex flex-col gap-3'><ActionCreate /></Box>
         <CategoryBox />
         <ModeratorBox />
+        <BackToTop />
       </div>
     </div>
   )

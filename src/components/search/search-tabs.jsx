@@ -1,14 +1,13 @@
 'use client';
 
-
+import clsx from 'clsx';
 import { useRouter, useSearchParams } from 'next/navigation';
 import DiscussionsSearch from './discussions-search';
 import PostsSearch from './posts-search';
 import UsersSearch from './users-search';
+import BackToTop from '../ui/back-to-top';
 import { CheckIcon } from '../icons';
-import { HeadingSmall } from '../ui/heading';
 import Box from '../ui/box';
-import clsx from 'clsx';
 
 const tabs = [
     { value: 'default', name: '话题' },
@@ -54,6 +53,8 @@ export default function SearchTabs() {
                         })}
                     </div>
                 </Box>
+
+                <BackToTop />
             </div>
         </div>
     );

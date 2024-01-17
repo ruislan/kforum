@@ -10,6 +10,7 @@ const CategoryBox = dynamicImport(() => import('@/components/category/category-b
 const ActionCreate = dynamicImport(() => import('@/components/discussion/action-create'));
 const SortPanel = dynamicImport(() => import('@/components/discussion/sort-panel'));
 const ModeratorBox = dynamicImport(() => import('@/components/user/moderator-box'));
+const BackToTop = dynamicImport(() => import('@/components/ui/back-to-top'));
 
 async function getDiscussions(sort) {
   return await discussionModel.getDiscussions({
@@ -41,6 +42,7 @@ export default async function Home({ searchParams }) {
         <Box className='flex flex-col gap-3'><ActionCreate category={null} /></Box>
         <CategoryBox />
         <ModeratorBox />
+        <BackToTop />
       </div>
     </div>
   )

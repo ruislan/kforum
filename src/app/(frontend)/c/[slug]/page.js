@@ -11,6 +11,7 @@ const DiscussionList = dynamicImport(() => import('@/components/discussion/discu
 const CategoryBox = dynamicImport(() => import('@/components/category/category-box'));
 const ActionCreate = dynamicImport(() => import('@/components/discussion/action-create'));
 const ModeratorBox = dynamicImport(() => import('@/components/user/moderator-box'));
+const BackToTop = dynamicImport(() => import('@/components/ui/back-to-top'));
 
 async function getCategory(slug) {
   return await categoryModel.getCategory({ slug, withStats: true });
@@ -53,6 +54,7 @@ export default async function Page({ params, searchParams }) {
         <Box className='flex flex-col gap-3'><ActionCreate category={category} /></Box>
         <CategoryBox />
         <ModeratorBox />
+        <BackToTop />
       </div>
     </div>
   )

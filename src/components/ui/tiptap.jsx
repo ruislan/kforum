@@ -193,7 +193,7 @@ function LinkActionButton({ editor }) {
   const handleClose = async () => {
     resetFields();
     setShow(false);
-    setTimeout(() => editor.commands.focus(), 500); // wait 1s for editor rendering
+    setTimeout(() => editor.commands.focus(), 500); // wait 500ms for editor rendering
   }
 
   const handleOk = async () => {
@@ -280,8 +280,8 @@ function ActionButton({ isActive, onClick, ...rest }) {
 function MenuBar({ editor, endActionEnhancer }) {
   if (!editor) return null;
   return (
-    <div className='flex items-center justify-between px-2 pb-2'>
-      <div className='flex items-center'>
+    <div className='flex items-center justify-between p-2 border-t border-neutral-700'>
+      <div className='flex items-center flex-wrap'>
         <ActionButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editor.can().chain().focus().toggleBold().run()}
