@@ -6,7 +6,7 @@ import Box from '../ui/box';
 import Button from '../ui/button';
 import { HeadingSmall } from '../ui/heading';
 import Spinner from '../ui/spinner';
-import { DeleteBin } from '../icons';
+import { DeleteBinIcon } from '../icons';
 import Input from '../ui/input';
 
 export default function NavMenus() {
@@ -109,7 +109,7 @@ export default function NavMenus() {
                             onClick={() => handleDeleteClick(item)}
                         >
                             <span className='w-4 h-4 text-gray-400'>
-                                <DeleteBin />
+                                <DeleteBinIcon />
                             </span>
                         </Button>
                     </div>

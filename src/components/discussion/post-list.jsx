@@ -14,7 +14,7 @@ import ActionButton from '../ui/action-button';
 import ReactionGroup from '../ui/reaction-group';
 import NoContent from '../ui/no-content';
 import Button from '../ui/button';
-import { Edit, ArrowDownS, ArrowUpS, MoreIcon } from '../icons';
+import { EditIcon, ArrowDownSIcon, ArrowUpSIcon, MoreIcon } from '../icons';
 import ActionDelete from './action-delete';
 import ActionReact from './action-react';
 import ActionReply from './action-reply';
@@ -47,7 +47,7 @@ function PostReplyContent({ replyPost }) {
                         <span className='w-4 h-4 cursor-pointer' onClick={e => {
                             e.preventDefault();
                             toggleExpend();
-                        }}>{expend ? <ArrowUpS /> : <ArrowDownS />}</span>
+                        }}>{expend ? <ArrowUpSIcon /> : <ArrowDownSIcon />}</span>
                     </div>}
                 </div>
                 <div className={expend ? '' : 'max-h-[64px] overflow-hidden'}>
@@ -134,16 +134,16 @@ function PostItem({ isDiscussionLocked, item, onReplyClick }) {
                                                 {/* copy url to share  */}
                                                 {/* <ActionButton><LinkIcon /></ActionButton> */}
                                                 {/* save to bookmark */}
-                                                {/* <ActionButton><Bookmark /></ActionButton><ActionButton><UnBookmark /></ActionButton> */}
+                                                {/* <ActionButton><BookmarkIcon /></ActionButton><ActionButton><UnBookmarkIcon /></ActionButton> */}
                                                 {/* hide */}
                                                 {/* <ActionButton><EyeOff /></ActionButton> */}
                                             </>}
                                             {/* define this port: owner, moderator. multi choose, items: spoiler(剧透)，NSFW(少儿不宜)，fake（假的），approved（实锤），spam（水贴）, OC（原创）, official（官方）*/}
-                                            {/* <ActionButton><Markup /></ActionButton> */}
+                                            {/* <ActionButton><MarkupIcon /></ActionButton> */}
                                             {(isOwner || isAdmin || isModerator) &&
                                                 <>
                                                     {/* edit:owner, moderator */}
-                                                    <ActionButton onClick={() => setIsEditMode(true)}><Edit /></ActionButton>
+                                                    <ActionButton onClick={() => setIsEditMode(true)}><EditIcon /></ActionButton>
                                                     {/* delete:owner, moderator */}
                                                     <ActionDelete post={post} onDeleted={() => setIsDeleted(true)} />
                                                 </>

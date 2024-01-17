@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 
 import { runIfFn } from '@/lib/fn';
 
-import { LoadingIcon, Pin, Pined } from '../icons';
+import { LoadingIcon, PinIcon, PinedIcon } from '../icons';
 import ActionButton from '../ui/action-button';
 
 export default function ActionSticky({ discussion, onSticky }) {
@@ -49,7 +49,7 @@ export default function ActionSticky({ discussion, onSticky }) {
         }}>
             {isLoading ?
                 <LoadingIcon /> :
-                (isSticky ? <Pined /> : <Pin />)
+                (isSticky ? <PinedIcon /> : <PinIcon />)
             }
         </ActionButton>
     );

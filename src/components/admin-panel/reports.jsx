@@ -12,7 +12,7 @@ import Spinner from '@/components/ui/spinner';
 import Button from '@/components/ui/button';
 import NoContent from '@/components/ui/no-content';
 import SplitBall from '@/components/ui/split-ball';
-import { Locked, Pined } from '@/components/icons';
+import { LockedIcon, PinedIcon } from '@/components/icons';
 import ProseContent from '@/components/ui/prose-content';
 import UserAvatar from '@/components/ui/user-avatar';
 import { REPORT_FILTERS, REPORT_TYPES } from '@/lib/constants';
@@ -158,8 +158,8 @@ export default function ReportList({ filter }) {
                             <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                             <span className='text-xs text-gray-400' suppressHydrationWarning>{dateUtils.fromNow(item.discussion.createdAt)}</span>
                             <span className='ml-1' />
-                            {item.discussion.isSticky && (<span className='h-4 w-4 ml-1.5 text-green-400'><Pined /></span>)}
-                            {item.discussion.isLocked && (<span className='h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}
+                            {item.discussion.isSticky && (<span className='h-4 w-4 ml-1.5 text-green-400'><PinedIcon /></span>)}
+                            {item.discussion.isLocked && (<span className='h-3.5 w-3.5 ml-0.5 text-yellow-400'><LockedIcon /></span>)}
                         </div>
                         <div className='relative mb-1'>
                             <Link href={`/d/${item.discussion.id}`} className='inline text-gray-50 text-lg font-bold break-words'>

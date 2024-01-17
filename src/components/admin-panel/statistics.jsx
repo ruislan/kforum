@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Box from '../ui/box';
 import Stats from '../ui/stats';
 import Spinner from '../ui/spinner';
-import { Refresh } from '../icons';
+import { RefreshIcon } from '../icons';
 import { HeadingSmall } from '../ui/heading';
 
 export default function Statistics() {
@@ -40,7 +40,7 @@ export default function Statistics() {
                     if (isLoading) return;
                     fetchStats();
                 }}>
-                    <Refresh />
+                    <RefreshIcon />
                 </span>
             </div>
             <div className='flex items-center flex-wrap gap-4'>

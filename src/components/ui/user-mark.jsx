@@ -1,6 +1,6 @@
 'use client';
 
-import { Locked, ModeratorFilledIcon, AdminFilledIcon } from '../icons';
+import { LockedIcon, ModeratorFilledIcon, AdminFilledIcon } from '../icons';
 import Tooltip from './tooltip';
 
 
@@ -40,7 +40,7 @@ export default function UserMark({
                     </div>
                 }>
                     <span className='h-3.5 w-3.5 text-orange-400'>
-                        <Locked />
+                        <LockedIcon />
                     </span>
                 </Tooltip>
             )}

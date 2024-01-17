@@ -13,7 +13,7 @@ import SplitBall from '../ui/split-ball';
 import ProseContent from '../ui/prose-content';
 import Spinner from '../ui/spinner';
 
-import { Locked, Pined } from '../icons';
+import { LockedIcon, PinedIcon } from '../icons';
 
 // 只列出用户的回帖（非话题首贴）
 export default function UserTabsPosts({ user }) {
@@ -70,8 +70,8 @@ export default function UserTabsPosts({ user }) {
                     <div className='inline p-2 border-b border-neutral-700'>
                         <span className='inline-block align-middle text-xs text-gray-400 mr-1.5 mt-0.5'>话题</span>
                         <Link href={`/d/${discussion.id}`} className='inline align-middle hover:underline underline-offset-2 cursor-pointer'>{discussion.title}</Link>
-                        {discussion.isSticky && (<span className='inline-block align-middle h-4 w-4 ml-1.5 text-green-400'><Pined /></span>)}
-                        {discussion.isLocked && (<span className='inline-block align-middle h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}
+                        {discussion.isSticky && (<span className='inline-block align-middle h-4 w-4 ml-1.5 text-green-400'><PinedIcon /></span>)}
+                        {discussion.isLocked && (<span className='inline-block align-middle h-3.5 w-3.5 ml-0.5 text-yellow-400'><LockedIcon /></span>)}
                         <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />
                         <Link href={`/c/${discussion.category.slug}`} className='inline-block align-middle text-xs text-gray-200 hover:underline underline-offset-2 cursor-pointer'>c/{discussion.category.name}</Link>
                         <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />

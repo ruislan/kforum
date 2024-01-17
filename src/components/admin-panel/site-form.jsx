@@ -8,7 +8,7 @@ import CryptoJS from 'crypto-js';
 import Input from '../ui/input';
 import Button from '../ui/button';
 import FormControl from '../ui/form-control';
-import { Image as ImageIcon, DeleteBin } from '../icons';
+import { ImageIcon, DeleteBinIcon } from '../icons';
 import { runIfFn } from '@/lib/fn';
 import { SITE_SETTING_TYPES } from '@/lib/constants';
 
@@ -119,7 +119,7 @@ function ImageType({ value, onDeleted, onUploaded }) {
                         runIfFn(onDeleted);
                     }}
                 >
-                    <span className='w-4 h-4'><DeleteBin /></span>
+                    <span className='w-4 h-4'><DeleteBinIcon /></span>
                 </div>
             </div>
         </div>

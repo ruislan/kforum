@@ -8,7 +8,7 @@ import { Dialog, Transition } from '@headlessui/react';
 
 import useLoginModal from '@/hooks/use-login-modal';
 
-import { CheckIcon, Close, Flag } from '../icons';
+import { CheckIcon, CloseIcon, FlagIcon } from '../icons';
 import ActionButton from '../ui/action-button';
 import Button from '../ui/button';
 import Textarea from '../ui/textarea';
@@ -98,7 +98,7 @@ export default function ActionReport({ post }) {
                 e.preventDefault();
                 handleClick();
             }}>
-                <Flag />
+                <FlagIcon />
             </ActionButton>
             <Transition appear show={show} as={Fragment}>
                 <Dialog as='div' className='relative z-50' onClose={handleClose}>
@@ -127,7 +127,7 @@ export default function ActionReport({ post }) {
                                 <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-lg bg-neutral-800 text-left align-middle shadow-xl transition-all'>
                                     <div className='flex justify-end pt-4 pl-4 pr-4'>
                                         <Button size='sm' kind='ghost' shape='circle' onClick={handleClose}>
-                                            <Close />
+                                            <CloseIcon />
                                         </Button>
                                     </div>
                                     <Dialog.Title as='h3' className='text-2xl font-bold pl-8 pr-8 mb-4'>举报</Dialog.Title>

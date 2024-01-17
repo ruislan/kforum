@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 
 import Button from './ui/button';
-import { Close } from './icons';
+import { CloseIcon } from './icons';
 
 export default function LockWatcher() {
     const { data } = useSession();
@@ -43,7 +43,7 @@ export default function LockWatcher() {
                             <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-neutral-800 text-left align-middle shadow-xl transition-all">
                                 <div className='flex justify-end pt-4 pl-4 pr-4'>
                                     <Button size='sm' kind='ghost' shape='circle' onClick={handleClose}>
-                                        <Close />
+                                        <CloseIcon />
                                     </Button>
                                 </div>
                                 <Dialog.Title className='text-2xl font-bold pl-8 pr-8 mb-4'>注意</Dialog.Title>

@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 
 import { runIfFn } from '@/lib/fn';
 import Box from '../ui/box';
-import { ArrowRight } from '../icons';
+import { ArrowRightIcon } from '../icons';
 import Tiptap from '../ui/tiptap';
 import Button from '../ui/button';
 import PostDetailPopover from './post-detail-popover';
@@ -104,7 +104,7 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
                 <div className='flex flex-col w-full'>
                     <div className='flex items-center mb-1.5 text-xs text-gray-300'>
                         <Link href={`/u/${session.user?.name}`} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{session.user?.name}</Link>
-                        <span className='w-4 h-4'><ArrowRight /></span>
+                        <span className='w-4 h-4'><ArrowRightIcon /></span>
                         <div className='flex items-center text-gray-100'>
                             <span className='whitespace-nowrap'>回贴&nbsp;</span>
                             {!replyToPost || replyToPost?.isFirst ? '主贴' : <PostDetailPopover post={replyToPost} />}

@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 
 import { runIfFn } from '@/lib/fn';
 
-import { LoadingIcon, Lock, Locked } from '../icons';
+import { LoadingIcon, LockIcon, LockedIcon } from '../icons';
 import ActionButton from '../ui/action-button';
 
 export default function ActionLock({ discussion, onLocked }) {
@@ -48,7 +48,7 @@ export default function ActionLock({ discussion, onLocked }) {
             handleLock();
         }}>
             {isLoading ? <LoadingIcon /> :
-                (isLocked ? <Locked /> : <Lock />)
+                (isLocked ? <LockedIcon /> : <LockIcon />)
             }
         </ActionButton>
     );

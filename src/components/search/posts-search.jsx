@@ -14,7 +14,7 @@ import Spinner from '../ui/spinner';
 import Button from '../ui/button';
 import SplitBall from '../ui/split-ball';
 import ProseContent from '../ui/prose-content';
-import { Locked, Pined } from '../icons';
+import { LockedIcon, PinedIcon } from '../icons';
 import UserAvatar from '../ui/user-avatar';
 import { POST_SORT, POST_SORT_NAMES } from '@/lib/constants';
 
@@ -77,8 +77,8 @@ export default function PostsSearch({ query }) {
                             )}>
                             {item.discussion.title}
                         </Link>
-                        {item.discussion.isSticky && (<span className='inline-block align-middle h-4 w-4 ml-1.5 text-green-400'><Pined /></span>)}
-                        {item.discussion.isLocked && (<span className='inline-block align-middle h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}
+                        {item.discussion.isSticky && (<span className='inline-block align-middle h-4 w-4 ml-1.5 text-green-400'><PinedIcon /></span>)}
+                        {item.discussion.isLocked && (<span className='inline-block align-middle h-3.5 w-3.5 ml-0.5 text-yellow-400'><LockedIcon /></span>)}
                         <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />
                         <div className='inline-flex align-middle items-center'>
                             {item.discussion.category.icon ?

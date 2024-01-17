@@ -17,19 +17,19 @@ import { generateHTML } from '@tiptap/html';
 
 import Button from './button';
 import {
-  Bold,
-  Italic,
-  Underline as UnderlineIcon,
-  Strike,
-  Heading1,
-  Heading2,
-  Heading3,
-  BulletList,
-  OrderedList,
-  BlockQuote,
-  Link as LinkIcon,
-  Image as ImageIcon,
-  Close
+  BoldIcon,
+  ItalicIcon,
+  UnderlineIcon,
+  StrikeIcon,
+  Heading1Icon,
+  Heading2Icon,
+  Heading3Icon,
+  BulletListIcon,
+  OrderedListIcon,
+  BlockQuoteIcon,
+  LinkIcon,
+  ImageIcon,
+  CloseIcon
 } from '../icons';
 import { runIfFn } from '@/lib/fn';
 import FormControl from './form-control';
@@ -235,7 +235,7 @@ function LinkActionButton({ editor }) {
                 <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-lg bg-neutral-800 text-left align-middle shadow-xl transition-all'>
                   <div className='flex justify-end pt-4 pl-4 pr-4'>
                     <Button size='sm' kind='ghost' shape='circle' onClick={handleClose}>
-                      <Close />
+                      <CloseIcon />
                     </Button>
                   </div>
                   <Dialog.Title className='text-2xl font-bold pl-8 pr-8 mb-4'>设置超链接</Dialog.Title>
@@ -286,19 +286,19 @@ function MenuBar({ editor, endActionEnhancer }) {
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editor.can().chain().focus().toggleBold().run()}
           isActive={editor.isActive('bold')}>
-          <Bold />
+          <BoldIcon />
         </ActionButton>
         <ActionButton
           onClick={() => editor.chain().focus().toggleItalic().run()}
           disabled={!editor.can().chain().focus().toggleItalic().run()}
           isActive={editor.isActive('italic')}>
-          <Italic />
+          <ItalicIcon />
         </ActionButton>
         <ActionButton
           onClick={() => editor.chain().focus().toggleStrike().run()}
           disabled={!editor.can().chain().focus().toggleStrike().run()}
           isActive={editor.isActive('strike')}>
-          <Strike />
+          <StrikeIcon />
         </ActionButton>
         <ActionButton
           onClick={() => editor.chain().focus().toggleUnderline().run()}
@@ -309,32 +309,32 @@ function MenuBar({ editor, endActionEnhancer }) {
         <ActionButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           isActive={editor.isActive('heading', { level: 1 })}>
-          <Heading1 />
+          <Heading1Icon />
         </ActionButton>
         <ActionButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           isActive={editor.isActive('heading', { level: 2 })}>
-          <Heading2 />
+          <Heading2Icon />
         </ActionButton>
         <ActionButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           isActive={editor.isActive('heading', { level: 3 })}>
-          <Heading3 />
+          <Heading3Icon />
         </ActionButton>
         <ActionButton
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           isActive={editor.isActive('bulletList')}>
-          <BulletList />
+          <BulletListIcon />
         </ActionButton>
         <ActionButton
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           isActive={editor.isActive('orderedList')}>
-          <OrderedList />
+          <OrderedListIcon />
         </ActionButton>
         <ActionButton
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           isActive={editor.isActive('blockquote')}>
-          <BlockQuote />
+          <BlockQuoteIcon />
         </ActionButton>
         <LinkActionButton
           editor={editor}

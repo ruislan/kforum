@@ -12,7 +12,6 @@ import { HeadingSmall } from '../../ui/heading';
 import Spinner from '../../ui/spinner';
 import UserAvatar from '../../ui/user-avatar';
 import Input from '../../ui/input';
-import { Locked, ModeratorFilledIcon } from '../../icons';
 import SplitBall from '../../ui/split-ball';
 import ActionLock from './action-lock';
 import ActionModerator from './action-moderator';

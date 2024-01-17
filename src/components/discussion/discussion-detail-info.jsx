@@ -10,7 +10,7 @@ import { useSession } from 'next-auth/react';
 import dateUtils from '@/lib/date-utils';
 import { runIfFn } from '@/lib/fn';
 import Box from '../ui/box';
-import { Lock, Edit, MoreIcon } from '../icons';
+import { LockIcon, EditIcon, MoreIcon } from '../icons';
 import SplitBall from '../ui/split-ball';
 import ActionButton from '../ui/action-button';
 import ProseContent from '../ui/prose-content';
@@ -155,17 +155,17 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                                             {isAuthenticated && <>
                                                 <ActionReport post={firstPost} />
                                                 {/* save to bookmark */}
-                                                {/* <ActionButton><Bookmark /></ActionButton><ActionButton><UnBookmark /></ActionButton> */}
+                                                {/* <ActionButton><BookmarkIcon /></ActionButton><ActionButton><UnBookmarkIcon /></ActionButton> */}
                                                 {/* report: owner, moderator and the user who has reported don't show this flag icon */}
                                                 {/* hide */}
-                                                {/* <ActionButton><EyeOff /></ActionButton> */}
+                                                {/* <ActionButton><EyeOffIcon /></ActionButton> */}
                                             </>}
                                             {(isOwner || isAdmin || isModerator) &&
                                                 <>
                                                     {/* give discussion tags: admin, moderator, owner */}
                                                     <ActionTags discussion={discussion} onSelected={tags => { setTags(tags); discussion.tags = tags; }} />
                                                     {/* edit:owner, moderator, admin */}
-                                                    <ActionButton onClick={() => setIsEditMode(true)}><Edit /></ActionButton>
+                                                    <ActionButton onClick={() => setIsEditMode(true)}><EditIcon /></ActionButton>
                                                     {/* delete:owner, moderator, admin */}
                                                     <ActionDelete // 删除首贴会自动删除整个话题（目前是这个规则）
                                                         confirmContent='你确定要删除这篇话题及其所有的回复吗？'
@@ -175,7 +175,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                                                     {/* let discussion stay top of the discussion list: admin, moderator */}
                                                     {(isAdmin || isModerator) && <ActionSticky discussion={discussion} onSticky={(sticky) => { setIsSticky(sticky); discussion.isSticky = sticky; }} />}
                                                     {/* lock all: admin, owner, moderator */}
-                                                    <ActionLock discussion={discussion} onLocked={handleLockClick}><Lock /></ActionLock>
+                                                    <ActionLock discussion={discussion} onLocked={handleLockClick}><LockIcon /></ActionLock>
                                                 </>
                                             }
                                         </>

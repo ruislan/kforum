@@ -10,7 +10,7 @@ import Box from '../ui/box';
 import NoContent from '../ui/no-content';
 import Button from '../ui/button';
 import SplitBall from '../ui/split-ball';
-import { LoadingIcon, Locked, Pined } from '../icons';
+import { LoadingIcon, LockedIcon, PinedIcon } from '../icons';
 import Spinner from '../ui/spinner';
 
 // 只列出用户的话题（含首贴）
@@ -48,8 +48,8 @@ export default function UserTabsDiscussions({ user }) {
                 <Box key={i} className='flex flex-col'>
                     <div className='inline align-middle'>
                         <Link href={`/d/${item.id}`} className='inline align-middle hover:underline underline-offset-2 cursor-pointer'>{item.title}</Link>
-                        {item.isSticky && (<span className='inline-flex align-middle h-4 w-4 ml-1.5 text-green-400'><Pined /></span>)}
-                        {item.isLocked && (<span className='inline-flex align-middle h-3.5 w-3.5 ml-0.5 text-yellow-400'><Locked /></span>)}
+                        {item.isSticky && (<span className='inline-flex align-middle h-4 w-4 ml-1.5 text-green-400'><PinedIcon /></span>)}
+                        {item.isLocked && (<span className='inline-flex align-middle h-3.5 w-3.5 ml-0.5 text-yellow-400'><LockedIcon /></span>)}
                         <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />
                         <Link href={`/c/${item.category.slug}`} className='inline-block align-middle text-xs text-gray-200 hover:underline underline-offset-2 cursor-pointer'>c/{item.category.name}</Link>
                         <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />

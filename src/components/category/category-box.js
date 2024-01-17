@@ -5,7 +5,7 @@ import { categoryModel } from '@/models';
 
 import Box from '../ui/box';
 import { HeadingSmall } from '../ui/heading';
-import { Blank as BlankIcon } from '../icons';
+import { BlankIcon } from '../icons';
 import ActionPlus from './action-plus';
 
 async function getCategories() {

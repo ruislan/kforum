@@ -4,7 +4,7 @@ import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Transition } from '@headlessui/react';
 
-import { Close, Search as SearchIcon } from '../icons';
+import { CloseIcon, SearchIcon } from '../icons';
 
 function SearchAction({ prefix, type, query }) {
     const router = useRouter();
@@ -102,7 +102,7 @@ export default function Search() {
                                 setQuery('');
                             }}
                         >
-                            <Close />
+                            <CloseIcon />
                         </span>
                     </div>
                 )}

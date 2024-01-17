@@ -4,7 +4,7 @@ import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
 import Button from './button';
-import { Close } from '../icons';
+import { CloseIcon } from '../icons';
 import { runIfFn } from '@/lib/fn';
 
 export default function ConfirmModal({ show, title, description, onClose, onCancel, onConfirm }) {
@@ -38,7 +38,7 @@ export default function ConfirmModal({ show, title, description, onClose, onCanc
                             <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-lg bg-neutral-800 text-left align-middle shadow-xl transition-all'>
                                 <div className='flex justify-end pt-4 pl-4 pr-4'>
                                     <Button size='sm' kind='ghost' shape='circle' onClick={handleClose}>
-                                        <Close />
+                                        <CloseIcon />
                                     </Button>
                                 </div>
                                 <Dialog.Title className='text-2xl font-bold pl-8 pr-8 mb-4'>{title}</Dialog.Title>

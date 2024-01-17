@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Box from '@/components/ui/box';
 import { HeadingSmall } from '@/components/ui/heading';
 import { categoryModel } from '@/models';
-import { Eye } from '@/components/icons';
+import { EyeIcon } from '@/components/icons';
 
 const CategoryForm = dynamicImport(() => import('@/components/admin-panel/category/category-form'));
 
@@ -22,7 +22,7 @@ export default async function Page({ searchParams }) {
                         href={`/c/${slug}`}
                         className='w-4 h-4 cursor-pointer text-gray-400 hover:text-gray-50 transition-all'
                     >
-                        <Eye />
+                        <EyeIcon />
                     </Link>
                 )}
             </div>

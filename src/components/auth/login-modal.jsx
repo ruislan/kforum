@@ -9,7 +9,7 @@ import useLoginModal from '@/hooks/use-login-modal';
 import useRegisterModal from '@/hooks/use-register-modal';
 
 import Button from '../ui/button';
-import { Close } from '../icons';
+import { CloseIcon } from '../icons';
 
 export default function LoginModal() {
     const loginModal = useLoginModal();
@@ -73,7 +73,7 @@ export default function LoginModal() {
                             <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-lg bg-neutral-800 text-left align-middle shadow-xl transition-all'>
                                 <div className='flex justify-end pt-4 pl-4 pr-4'>
                                     <Button size='sm' kind='ghost' shape='circle' onClick={handleClose}>
-                                        <Close />
+                                        <CloseIcon />
                                     </Button>
                                 </div>
                                 <Dialog.Title className='text-2xl font-bold pl-8 pr-8 mb-4'>登陆</Dialog.Title>

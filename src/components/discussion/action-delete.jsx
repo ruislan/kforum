@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { runIfFn } from '@/lib/fn';
 
-import { DeleteBin, LoadingIcon } from '../icons';
+import { DeleteBinIcon, LoadingIcon } from '../icons';
 import ActionButton from '../ui/action-button';
 import ConfirmModal from '../ui/confirm-modal';
 import toast from 'react-hot-toast';
@@ -43,7 +43,7 @@ export default function ActionDelete({ post, onDeleted, confirmContent = '你确
                 e.preventDefault();
                 setIsOpenDeleteConfirm(true);
             }}>
-                {isDeleting ? <LoadingIcon /> : <DeleteBin />}
+                {isDeleting ? <LoadingIcon /> : <DeleteBinIcon />}
             </ActionButton>
             <ConfirmModal title='删除确认' description={confirmContent}
                 show={isOpenDeleteConfirm} onConfirm={() => handleDelete()}

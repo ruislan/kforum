@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 import { runIfFn } from '@/lib/fn';
 import useTagsModal from '@/hooks/use-tags-modal';
 import Tag from '../ui/tag';
-import { Close } from '../icons';
+import { CloseIcon } from '../icons';
 import Button from '../ui/button';
 import Input from '../ui/input';
 import Spinner from '../ui/spinner';
@@ -69,7 +69,7 @@ export default function TagsModal({ tags, limit = 5, onOk, onCancel }) {
                             <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-lg bg-neutral-800 text-left align-middle shadow-xl transition-all'>
                                 <div className='flex justify-end pt-4 pl-4 pr-4'>
                                     <Button size='sm' kind='ghost' shape='circle' onClick={handleClose}>
-                                        <Close />
+                                        <CloseIcon />
                                     </Button>
                                 </div>
                                 <Dialog.Title className='text-2xl font-bold pl-8 pr-8 mb-4'>选择标签</Dialog.Title>
@@ -86,7 +86,7 @@ export default function TagsModal({ tags, limit = 5, onOk, onCancel }) {
                                             }}
                                         >
                                             {tag.name}
-                                            <span className='inline-block align-bottom h-4 w-4'><Close /></span>
+                                            <span className='inline-block align-bottom h-4 w-4'><CloseIcon /></span>
                                         </Tag>
                                     ))}
                                 </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { Locked, Pined } from '../icons';
+import { LockedIcon, PinedIcon } from '../icons';
 import Tooltip from './tooltip';
 
 
@@ -17,7 +17,7 @@ export default function DiscussionMark({
                     </div>
                 }>
                     <span className='h-4 w-4 text-green-400'>
-                        <Pined />
+                        <PinedIcon />
                     </span>
                 </Tooltip>
             )}
@@ -28,7 +28,7 @@ export default function DiscussionMark({
                     </div>
                 }>
                     <span className='h-3.5 w-3.5 text-yellow-400'>
-                        <Locked />
+                        <LockedIcon />
                     </span>
                 </Tooltip>
             )}

@@ -10,7 +10,7 @@ import ActionButton from '../ui/action-button';
 import { runIfFn } from '@/lib/fn';
 import useLoginModal from '@/hooks/use-login-modal';
 import useOutsideClick from '@/hooks/use-outside-click';
-import { LoadingIcon, Heart } from '../icons';
+import { LoadingIcon, HeartIcon } from '../icons';
 
 function ReactionItem({ reaction, post, isUserReacted, onReacted }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -117,7 +117,7 @@ export default function ActionReact({ post, onReacted }) {
                 if (!data?.user) loginModal.open()
                 else setIsOpen(!isOpen);
             }} isActive={isOpen}>
-                <Heart />
+                <HeartIcon />
             </ActionButton>
             <Transition
                 as={Fragment}

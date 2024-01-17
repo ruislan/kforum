@@ -8,10 +8,9 @@ import { Dialog, Transition } from '@headlessui/react';
 
 import useOutsideClick from '@/hooks/use-outside-click';
 
-import { Close, MenuIcon } from '../icons';
+import { CloseIcon, MenuIcon } from '../icons';
 import Box from '../ui/box';
 import Image from 'next/image';
-import Button from '../ui/button';
 
 function DropdownMenus({ menus }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -139,7 +138,7 @@ function DrawerMenus({ logo, menus }) {
                                     className='w-6 h-6 text-gray-300'
                                     onClick={close}
                                 >
-                                    <Close />
+                                    <CloseIcon />
                                 </div>
                             </div>
                             <div className='flex flex-col gap-2 p-2'>

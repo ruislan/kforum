@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { Fragment } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
-import { ArrowDownS, CheckIcon } from '../icons';
+import { ArrowDownSIcon, CheckIcon } from '../icons';
 
 const Select = ({ options, label, value, onChange }) => {
     return (
@@ -21,7 +21,7 @@ const Select = ({ options, label, value, onChange }) => {
                             {value?.label ?? label}
                         </span>
                         <span className='pointer-events-none'>
-                            <ArrowDownS
+                            <ArrowDownSIcon
                                 className='h-5 w-5'
                                 aria-hidden='true'
                             />
