@@ -1,9 +1,9 @@
 'use client';
 
-import clsx from 'clsx';
 import { useState, useEffect } from 'react';
 
-import Button from './button';
+import { Transition } from '@headlessui/react';
+import clsx from 'clsx';
 
 export default function BackToTop() {
     const [isVisible, setIsVisible] = useState(false);
@@ -24,21 +24,30 @@ export default function BackToTop() {
     }, []);
 
     return (
-        <div
-            className={clsx(
-                isVisible ? 'flex' : 'hidden',
-                'items-center justify-center mt-4 sticky'
-            )}
+        <Transition
+            as='div'
+            show={isVisible}
+            appear
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100 scale-100'
+            leave='ease-in duration-100'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+            className='flex items-center justify-center mt-4 sticky'
             style={{
                 top: 'calc(100vh - 64px)'
             }}
         >
-            <Button
-                className='rounded-2xl'
+            <div
+                className={clsx(
+                    'rounded-2xl bg-neutral-300 hover:bg-neutral-200 px-4 py-1.5',
+                    'text-sm font-bold text-gray-900 cursor-pointer select-none'
+                )}
                 onClick={scrollToTop}
             >
                 回到顶端
-            </Button>
-        </div>
+            </div>
+        </Transition>
     );
 }
