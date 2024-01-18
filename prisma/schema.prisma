@@ -36,6 +36,7 @@ model User {
   ignoredReports     Report[]           @relation(name: "userIgnoredReports")
   agreedReports      Report[]           @relation(name: "userAgreedReports")
   tags               TagDiscussionRef[]
+  bookmarks          Bookmark[]
 }
 
 model Discussion {
@@ -107,6 +108,7 @@ model Post {
   replies             Post[]            @relation(name: "replies")
   uploads             UploadPostRef[]
   reports             Report[]
+  bookmarks           Bookmark[]
 
   @@index([id, discussionId])
   @@index([discussionId, createdAt])
@@ -199,6 +201,21 @@ model Category {
 
   // ref
   discussions Discussion[]
+}
+
+// 帖子收藏
+model Bookmark {
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  postId    Int      @map("post_id") @db.UnsignedInt
+  userId    Int      @map("user_id") @db.UnsignedInt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // ref
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
 }
 
 // 帖子举报
