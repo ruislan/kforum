@@ -205,9 +205,8 @@ model Category {
 
 // 帖子收藏
 model Bookmark {
-  id        Int      @id @default(autoincrement()) @db.UnsignedInt
-  postId    Int      @map("post_id") @db.UnsignedInt
   userId    Int      @map("user_id") @db.UnsignedInt
+  postId    Int      @map("post_id") @db.UnsignedInt
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -215,7 +214,7 @@ model Bookmark {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  @@unique([postId, userId])
+  @@id([userId, postId])
 }
 
 // 帖子举报

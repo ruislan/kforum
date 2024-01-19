@@ -5,6 +5,7 @@ import ModelError from './model-error';
 import userModel from './user';
 import postModel from './post';
 import uploadModel from './upload';
+import categoryModel from './category';
 
 const discussionModel = {
     errors: {
@@ -16,11 +17,43 @@ const discussionModel = {
     actions: {
         STICKY: 'sticky',
     },
+    // 获取用户的discussion
+    async getUserDiscussions({
+        username,
+        // page
+        page = 1,
+        pageSize = DEFAULT_PAGE_LIMIT,
+    }) {
+        const user = await prisma.user.findUnique({ where: { name: username } });
+        if (!user) return { discussions: [], hasMore: false };
+        const whereClause = {
+            id: { gt: 0 },
+            userId: user.id,
+            deletedAt: null
+        }
+
+        const skip = pageUtils.getSkip(page, pageSize);
+        const take = pageSize;
+        const countFetch = prisma.discussion.count({ where: whereClause });
+        const discussionsFetch = prisma.discussion.findMany({
+            where: whereClause,
+            include: {
+                category: { select: categoryModel.fields.simple },
+            },
+            orderBy: [
+                { createdAt: 'desc' }
+            ],
+            skip,
+            take
+        });
+
+        const [discussions, count] = await Promise.all([discussionsFetch, countFetch]);
+        return { discussions, hasMore: count > skip + take };
+    },
     async getDiscussions({
         // filter
         queryTitle = null, // 如果存在 queryTitle 则即是要进行模糊搜索
         categoryId = null, // 如果有categoryId，也即是进行分类过滤，那么无需在每个话题上携带分类 Join（都是这个分类）
-        userId = null, // 如果有userId，也即是进行所有人过滤，那么无需在每个话题上携带用户 Join（都是这个人）
         tagId = null, // 如果有tagId，也即是根据标签进行过滤
         isDeleted = false,
         // page
@@ -45,7 +78,6 @@ const discussionModel = {
             where: {
                 id: { gt: 0 },
                 title: { contains: queryTitle || '' },
-                userId: userId || undefined,
                 categoryId: categoryId || undefined,
                 tags: tagId ? { some: { tagId } } : undefined,
                 deletedAt: isDeleted ? { not: null } : null,
@@ -55,8 +87,8 @@ const discussionModel = {
                 firstPost: withFirstPost,
                 poster: withPoster,
                 tags: withTags ? { select: { tag: true } } : false,
-                category: categoryId ? false : { select: { id: true, name: true, slug: true, color: true, icon: true } },
-                user: userId ? false : { select: userModel.fields.simple },
+                category: categoryId ? false : { select: categoryModel.fields.simple },
+                user: { select: userModel.fields.simple },
             }
         };
 

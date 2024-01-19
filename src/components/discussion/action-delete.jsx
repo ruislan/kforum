@@ -25,6 +25,8 @@ export default function ActionDelete({ post, onDeleted, confirmContent = '你确
                 if (res.status === 400) {
                     const json = await res.json();
                     toast.error(json.message);
+                } else if (res.status === 403) {
+                    toast.error('您没有权限进行此操作');
                 } else if (res.status === 401) {
                     toast.error('您的登录已过期，请重新登录');
                 } else {

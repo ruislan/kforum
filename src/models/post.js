@@ -276,17 +276,28 @@ const postModel = {
         return { posts, hasMore: count > skip + take };
     },
     async getUserReplyPosts({
-        userId,
+        username,
         isDeleted = false,
         isNewFirst = true,
         page = 1,
         pageSize = DEFAULT_PAGE_LIMIT
     }) {
+        const user = await prisma.user.findUnique({
+            where: {
+                name: username
+            },
+            select: {
+                id: true,
+                name: true
+            }
+        });
+        if (!user) return { posts: [], hasMore: false };
+
         const skip = pageUtils.getSkip(page, pageSize);
         const take = pageSize;
 
         const whereClause = {
-            userId,
+            userId: user.id,
             firstPostDiscussion: null, // 只有回帖不包含主贴
             deletedAt: isDeleted ? { not: null } : null,
         };

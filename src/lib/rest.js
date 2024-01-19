@@ -9,6 +9,9 @@ const rest = {
     unauthorized() {
         return new Response(null, { status: 401, headers: jsonHeaders });
     },
+    forbidden() {
+        return new Response(null, { status: 403, headers: jsonHeaders });
+    },
     created(json) {
         const body = json ? JSON.stringify(json) : null;
         return new Response(body, { status: 201, headers: jsonHeaders });

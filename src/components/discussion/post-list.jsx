@@ -2,7 +2,6 @@
 import { useMemo, useState } from 'react';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 
 import dateUtils from '@/lib/date-utils';
@@ -14,15 +13,16 @@ import ActionButton from '../ui/action-button';
 import ReactionGroup from '../ui/reaction-group';
 import NoContent from '../ui/no-content';
 import Button from '../ui/button';
+import Spinner from '../ui/spinner';
+import UserMark from '../ui/user-mark';
+import UserAvatar from '../ui/user-avatar';
 import { EditIcon, ArrowDownSIcon, ArrowUpSIcon, MoreIcon } from '../icons';
 import ActionDelete from './action-delete';
 import ActionReact from './action-react';
 import ActionReply from './action-reply';
 import PostUpdater from './post-updater';
-import Spinner from '../ui/spinner';
-import UserAvatar from '../ui/user-avatar';
 import ActionReport from './action-report';
-import UserMark from '../ui/user-mark';
+import ActionBookmark from './action-bookmark';
 
 function PostReplyContent({ replyPost }) {
     const limit = 100;
@@ -125,7 +125,7 @@ function PostItem({ isDiscussionLocked, item, onReplyClick }) {
                                 {!isDiscussionLocked && <ActionReply onClick={() => runIfFn(onReplyClick, { post })} />}
                                 {/* give reaction  */}
                                 <ActionReact post={post} onReacted={handleUserReacted} />
-
+                                <ActionBookmark post={post} />
                                 {
                                     isExpendAction ?
                                         (<>
@@ -133,8 +133,6 @@ function PostItem({ isDiscussionLocked, item, onReplyClick }) {
                                                 <ActionReport post={post} />
                                                 {/* copy url to share  */}
                                                 {/* <ActionButton><LinkIcon /></ActionButton> */}
-                                                {/* save to bookmark */}
-                                                {/* <ActionButton><BookmarkIcon /></ActionButton><ActionButton><UnBookmarkIcon /></ActionButton> */}
                                                 {/* hide */}
                                                 {/* <ActionButton><EyeOff /></ActionButton> */}
                                             </>}

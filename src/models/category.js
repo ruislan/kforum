@@ -10,6 +10,9 @@ const categoryModel = {
         UNIQUE_SLUG: 'slug 已经在使用中',
         CATEGORY_NOT_EMPTY: '该分类下还有话题',
     },
+    fields: {
+        simple: { id: true, name: true, slug: true, color: true, icon: true }
+    },
     validate({ name, slug, sequence, description, color }) {
         if (!name || name.length < 2 || name.length > 20) return { error: true, message: this.errors.SCHEMA_NAME };
         if (!slug || slug.length < 2 || slug.length > 20 || !/^[a-z0-9]+$/.test(slug)) return { error: true, message: this.errors.SCHEMA_SLUG };

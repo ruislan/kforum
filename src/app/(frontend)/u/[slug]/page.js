@@ -20,14 +20,6 @@ export default async function Page({ params, searchParams }) {
     <div className='flex md:flex-row flex-col w-full h-full gap-6'>
       {/* main container*/}
       <div className='flex flex-col flex-1 order-2 md:order-1'>
-        {/* user tabs
-            1. overview(activities) v3
-            2. discussions v1
-            3. posts v1
-            4. Saved / Favorite v2
-            5. following v2
-            6. followers v2
-         */}
         <UserTabs user={user} tab={searchParams.tab} />
       </div>
       {/* right side */}

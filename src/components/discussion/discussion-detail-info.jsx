@@ -27,6 +27,7 @@ import ActionReport from './action-report';
 import ActionTags from './action-tags';
 import UserMark from '../ui/user-mark';
 import DiscussionMark from '../ui/discussion-mark';
+import ActionBookmark from './action-bookmark';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -146,6 +147,8 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                             {!isLocked && <ActionReply onClick={() => runIfFn(onReplyClick)} />}
                             {/* give reaction  */}
                             <ActionReact post={firstPost} onReacted={handleUserReacted} />
+                            {/* save to bookmark */}
+                            <ActionBookmark post={firstPost} />
                             {/* copy url to share  */}
                             {/* <ActionButton><LinkIcon /></ActionButton> */}
                             {
@@ -154,8 +157,6 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                                         <>
                                             {isAuthenticated && <>
                                                 <ActionReport post={firstPost} />
-                                                {/* save to bookmark */}
-                                                {/* <ActionButton><BookmarkIcon /></ActionButton><ActionButton><UnBookmarkIcon /></ActionButton> */}
                                                 {/* report: owner, moderator and the user who has reported don't show this flag icon */}
                                                 {/* hide */}
                                                 {/* <ActionButton><EyeOffIcon /></ActionButton> */}

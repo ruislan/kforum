@@ -7,7 +7,8 @@ import rest from '@/lib/rest';
 export async function PUT(request, { params }) {
     // require user
     const session = await getServerSession(authOptions);
-    if (!session.user?.id || session.user?.isLocked) return rest.unauthorized();
+    if (!session.user?.id) return rest.unauthorized();
+    if (session.user?.isLocked) return rest.forbidden();
 
     let { gender, bio } = await request.json();
 

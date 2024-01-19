@@ -31,6 +31,8 @@ export default function ActionTags({ discussion, onSelected }) {
                     toast.error(json.message);
                 } else if (res.status === 401) {
                     toast.error('您的登录已过期，请重新登录');
+                } else if (res.status === 403) {
+                    toast.error('您没有权限进行此操作');
                 } else {
                     throw new Error();
                 }

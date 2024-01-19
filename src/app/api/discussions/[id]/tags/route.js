@@ -8,7 +8,8 @@ import logger from '@/lib/logger';
 export async function PUT(request, { params }) {
     // require user
     const session = await getServerSession(authOptions);
-    if (!session.user?.id || session.user?.isLocked) return rest.unauthorized();
+    if (!session.user?.id) return rest.unauthorized();
+    if (session.user?.isLocked) return rest.forbidden();
 
     const discussionId = Number(params.id) || 0;
     const { tags } = await request.json();

@@ -1,7 +1,10 @@
 import dynamicImport from 'next/dynamic';
 import { notFound } from 'next/navigation';
-import { discussionModel } from '@/models';
+import { getServerSession } from 'next-auth';
+
+import { bookmarkModel, discussionModel } from '@/models';
 import Box from '@/components/ui/box';
+import authOptions from '@/lib/auth';
 
 const DiscussionDetail = dynamicImport(() => import('@/components/discussion/discussion-detail'));
 const DiscussionStats = dynamicImport(() => import('@/components/discussion/discussion-detail-stats'));
@@ -22,6 +25,11 @@ export default async function Page({ params }) {
   if (!d) notFound();
   // we must assure the discussion exists
   await discussionModel.incrementView({ id: d.id });
+  const session = await getServerSession(authOptions);
+  if (!!session?.user) {
+    const bookmark = await bookmarkModel.getBookmark({ userId: session.user.id, postId: d.firstPost.id });
+    d.firstPost.isBookmarked = !!bookmark;
+  }
 
   return (
     <div className='flex md:flex-row flex-col w-full h-full gap-6'>

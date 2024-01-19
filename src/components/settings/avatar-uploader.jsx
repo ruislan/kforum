@@ -67,6 +67,8 @@ export default function AvatarUploader({ user }) {
                     setError(json.message);
                 } else if (res.status === 401) {
                     setError('您的登录已过期，请重新登录');
+                } else if (res.status === 403) {
+                    toast.error('您没有权限进行此操作');
                 } else {
                     throw new Error();
                 }

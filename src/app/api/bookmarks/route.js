@@ -5,6 +5,25 @@ import rest from '@/lib/rest';
 import { ModelError, bookmarkModel } from '@/models';
 import logger from '@/lib/logger';
 
+export async function DELETE(request, { params }) {
+    const session = await getServerSession(authOptions);
+    if (!session.user?.id || session.user?.isLocked) return rest.unauthorized();
+
+    const { postId } = await request.json();
+
+    try {
+        await bookmarkModel.delete({ userId: session.user.id, postId });
+        return rest.deleted();
+    } catch (err) {
+        if (err instanceof ModelError)
+            return rest.badRequest({ message: err.message });
+        else {
+            logger.warn(err);
+            return rest.badRequest();
+        }
+    }
+}
+
 export async function GET(request, { params }) {
     const session = await getServerSession(authOptions);
     if (!session.user?.id || session.user?.isLocked) return rest.unauthorized();
@@ -20,7 +39,8 @@ export async function GET(request, { params }) {
 
 export async function POST(request, { params }) {
     const session = await getServerSession(authOptions);
-    if (!session.user?.id || session.user?.isLocked) return rest.unauthorized();
+    if (!session.user?.id) return rest.unauthorized();
+    if (session.user?.isLocked) return rest.forbidden();
 
     const { postId } = await request.json();
 

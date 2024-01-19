@@ -8,7 +8,8 @@ import logger from '@/lib/logger';
 export async function POST(request, { params }) {
     // require user
     const session = await getServerSession(authOptions);
-    if (!session.user?.id || session.user?.isLocked) return rest.unauthorized();
+    if (!session.user?.id) return rest.unauthorized();
+    if (session.user?.isLocked) return rest.forbidden();
 
     const data = await request.formData();
     const file = data.get('file');
