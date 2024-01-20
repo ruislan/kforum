@@ -3,7 +3,7 @@ import { siteSettingModel } from '@/models';
 
 import './globals.css';
 
-async function getLogo() {
+async function getFavicon() {
   return await siteSettingModel.getFieldValue(siteSettingModel.fields.siteFavicon);
 }
 
@@ -22,11 +22,11 @@ export async function generateMetadata({ params, searchParams }, parent) {
 }
 
 export default async function RootLayout({ children }) {
-  const logoUrl = await getLogo();
+  const faviconUrl = await getFavicon();
   return (
     <html lang='en' className='dark'>
       <head>
-        <link rel='icon' href={_.isEmpty(logoUrl) ? '/favicon.ico' : logoUrl} />
+        <link rel='icon' href={_.isEmpty(faviconUrl) ? '/favicon.ico' : faviconUrl} />
       </head>
       <body className='antialiased w-full h-full max-w-full m-0 p-0'>
         {children}

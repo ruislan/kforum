@@ -191,7 +191,7 @@ function Logo({ logo }) {
 export default function NavMenus({ logo, menus }) {
     return (
         <>
-            <Logo />
+            <Logo logo={logo} />
             <DrawerMenus logo={logo} menus={menus} />
             <MainMenus menus={menus.slice(0, 4)} />
             {menus.length > 4 && <DropdownMenus menus={menus.slice(4)} />}
