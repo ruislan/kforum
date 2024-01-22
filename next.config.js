@@ -34,6 +34,10 @@ const nextConfig = {
                 source: '/u/:slug/:path',
                 destination: '/u/:slug?tab=:path'
             },
+            {
+                source: '/d/:id/p/:postId',
+                destination: '/d/:id?postId=:postId'
+            }
         ];
     }
 };

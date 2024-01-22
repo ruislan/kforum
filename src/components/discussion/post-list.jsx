@@ -23,8 +23,9 @@ import ActionReply from './action-reply';
 import PostUpdater from './post-updater';
 import ActionReport from './action-report';
 import ActionBookmark from './action-bookmark';
+import ActionCopyLink from './action-copy-link';
 
-function PostReplyContent({ replyPost }) {
+export function PostReplyContent({ replyPost }) {
     const limit = 100;
     const [expend, setExpend] = useState(false);
     const toggleExpend = async () => setExpend(prev => !prev);
@@ -126,18 +127,12 @@ function PostItem({ isDiscussionLocked, item, onReplyClick }) {
                                 {/* give reaction  */}
                                 <ActionReact post={post} onReacted={handleUserReacted} />
                                 <ActionBookmark post={post} />
+                                {/* copy url to share  */}
+                                <ActionCopyLink post={post} />
                                 {
                                     isExpendAction ?
                                         (<>
-                                            {isAuthenticated && <>
-                                                <ActionReport post={post} />
-                                                {/* copy url to share  */}
-                                                {/* <ActionButton><LinkIcon /></ActionButton> */}
-                                                {/* hide */}
-                                                {/* <ActionButton><EyeOff /></ActionButton> */}
-                                            </>}
-                                            {/* define this port: owner, moderator. multi choose, items: spoiler(剧透)，NSFW(少儿不宜)，fake（假的），approved（实锤），spam（水贴）, OC（原创）, official（官方）*/}
-                                            {/* <ActionButton><MarkupIcon /></ActionButton> */}
+                                            {isAuthenticated && <ActionReport post={post} />}
                                             {(isOwner || isAdmin || isModerator) &&
                                                 <>
                                                     {/* edit:owner, moderator */}
@@ -149,7 +144,7 @@ function PostItem({ isDiscussionLocked, item, onReplyClick }) {
                                         </>
                                         ) :
                                         (
-                                            <ActionButton onClick={() => setIsExpendAction(true)}><MoreIcon /></ActionButton>
+                                            isAuthenticated && <ActionButton onClick={() => setIsExpendAction(true)}><MoreIcon /></ActionButton>
                                         )
                                 }
                             </div>

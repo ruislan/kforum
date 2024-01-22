@@ -16,7 +16,11 @@ export default function DiscussionDetail({ discussion }) {
     const [isLocked, setIsLocked] = useState(discussion.isLocked);
 
     const changeReplyToPost = async (post, focus = true) => {
-        setReplyToPost({ ...post, clickTime: new Date(), focus }); // 加这个clickTime用于区分在不同时间点击同一个帖子
+        setReplyToPost({
+            ...post,
+            clickTime: new Date(), // 加这个clickTime用于区分在不同时间点击同一个帖子
+            focus
+        });
     }
 
     useEffect(() => {

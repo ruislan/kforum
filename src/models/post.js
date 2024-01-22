@@ -189,6 +189,55 @@ const postModel = {
             }
         });
     },
+    async getPost({
+        id
+    }) {
+        const post = await prisma.post.findUnique({
+            where: {
+                id,
+                deletedAt: null,
+            },
+            include: {
+                user: { select: userModel.fields.simple },
+                replyPost: {
+                    include: {
+                        user: { select: userModel.fields.simple }
+                    }
+                }
+            }
+        });
+        // load reactions
+        const refs = await prisma.reactionPostRef.groupBy({
+            by: ['reactionId', 'postId'],
+            where: {
+                postId: post.id
+            },
+            _count: {
+                userId: true
+            }
+        });
+        const reactionIds = refs.map(r => r.reactionId);
+        const reactions = await prisma.reaction.findMany({
+            where: {
+                id: { in: reactionIds }
+            }
+        });
+        post.reactions = refs.map(r => {
+            const reaction = reactions.find(re => re.id === r.reactionId);
+            return {
+                ...reaction,
+                count: r._count.userId
+            }
+        });
+        post.reactions.sort((a, b) => b.count - a.count);
+
+        // handle deleted reply
+        if (post.replyPost && post.replyPost.deletedAt) {
+            post.replyPost.content = '';
+            post.replyPost.text = '';
+        }
+        return post;
+    },
     async getPosts({
         queryText,
         discussionId, // 如果有discussionId说明是某个话题下面的回帖
@@ -211,11 +260,6 @@ const postModel = {
                 createdAt: isNewFirst ? 'desc' : undefined
             },
             include: {
-                reactions: withReactions ? {
-                    select: {
-                        userId: true, postId: true, reaction: true,
-                    }
-                } : false,
                 user: withUser ? { select: userModel.fields.simple } : false,
                 replyPost: withReplyPosts ? {
                     include: {
@@ -240,37 +284,41 @@ const postModel = {
         const fetchPosts = await prisma.post.findMany(queryCondition);
         let [posts, count] = await Promise.all([fetchPosts, fetchCount]);
 
-        // avoid n + 1, batch load Posts reactions and reaction stats;
-        const postIds = posts.map(p => p.id);
-        const refs = await prisma.reactionPostRef.groupBy({
-            by: ['reactionId', 'postId'],
-            where: {
-                postId: { in: postIds }
-            },
-            _count: {
-                userId: true
-            }
-        });
-        const reactionIds = refs.map(r => r.reactionId);
-        const reactions = await prisma.reaction.findMany({
-            where: {
-                id: { in: reactionIds }
-            }
-        });
         for (const post of posts) {
-            post.reactions = refs.filter(r => r.postId === post.id).map(r => {
-                const reaction = reactions.find(re => re.id === r.reactionId);
-                return {
-                    ...reaction,
-                    count: r._count.userId
-                }
-            });
-            post.reactions.sort((a, b) => b.count - a.count);
-
             // handle deleted reply
             if (post.replyPost && post.replyPost.deletedAt) {
                 post.replyPost.content = '';
                 post.replyPost.text = '';
+            }
+        }
+
+        if (withReactions) {
+            // avoid n + 1, batch load Posts reactions and reaction stats;
+            const postIds = posts.map(p => p.id);
+            const refs = await prisma.reactionPostRef.groupBy({
+                by: ['reactionId', 'postId'],
+                where: {
+                    postId: { in: postIds }
+                },
+                _count: {
+                    userId: true
+                }
+            });
+            const reactionIds = refs.map(r => r.reactionId);
+            const reactions = await prisma.reaction.findMany({
+                where: {
+                    id: { in: reactionIds }
+                }
+            });
+            for (const post of posts) {
+                post.reactions = refs.filter(r => r.postId === post.id).map(r => {
+                    const reaction = reactions.find(re => re.id === r.reactionId);
+                    return {
+                        ...reaction,
+                        count: r._count.userId
+                    }
+                });
+                post.reactions.sort((a, b) => b.count - a.count);
             }
         }
         return { posts, hasMore: count > skip + take };

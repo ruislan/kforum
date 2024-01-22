@@ -2,11 +2,12 @@ import dynamicImport from 'next/dynamic';
 import { notFound } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 
-import { bookmarkModel, discussionModel } from '@/models';
+import { bookmarkModel, discussionModel, postModel } from '@/models';
 import Box from '@/components/ui/box';
 import authOptions from '@/lib/auth';
 
 const DiscussionDetail = dynamicImport(() => import('@/components/discussion/discussion-detail'));
+const DiscussionDetailShareView = dynamicImport(() => import('@/components/discussion/discussion-detail-share-view'));
 const DiscussionStats = dynamicImport(() => import('@/components/discussion/discussion-detail-stats'));
 const CategoryBox = dynamicImport(() => import('@/components/category/category-box'));
 const ModeratorBox = dynamicImport(() => import('@/components/user/moderator-box'));
@@ -19,7 +20,7 @@ export async function generateMetadata({ params, searchParams }, parent) {
   };
 }
 
-export default async function Page({ params }) {
+export default async function Page({ params, searchParams }) {
   const id = Number(params.id);
   const d = await discussionModel.getDiscussion({ id });
   if (!d) notFound();
@@ -30,12 +31,19 @@ export default async function Page({ params }) {
     const bookmark = await bookmarkModel.getBookmark({ userId: session.user.id, postId: d.firstPost.id });
     d.firstPost.isBookmarked = !!bookmark;
   }
+  let post = null;
+  if (searchParams.postId && d.firstPost.id !== searchParams.postId) {
+    post = await postModel.getPost({ id: Number(searchParams.postId) });
+  }
 
   return (
     <div className='flex md:flex-row flex-col w-full h-full gap-6'>
       {/* main container */}
       <div className='flex flex-col md:flex-1 gap-2'>
-        <DiscussionDetail discussion={d} />
+        {post ?
+          <DiscussionDetailShareView discussion={d} post={post} /> :
+          <DiscussionDetail discussion={d} />
+        }
       </div>
       {/* right side */}
       <div className='flex flex-col md:w-80 w-full gap-4'>

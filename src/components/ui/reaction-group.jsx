@@ -12,7 +12,7 @@ export default function ReactionGroup({ reactions }) {
     const restReactions = reactions?.slice(isOverflow ? OVERFLOW_LIMIT : reactions?.length);
     return (
         <div className='relative flex items-center gap-2'>
-            {showReactions?.map(r => <Reaction key={r.id} data={r} />)}
+            {showReactions?.map((r, i) => <Reaction key={i} data={r} />)}
             {isOverflow && (
                 <Popover>
                     <Popover.Button className='text-xs text-gray-300 hover:text-gray-300/90 underline underline-offset-2 outline-none'>更多反馈</Popover.Button>

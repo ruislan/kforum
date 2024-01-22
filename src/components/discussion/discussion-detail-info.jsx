@@ -28,6 +28,7 @@ import ActionTags from './action-tags';
 import UserMark from '../ui/user-mark';
 import DiscussionMark from '../ui/discussion-mark';
 import ActionBookmark from './action-bookmark';
+import ActionCopyLink from './action-copy-link';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -150,17 +151,12 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                             {/* save to bookmark */}
                             <ActionBookmark post={firstPost} />
                             {/* copy url to share  */}
-                            {/* <ActionButton><LinkIcon /></ActionButton> */}
+                            <ActionCopyLink />
                             {
                                 isExpendAction ?
                                     (
                                         <>
-                                            {isAuthenticated && <>
-                                                <ActionReport post={firstPost} />
-                                                {/* report: owner, moderator and the user who has reported don't show this flag icon */}
-                                                {/* hide */}
-                                                {/* <ActionButton><EyeOffIcon /></ActionButton> */}
-                                            </>}
+                                            {isAuthenticated && <ActionReport post={firstPost} />}
                                             {(isOwner || isAdmin || isModerator) &&
                                                 <>
                                                     {/* give discussion tags: admin, moderator, owner */}
@@ -182,7 +178,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                                         </>
                                     ) :
                                     (
-                                        <ActionButton onClick={() => setIsExpendAction(true)}><MoreIcon /></ActionButton>
+                                        isAuthenticated && <ActionButton onClick={() => setIsExpendAction(true)}><MoreIcon /></ActionButton>
                                     )
                             }
                         </div>
