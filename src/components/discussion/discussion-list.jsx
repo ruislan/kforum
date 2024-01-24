@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import { DISCUSSION_SORT } from '@/lib/constants';
-import { LoadingIcon } from '../icons';
 import Button from '../ui/button';
 import NoContent from '../ui/no-content';
 import DiscussionListItem from './discussion-list-item';
+import Spinner from '../ui/spinner';
 
 export default function DiscussionList({
     discussions,
@@ -50,7 +50,9 @@ export default function DiscussionList({
     return (
         <div className='flex flex-col gap-2'>
             {dataList.map((d, i) => <DiscussionListItem key={i} discussion={d} />)}
-            {isLoading && <div className='flex justify-center mt-4'><LoadingIcon className='w-8 h-8' /></div>}
+            {isLoading && <Spinner className='self-center' />
+                // <div className='flex justify-center mt-4'><LoadingIcon className='w-8 h-8' /></div>
+            }
             {hasMore && !isLoading && (
                 <div className='self-center py-2'>
                     <Button kind='ghost' disabled={isLoading} onClick={() => setPage(prev => prev + 1)}>查看更多</Button>

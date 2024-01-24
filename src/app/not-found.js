@@ -9,7 +9,7 @@ async function getLogo() {
 export default async function NotFound() {
     const logo = await getLogo();
     return (
-        <div className='m-32 flex flex-col w-full max-w-2xl'>
+        <div className='m-32 mx-auto flex flex-col w-full max-w-2xl'>
             <Link href='/' className='relative font-bold text-lg text-white mr-4 flex items-center group max-w-[156px]'>
                 {logo ?
                     <Image className='h-9 w-auto max-h-9' src={logo} alt={logo} width={180} height={60} /> :
