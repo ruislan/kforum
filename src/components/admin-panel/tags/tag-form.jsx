@@ -142,7 +142,6 @@ export default function TagForm({ tag }) {
             const isUpdate = _.isNumber(id);
             isUpdate ? await handleUpdate() : await handleCreate();
         } catch (err) {
-            console.log(err);
             setError('未知错误，请稍后再试');
         } finally {
             setIsSubmitting(false);

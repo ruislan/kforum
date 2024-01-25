@@ -51,7 +51,7 @@ const reportModel = {
                 }
             }
         };
-        console.log(filter);
+
         switch (filter) {
             case 'pending':
                 whereClause.deletedAt = null,
@@ -66,8 +66,6 @@ const reportModel = {
                 break;
             default: break;
         }
-
-        console.log(whereClause);
 
         // 这里主要是以帖子为主体的举报
         const fetchCount = prisma.post.count({ where: whereClause });

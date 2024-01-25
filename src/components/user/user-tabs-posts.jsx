@@ -36,7 +36,6 @@ export default function UserTabsPosts({ user }) {
                     toast.error('未知错误，请刷新重试');
                 }
             } catch (err) {
-                console.log(err);
                 toast.error('未知错误，请刷新重试');
             } finally {
                 setIsLoading(false);
