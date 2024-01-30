@@ -290,3 +290,14 @@ model SiteSetting {
   // ref
   upload Upload? @relation(fields: [uploadId], references: [id])
 }
+
+// 关注的话题
+// 话题在有了新的回复、或者状态发生了变化的时候，关注人就会得到通知
+model DiscussionFollower {
+  id           Int      @id @default(autoincrement()) @db.UnsignedInt
+  discussionId Int      @map("discussion_id")
+  userId       Int      @map("user_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@unique([discussionId, userId])
+}
