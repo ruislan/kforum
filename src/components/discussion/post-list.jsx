@@ -42,7 +42,11 @@ export function PostReplyContent({ replyPost }) {
                             name={replyPost.user.name}
                             avatar={replyPost.user.avatarUrl}
                         />
-                        <Link href={`/u/${replyPost.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{replyPost.user.name}</Link>
+                        <Link
+                            href={`/u/${replyPost.user.name}`}
+                            onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>
+                            u/{replyPost.user.name}
+                        </Link>
                     </div>
                     {replyPost.text.length > limit && <div className='flex items-center'>
                         <span className='w-4 h-4 cursor-pointer' onClick={e => {
@@ -119,9 +123,9 @@ function PostItem({ isDiscussionLocked, item, onReplyClick }) {
                         <ProseContent className='my-1' content={post.content} />
                     }
                     {!isEditMode && (
-                        <div className='text-xs inline-flex items-center justify-between text-gray-300'>
+                        <div className='text-xs inline-flex flex-col items-end gap-1 mt-1 md:flex-row md:items-center md:justify-between text-gray-300'>
                             <ReactionGroup reactions={reactions} />
-                            <div className='flex items-center gap-1'>
+                            <div className='flex items-center flex-wrap self-end gap-1'>
                                 {/* reply  */}
                                 {!isDiscussionLocked && <ActionReply onClick={() => runIfFn(onReplyClick, { post })} />}
                                 {/* give reaction  */}

@@ -132,9 +132,12 @@ export default function ActionReact({ post, onReacted }) {
                 leaveFrom='opacity-100 translate-y-0'
                 leaveTo='opacity-0 translate-y-1'
             >
-                <div ref={ref} className={clsx('absolute bottom-full right-0 top-auto z-10',
-                    'grid grid-cols-8 gap-1 p-1 mb-2 w-max',
-                    'bg-clip-padding bg-neutral-800 border border-solid border-neutral-700 rounded-md shadow-xl')}>
+                <div ref={ref} className={clsx(
+                    'absolute bottom-full right-0 z-10',
+                    'grid md:grid-cols-8 grid-cols-6',
+                    'gap-1 p-1 mb-2 w-max',
+                    'bg-clip-padding bg-neutral-800 border border-solid border-neutral-700 rounded-md shadow-xl'
+                )}>
                     <ReactionList post={post} onReacted={onReacted} />
                 </div>
             </Transition>

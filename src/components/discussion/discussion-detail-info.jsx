@@ -142,7 +142,7 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                 }
 
                 {!isEditMode && (
-                    <div className='text-xs inline-flex items-center justify-between text-gray-300'>
+                    <div className='text-xs inline-flex flex-col items-end gap-1 mt-1 md:flex-row md:items-center md:justify-between text-gray-300'>
                         <ReactionGroup reactions={reactions} />
                         <div className='flex items-center gap-1'>
                             {!isLocked && <ActionReply onClick={() => runIfFn(onReplyClick)} />}
