@@ -26,17 +26,18 @@ model User {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // ref
-  discussions        Discussion[]       @relation(name: "userDiscussions")
-  deletedDiscussions Discussion[]       @relation(name: "userDeletedDiscussions")
-  posts              Post[]             @relation(name: "userPosts")
-  deletedPosts       Post[]             @relation(name: "userDeletedPosts")
-  reactions          ReactionPostRef[]
-  avatar             UploadAvatarRef?
-  reports            Report[]           @relation(name: "userReports")
-  ignoredReports     Report[]           @relation(name: "userIgnoredReports")
-  agreedReports      Report[]           @relation(name: "userAgreedReports")
-  tags               TagDiscussionRef[]
-  bookmarks          Bookmark[]
+  discussions          Discussion[]         @relation(name: "userDiscussions")
+  deletedDiscussions   Discussion[]         @relation(name: "userDeletedDiscussions")
+  posts                Post[]               @relation(name: "userPosts")
+  deletedPosts         Post[]               @relation(name: "userDeletedPosts")
+  reactions            ReactionPostRef[]
+  avatar               UploadAvatarRef?
+  reports              Report[]             @relation(name: "userReports")
+  ignoredReports       Report[]             @relation(name: "userIgnoredReports")
+  agreedReports        Report[]             @relation(name: "userAgreedReports")
+  tags                 TagDiscussionRef[]
+  bookmarks            Bookmark[]
+  followingDiscussions DiscussionFollower[]
 }
 
 model Discussion {
@@ -67,18 +68,34 @@ model Discussion {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // ref
-  category    Category           @relation(fields: [categoryId], references: [id])
-  user        User               @relation(name: "userDiscussions", fields: [userId], references: [id])
-  deletedUser User?              @relation(name: "userDeletedDiscussions", fields: [deletedUserId], references: [id])
-  firstPost   Post?              @relation(name: "firstPost", fields: [firstPostId], references: [id])
-  lastPost    Post?              @relation(name: "lastPost", fields: [lastPostId], references: [id])
-  posts       Post[]             @relation(name: "posts")
-  poster      Upload?            @relation(fields: [posterId], references: [id])
+  category    Category             @relation(fields: [categoryId], references: [id])
+  user        User                 @relation(name: "userDiscussions", fields: [userId], references: [id])
+  deletedUser User?                @relation(name: "userDeletedDiscussions", fields: [deletedUserId], references: [id])
+  firstPost   Post?                @relation(name: "firstPost", fields: [firstPostId], references: [id])
+  lastPost    Post?                @relation(name: "lastPost", fields: [lastPostId], references: [id])
+  posts       Post[]               @relation(name: "posts")
+  poster      Upload?              @relation(fields: [posterId], references: [id])
   tags        TagDiscussionRef[]
+  followers   DiscussionFollower[]
 
   @@index([createdAt, isSticky])
   @@index([deletedAt])
   @@index([id, deletedAt])
+}
+
+// 关注的话题
+// 话题在有了新的回复、或者状态发生了变化的时候，关注人就会得到通知
+model DiscussionFollower {
+  discussionId Int      @map("discussion_id") @db.UnsignedInt
+  userId       Int      @map("user_id") @db.UnsignedInt
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  //ref
+  discussion Discussion @relation(fields: [discussionId], references: [id])
+  user       User       @relation(fields: [userId], references: [id])
+
+  @@id([discussionId, userId])
 }
 
 model Post {
@@ -289,15 +306,4 @@ model SiteSetting {
 
   // ref
   upload Upload? @relation(fields: [uploadId], references: [id])
-}
-
-// 关注的话题
-// 话题在有了新的回复、或者状态发生了变化的时候，关注人就会得到通知
-model DiscussionFollower {
-  id           Int      @id @default(autoincrement()) @db.UnsignedInt
-  discussionId Int      @map("discussion_id")
-  userId       Int      @map("user_id")
-  createdAt    DateTime @default(now()) @map("created_at")
-
-  @@unique([discussionId, userId])
 }

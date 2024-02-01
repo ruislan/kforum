@@ -1,44 +1,31 @@
 'use client';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { useSession } from 'next-auth/react';
 
 import { runIfFn } from '@/lib/fn';
-import useLoginModal from '@/hooks/use-login-modal';
 import ActionButton from '../ui/action-button';
-import { BookmarkIcon, LoadingIcon, BookmarkedIcon } from '../icons';
+import { LoadingIcon, NotificationIcon, NotificationFillIcon } from '../icons';
 
 
-export default function ActionBookmark({ post, onBookmarked }) {
-    const loginModal = useLoginModal();
-    const { data } = useSession();
-    const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked);
+export default function ActionFollow({ discussion, onFollowed }) {
+    const [isFollowed, setIsFollowed] = useState(discussion.isFollowed);
     const [isLoading, setIsLoading] = useState(false);
 
     const handleAction = async () => {
         if (isLoading) return;
         setIsLoading(true);
         try {
-            const newState = !isBookmarked;
+            const newState = !isFollowed;
             let res = null;
-            if (isBookmarked) {
-                res = await fetch(`/api/bookmarks`, {
-                    method: 'DELETE',
-                    body: JSON.stringify({ postId: post.id }),
-                    headers: { 'Content-Type': 'application/json' }
-                });
-
+            if (isFollowed) {
+                res = await fetch(`/api/discussions/${discussion.id}/follow`, { method: 'DELETE' });
             } else {
-                res = await fetch(`/api/bookmarks`, {
-                    method: 'POST',
-                    body: JSON.stringify({ postId: post.id }),
-                    headers: { 'Content-Type': 'application/json' }
-                });
+                res = await fetch(`/api/discussions/${discussion.id}/follow`, { method: 'POST' });
             }
             if (res?.ok) {
-                toast.success(newState ? '已经收藏' : '已经取消收藏');
-                setIsBookmarked(newState);
-                runIfFn(onBookmarked, newState);
+                toast.success(newState ? '已经关注' : '已经取消关注');
+                setIsFollowed(newState);
+                runIfFn(onFollowed, newState);
             } else {
                 if (res.status === 400) {
                     const json = await res.json();
@@ -60,11 +47,10 @@ export default function ActionBookmark({ post, onBookmarked }) {
     return (
         <ActionButton onClick={e => {
             e.preventDefault();
-            if (!data?.user) loginModal.open();
-            else handleAction();
+            handleAction();
         }}>
             {isLoading ? <LoadingIcon /> :
-                (isBookmarked ? <BookmarkedIcon /> : <BookmarkIcon />)
+                (isFollowed ? <NotificationFillIcon /> : <NotificationIcon />)
             }
         </ActionButton>
     );

@@ -179,6 +179,17 @@ const discussionModel = {
 
         return d;
     },
+    async isUserFollowed({ discussionId, userId }) {
+        const follower = await prisma.discussionFollower.findUnique({
+            where: {
+                discussionId_userId: {
+                    discussionId,
+                    userId,
+                }
+            }
+        });
+        return !!follower;
+    },
     validate({ title, text, content, categorySlug }) {
         if (!title || title.length < MIN_LENGTH_TITLE) return { error: true, message: this.errors.SCHEMA_TITLE };
         if (!categorySlug) return { error: true, message: this.errors.SCHEMA_CATEGORY };
@@ -311,6 +322,35 @@ const discussionModel = {
         if (!this.checkPermission(localUser, discussion, this.actions.STICKY)) throw new ModelError(this.errors.NO_PERMISSION);
 
         await prisma.discussion.update({ where: { id: discussionId }, data: { isSticky } });
+    },
+    async follow({ user, discussionId, isFollowed }) {
+        const localUser = { ...user };
+        const discussion = await prisma.discussion.findUnique({ where: { id: discussionId } });
+        if (!discussion) throw new ModelError(this.errors.DISCUSSION_NOT_FOUND);
+        if (isFollowed) {
+            await prisma.discussionFollower.upsert({
+                where: {
+                    discussionId_userId: {
+                        discussionId: discussion.id,
+                        userId: localUser.id
+                    }
+                },
+                create: {
+                    discussionId: discussion.id,
+                    userId: localUser.id
+                },
+                update: {}
+            });
+        } else {
+            await prisma.discussionFollower.delete({
+                where: {
+                    discussionId_userId: {
+                        discussionId: discussion.id,
+                        userId: localUser.id
+                    }
+                }
+            });
+        }
     },
     async calculateHotnessScore({ createdAt, postCount, userCount, reactionCount, viewCount }) {
         const now = new Date();

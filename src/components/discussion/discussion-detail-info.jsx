@@ -29,6 +29,7 @@ import UserMark from '../ui/user-mark';
 import DiscussionMark from '../ui/discussion-mark';
 import ActionBookmark from './action-bookmark';
 import ActionCopyLink from './action-copy-link';
+import ActionFollow from './action-follow';
 
 /*
     line 1: [User Avatar] username | created At ｜ space ___________ space | user actions?: follow? report,
@@ -82,29 +83,34 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
     return (
         <Box className='flex flex-col pb-0.5'>
             <div className='flex flex-col flex-1'>
-                <div className='flex items-center mb-2 text-gray-300'>
+                <div className='flex items-center justify-between mb-2 text-gray-300'>
                     <div className='flex items-center'>
-                        {c.icon ?
-                            <span className='mr-1.5'><Image width={20} height={20} alt={c.name} src={c.icon} className='rounded' /></span> :
-                            <span className='w-5 h-5 rounded mr-1.5' style={{ backgroundColor: `${c.color || 'bg-gray-300'}`, }}></span>
-                        }
-                        <Link href={`/c/${c?.slug}`} onClick={e => e.stopPropagation()} className='text-xs text-gray-50 hover:underline underline-offset-2 cursor-pointer'>c/{c?.name}</Link>
+                        <div className='flex items-center'>
+                            {c.icon ?
+                                <span className='mr-1.5'><Image width={20} height={20} alt={c.name} src={c.icon} className='rounded' /></span> :
+                                <span className='w-5 h-5 rounded mr-1.5' style={{ backgroundColor: `${c.color || 'bg-gray-300'}`, }}></span>
+                            }
+                            <Link href={`/c/${c?.slug}`} onClick={e => e.stopPropagation()} className='text-xs text-gray-50 hover:underline underline-offset-2 cursor-pointer'>c/{c?.name}</Link>
+                        </div>
+                        <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
+                        <div className='flex items-center'>
+                            <UserAvatar className='mr-1.5' size='xs' name={discussion.user.name} avatar={discussion.user.avatarUrl} />
+                            <Link href={`/u/${discussion.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{discussion.user.name}</Link>
+                            <UserMark isAdmin={discussion.user.isAdmin} isModerator={discussion.user.isModerator} isLocked={discussion.user.isLocked} />
+                        </div>
+                        <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
+                        <span className='text-xs' suppressHydrationWarning>{dateUtils.fromNow(discussion.createdAt)}</span>
+                        {discussion.lastUpdatedAt && (
+                            <>
+                                <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
+                                <span className='text-xs'>{`编辑于 ${dateUtils.fromNow(discussion.lastUpdatedAt)}`}</span>
+                            </>
+                        )}
+                        <DiscussionMark isSticky={isSticky} isLocked={isLocked} />
                     </div>
-                    <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                    <div className='flex items-center'>
-                        <UserAvatar className='mr-1.5' size='xs' name={discussion.user.name} avatar={discussion.user.avatarUrl} />
-                        <Link href={`/u/${discussion.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{discussion.user.name}</Link>
-                        <UserMark isAdmin={discussion.user.isAdmin} isModerator={discussion.user.isModerator} isLocked={discussion.user.isLocked} />
+                    <div>
+                        {isAuthenticated && <ActionFollow discussion={discussion} />}
                     </div>
-                    <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                    <span className='text-xs' suppressHydrationWarning>{dateUtils.fromNow(discussion.createdAt)}</span>
-                    {discussion.lastUpdatedAt && (
-                        <>
-                            <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                            <span className='text-xs'>{`编辑于 ${dateUtils.fromNow(discussion.lastUpdatedAt)}`}</span>
-                        </>
-                    )}
-                    <DiscussionMark isSticky={isSticky} isLocked={isLocked} />
                 </div>
                 <div className='inline-block relative mb-1'>
                     <h2 className='inline text-xl font-bold break-words text-gray-50'>{discussion.title}</h2>
@@ -140,7 +146,6 @@ export default function DiscussionDetailInfo({ discussion, onReplyClick, onLockC
                     /> :
                     <ProseContent className='my-3' content={firstPost?.content} />
                 }
-
                 {!isEditMode && (
                     <div className='text-xs inline-flex flex-col items-end gap-1 mt-1 md:flex-row md:items-center md:justify-between text-gray-300'>
                         <ReactionGroup reactions={reactions} />

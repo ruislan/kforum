@@ -28,8 +28,13 @@ export default async function Page({ params, searchParams }) {
   await discussionModel.incrementView({ id: d.id });
   const session = await getServerSession(authOptions);
   if (!!session?.user) {
-    const bookmark = await bookmarkModel.getBookmark({ userId: session.user.id, postId: d.firstPost.id });
+    // get user bookmark and user follow status
+    const [bookmark, isFollowed] = await Promise.all([
+      bookmarkModel.getBookmark({ userId: session.user.id, postId: d.firstPost.id }),
+      discussionModel.isUserFollowed({ userId: session.user.id, discussionId: d.id })
+    ]);
     d.firstPost.isBookmarked = !!bookmark;
+    d.isFollowed = isFollowed;
   }
   let post = null;
   if (searchParams.postId && d.firstPost.id !== searchParams.postId) {
