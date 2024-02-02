@@ -13,37 +13,37 @@ const ModeratorBox = dynamicImport(() => import('@/components/user/moderator-box
 const BackToTop = dynamicImport(() => import('@/components/ui/back-to-top'));
 
 async function getDiscussions(sort) {
-  return await discussionModel.getDiscussions({
-    sort,
-    withFirstPost: true,
-  });
+    return await discussionModel.getDiscussions({
+        sort,
+        withFirstPost: true,
+    });
 }
 
 export const metadata = {
-  title: '首页'
+    title: '首页'
 }
 
 export default async function Home({ searchParams }) {
-  const sort = searchParams.sort || DISCUSSION_SORT[0];
-  const { discussions, hasMore } = await getDiscussions(sort);
+    const sort = searchParams.sort || DISCUSSION_SORT[0];
+    const { discussions, hasMore } = await getDiscussions(sort);
 
-  return (
-    <div className='flex md:flex-row flex-col w-full h-full gap-6'>
-      <div className='flex flex-col flex-1'>
-        <SortPanel />
-        <DiscussionList
-          discussions={discussions}
-          hasMore={hasMore}
-          categoryId={null}
-        />
-      </div>
-      <div className='flex flex-col md:w-80 w-full gap-4'>
-        <About />
-        <Box className='flex flex-col gap-3'><ActionCreate category={null} /></Box>
-        <CategoryBox />
-        <ModeratorBox />
-        <BackToTop />
-      </div>
-    </div>
-  )
+    return (
+        <div className='flex md:flex-row flex-col w-full h-full gap-6'>
+            <div className='flex flex-col flex-1'>
+                <SortPanel />
+                <DiscussionList
+                    discussions={discussions}
+                    hasMore={hasMore}
+                    categoryId={null}
+                />
+            </div>
+            <div className='flex flex-col md:w-80 w-full gap-4'>
+                <About />
+                <Box className='flex flex-col gap-3'><ActionCreate category={null} /></Box>
+                <CategoryBox />
+                <ModeratorBox />
+                <BackToTop />
+            </div>
+        </div>
+    )
 }

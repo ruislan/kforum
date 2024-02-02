@@ -179,17 +179,6 @@ const discussionModel = {
 
         return d;
     },
-    async isUserFollowed({ discussionId, userId }) {
-        const follower = await prisma.discussionFollower.findUnique({
-            where: {
-                discussionId_userId: {
-                    discussionId,
-                    userId,
-                }
-            }
-        });
-        return !!follower;
-    },
     validate({ title, text, content, categorySlug }) {
         if (!title || title.length < MIN_LENGTH_TITLE) return { error: true, message: this.errors.SCHEMA_TITLE };
         if (!categorySlug) return { error: true, message: this.errors.SCHEMA_CATEGORY };
@@ -351,6 +340,17 @@ const discussionModel = {
                 }
             });
         }
+    },
+    async isUserFollowed({ discussionId, userId }) {
+        const follower = await prisma.discussionFollower.findUnique({
+            where: {
+                discussionId_userId: {
+                    discussionId,
+                    userId,
+                }
+            }
+        });
+        return !!follower;
     },
     async calculateHotnessScore({ createdAt, postCount, userCount, reactionCount, viewCount }) {
         const now = new Date();

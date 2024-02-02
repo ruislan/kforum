@@ -16,52 +16,52 @@ const AvatarUploader = dynamicImport(() => import('@/components/settings/avatar-
 export const dynamic = 'force-dynamic'; // no cache for this page
 
 export async function generateMetadata({ params, searchParams }, parent) {
-  return {
-    title: `设置`,
-  };
+    return {
+        title: `设置`,
+    };
 }
 
 export default async function Page({ params }) {
-  const session = await getServerSession(authOptions);
-  const user = await userModel.getUser({ id: session.user?.id });
-  if (!user) redirect('/');
+    const session = await getServerSession(authOptions);
+    const user = await userModel.getUser({ id: session.user?.id });
+    if (!user) redirect('/');
 
-  return (
-    <div className='flex md:flex-row flex-col w-full min-h-screen gap-6'>
-      {/* left side menus */}
-      <div className='flex flex-col md:w-80 w-full gap-4'>
-        <SideNav menus={[
-          { label: '基本', path: '/settings/general' },
-          { label: '个性化', path: '/settings/profile' },
-          { label: '安全', path: '/settings/security' },
-        ]} />
-      </div>
-      {/* main container*/}
-      <div className='flex flex-col md:flex-1'>
-        {params.slug === 'general' && (
-          <Box className='flex flex-col'>
-            <HeadingSmall>账号信息</HeadingSmall>
-            <GeneralForm user={user} />
-          </Box>)}
-        {params.slug === 'profile' && (
-          <div className='flex flex-col gap-4'>
-            <Box className='flex flex-col'>
-              <HeadingSmall>图形图像</HeadingSmall>
-              <AvatarUploader user={user} />
-            </Box>
-            <Box className='flex flex-col'>
-              <HeadingSmall>概要信息</HeadingSmall>
-              <ProfileForm user={user} />
-            </Box>
-          </div>
-        )}
-        {params.slug === 'security' &&
-          <Box className='flex flex-col'>
-            <HeadingSmall>更改密码</HeadingSmall>
-            <SecurityForm />
-          </Box>
-        }
-      </div>
-    </div>
-  )
+    return (
+        <div className='flex md:flex-row flex-col w-full min-h-screen gap-6'>
+            {/* left side menus */}
+            <div className='flex flex-col md:w-80 w-full gap-4'>
+                <SideNav menus={[
+                    { label: '基本', path: '/settings/general' },
+                    { label: '个性化', path: '/settings/profile' },
+                    { label: '安全', path: '/settings/security' },
+                ]} />
+            </div>
+            {/* main container*/}
+            <div className='flex flex-col md:flex-1'>
+                {params.slug === 'general' && (
+                    <Box className='flex flex-col'>
+                        <HeadingSmall>账号信息</HeadingSmall>
+                        <GeneralForm user={user} />
+                    </Box>)}
+                {params.slug === 'profile' && (
+                    <div className='flex flex-col gap-4'>
+                        <Box className='flex flex-col'>
+                            <HeadingSmall>图形图像</HeadingSmall>
+                            <AvatarUploader user={user} />
+                        </Box>
+                        <Box className='flex flex-col'>
+                            <HeadingSmall>概要信息</HeadingSmall>
+                            <ProfileForm user={user} />
+                        </Box>
+                    </div>
+                )}
+                {params.slug === 'security' &&
+                    <Box className='flex flex-col'>
+                        <HeadingSmall>更改密码</HeadingSmall>
+                        <SecurityForm />
+                    </Box>
+                }
+            </div>
+        </div>
+    )
 }
