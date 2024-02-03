@@ -222,19 +222,18 @@ model Category {
 }
 
 model Notification {
-  id        Int       @id @default(autoincrement()) @db.UnsignedInt
-  userId    Int       @map("user_id") @db.UnsignedInt // 通知接收人
-  type      String    @default("system") @db.VarChar(64) // 通知类型，系统 system / 关注 following
-  target    String?   @db.VarChar(64) // 发起对象，系统 / 话题 / 用户, 如果是系统可直接留空
-  targetId  Int?      @map("target_id") @db.UnsignedInt // 发起对象 Id，如果是系统可直接留空
-  title     String    @db.VarChar(256) // 通知文本的标题
-  content   String    @db.Text // 通知文本内容，一般是个 JSON
-  isRead    Boolean   @default(false) @map("is_read") // 是否已读
-  readAt    DateTime? @map("read_at") // 已读时间
-  createdAt DateTime  @default(now()) @map("created_at") // 创建时间
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  userId    Int      @map("user_id") @db.UnsignedInt // 通知接收人
+  type      String   @db.VarChar(64) // 通知类型，不同的通知，内容不同
+  data      String   @db.Text // 通知文本内容，一般是个 JSON
+  isRead    Boolean  @default(false) @map("is_read") // 是否已读
+  createdAt DateTime @default(now()) @map("created_at") // 创建时间
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   // ref
   user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, type])
 }
 
 // 帖子收藏
