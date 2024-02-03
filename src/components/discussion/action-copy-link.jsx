@@ -13,8 +13,12 @@ export default function ActionCopyLink({ post }) {
         setIsLoading(true);
         let url = location.href;
         if (post) url += `/p/${post.id}`;
-        await navigator.clipboard.writeText(url);
-        toast.success('已经拷贝分享链接');
+        if (!!navigator.clipboard) {
+            await navigator.clipboard.writeText(url);
+            toast.success('已经拷贝分享链接');
+        } else {
+            toast.error('无法分享，请检查你的浏览器安全策略');
+        }
         setIsLoading(false);
     }
     return (
