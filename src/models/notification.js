@@ -12,6 +12,11 @@ const notificationModel = {
     },
     fields: {
     },
+    async getNotifications({
+        userId,
+    }) {
+        return [];
+    }
 };
 
 export default notificationModel;

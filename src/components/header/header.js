@@ -1,8 +1,6 @@
 import dynamicImport from 'next/dynamic';
-import Link from 'next/link';
-
-import { PlusIcon } from '../icons';
 import { siteNavMenuModel, siteSettingModel } from '@/models';
+import ActionMenus from './action-menus';
 
 const NavMenus = dynamicImport(() => import('@/components/header/nav-menus'));
 const Search = dynamicImport(() => import('@/components/header/search'));
@@ -22,10 +20,9 @@ export default async function Header() {
         <header className='h-12 w-full md:px-0 px-4 fixed bg-neutral-800 border-solid border-b border-neutral-700 z-50'>
             <nav className='flex items-center h-full w-full max-w-5xl m-auto'>
                 <NavMenus logo={logo} menus={menus} />
-                <div className='flex items-center flex-grow justify-end md:gap-2 gap-1'>
+                <div className='flex items-center flex-grow justify-end gap-2'>
                     <Search />
-                    <Link href='/d/create' className='flex items-center justify-center w-9 h-9 text-gray-300 p-4 hover:bg-neutral-700 rounded-md'>
-                        <span className='flex w-7 h-7'><PlusIcon /></span></Link>
+                    <ActionMenus />
                     <UserMenus />
                 </div>
             </nav>

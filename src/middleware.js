@@ -10,6 +10,7 @@ export default withAuth({
 export const config = {
     matcher: [
         '/d/create',
+        '/notifications',
         '/settings',
         '/settings/:path*',
     ]
