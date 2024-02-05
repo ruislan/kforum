@@ -2,7 +2,7 @@ import 'server-only';
 export { default as bookmarkModel } from './bookmark';
 export { default as categoryModel } from './category';
 export { default as discussionModel } from './discussion';
-export { default as notificationModel, NOTIFICATION_TYPES } from './notification';
+export { default as notificationModel } from './notification';
 export { default as postModel } from './post';
 export { default as reportModel } from './report';
 export { default as siteNavMenuModel } from './site-nav-menu';

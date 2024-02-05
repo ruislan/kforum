@@ -1,11 +1,7 @@
 import _ from 'lodash';
 import prisma from '@/lib/prisma';
+import pageUtils, { DEFAULT_PAGE_LIMIT } from '@/lib/page-utils';
 import ModelError from './model-error';
-
-export const NOTIFICATION_TYPES = [
-    'NEW_DISCUSSION', // 有新的话题
-    'NEW_POST', // 话题有新的帖子
-];
 
 const notificationModel = {
     errors: {
@@ -13,9 +9,35 @@ const notificationModel = {
     fields: {
     },
     async getNotifications({
-        userId,
+        user,
+        page = 1,
+        pageSize = DEFAULT_PAGE_LIMIT,
     }) {
-        return [];
+        if (!user?.id) return [];
+        const skip = pageUtils.getSkip(page, pageSize);
+        const take = pageSize;
+
+        const fetchCount = prisma.notification.count({
+            where: {
+                userId: user.id,
+                isRead: false,
+            }
+        });
+        const fetchDataList = prisma.notification.findMany({
+            where: {
+                userId: user.id,
+                isRead: false,
+            },
+            orderBy: [
+                { createdAt: 'desc' }
+            ],
+            skip,
+            take
+        });
+
+        const [notifications, count] = await Promise.all([fetchDataList, fetchCount]);
+
+        return { notifications, hasMore: count > skip + take };
     }
 };
 

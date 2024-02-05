@@ -24,7 +24,7 @@ async function initBase() {
     const siteSettings = [
         {
             id: 1,
-            dataType: 'string',
+            dataType: 'STRING',
             key: 'site_title',
             name: '站点标题',
             description: '尽量用简单的词或者短句，对所有用户都可见。',
@@ -32,7 +32,7 @@ async function initBase() {
         },
         {
             id: 2,
-            dataType: 'string',
+            dataType: 'STRING',
             key: 'site_about',
             name: '关于本站',
             description: '用简单的一句话描述本站，对所有用户都可见。',
@@ -40,7 +40,7 @@ async function initBase() {
         },
         {
             id: 3,
-            dataType: 'image',
+            dataType: 'IMAGE',
             key: 'site_logo',
             name: '站点 Logo',
             description: '站点左上角的 Logo 图片，建议使用宽高比为 3:1 的矩形图片。设置为空则展示默认。',
@@ -48,7 +48,7 @@ async function initBase() {
         },
         {
             id: 4,
-            dataType: 'image',
+            dataType: 'IMAGE',
             key: 'site_favicon',
             name: '站点 Favicon',
             description: '站点的 Favicon 图片，建议使用128x128的 png 图片。设置为空则展示默认。',

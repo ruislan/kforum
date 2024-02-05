@@ -16,10 +16,15 @@ export const REPORT_FILTERS = [
 ];
 
 export const SITE_SETTING_TYPES = {
-    image: 'image',
-    string: 'string',
-    text: 'text',
-    html: 'html'
+    IMAGE: 'IMAGE',
+    STRING: 'STRING',
+    TEXT: 'TEXT',
+    HTML: 'HTML'
+};
+
+export const NOTIFICATION_TYPES = {
+    NEW_DISCUSSION: 'NEW_DISCUSSION', // 有新的话题
+    NEW_POST: 'NEW_POST', // 话题有新的帖子
 };
 
 export const MIN_LENGTH_TITLE = 2;

@@ -98,9 +98,9 @@ const discussionModel = {
         queryCondition.skip = skip;
 
         const countCondition = { where: queryCondition.where };
-        const countFetch = prisma.discussion.count(countCondition);
-        const discussionsFetch = prisma.discussion.findMany(queryCondition);
-        const [discussions, count] = await Promise.all([discussionsFetch, countFetch]);
+        const fetchCount = prisma.discussion.count(countCondition);
+        const fetchDataList = prisma.discussion.findMany(queryCondition);
+        const [discussions, count] = await Promise.all([fetchDataList, fetchCount]);
 
         if (withTags) {
             for (const d of discussions) {

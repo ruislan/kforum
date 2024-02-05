@@ -178,7 +178,7 @@ export default function SiteForm({ settings: initSettings }) {
         >
             {settings.map(setting =>
                 <FormControl key={setting.key} title={setting.name} subtitle={setting.description}>
-                    {setting.dataType === SITE_SETTING_TYPES.string && (
+                    {setting.dataType?.toUpperCase() === SITE_SETTING_TYPES.STRING && (
                         <Input
                             value={setting.value}
                             name={setting.key}
@@ -188,7 +188,7 @@ export default function SiteForm({ settings: initSettings }) {
                             }}
                         />
                     )}
-                    {setting.dataType === SITE_SETTING_TYPES.image &&
+                    {setting.dataType?.toUpperCase() === SITE_SETTING_TYPES.IMAGE &&
                         <ImageType
                             value={setting.value}
                             onUploaded={(image) => {

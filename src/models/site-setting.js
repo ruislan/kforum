@@ -12,7 +12,7 @@ const siteSettingModel = {
         await prisma.$transaction(async tx => {
             for (const setting of settings) {
                 let data = { value: setting.value };
-                if (setting.dataType === SITE_SETTING_TYPES.image) { // 图片类型，链接图片
+                if (setting.dataType?.toUpperCase() === SITE_SETTING_TYPES.IMAGE) { // 图片类型，链接图片
                     const upload = await tx.upload.findFirst({
                         where: { url: data.value }
                     });
