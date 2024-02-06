@@ -38,6 +38,19 @@ const notificationModel = {
         const [notifications, count] = await Promise.all([fetchDataList, fetchCount]);
 
         return { notifications, hasMore: count > skip + take };
+    },
+    async markAsRead({
+        user
+    }){
+        await prisma.notification.updateMany({
+            where: {
+                userId: user.id,
+                isRead: false,
+            },
+            data: {
+                isRead: true,
+            }
+        });
     }
 };
 
