@@ -23,7 +23,7 @@ export default function SearchTabs() {
 
     return (
         <div className='flex md:flex-row flex-col w-full h-full gap-6'>
-            <div className='flex flex-col md:flex-1 order-2 md:order-1'>
+            <div className='flex flex-col flex-1 md:max-w-main order-2 md:order-1'>
                 {type === 'default' && <DiscussionsSearch query={query} />}
                 {type === 'posts' && <PostsSearch query={query} />}
                 {type === 'users' && <UsersSearch query={query} />}

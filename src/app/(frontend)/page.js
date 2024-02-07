@@ -29,7 +29,7 @@ export default async function Home({ searchParams }) {
 
     return (
         <div className='flex md:flex-row flex-col w-full h-full gap-6'>
-            <div className='flex flex-col flex-1'>
+            <div className='flex flex-col flex-1 md:max-w-main'>
                 <SortPanel />
                 <DiscussionList
                     discussions={discussions}

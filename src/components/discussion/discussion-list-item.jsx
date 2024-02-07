@@ -66,7 +66,7 @@ export default function DiscussionListItem({
                         'flex justify-between' :
                         'flex flex-col'
                 )}>
-                    <div className='inline-block relative'>
+                    <div className={clsx('inline-block relative', isCardStyle && (discussion.poster ? 'max-w-[75%]' : 'max-w-full'))}>
                         <div className='inline text-gray-50 text-lg font-bold break-words'>{discussion.title}</div>
                         <div className='inline-flex flex-wrap ml-2 gap-1 align-text-top'>
                             {discussion.tags.map(tag => (
@@ -90,7 +90,7 @@ export default function DiscussionListItem({
                             <Image
                                 className={clsx(
                                     isCardStyle ?
-                                        'max-h-24 w-36' :
+                                        'max-h-24 max-w-36 w-auto' :
                                         'max-h-[496px] w-auto'
                                 )}
                                 width={640} height={380}

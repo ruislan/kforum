@@ -42,7 +42,7 @@ export default async function Layout({ children }) {
                     <div className='flex flex-col md:w-64 w-full gap-4'>
                         <SideNav menus={menus} />
                     </div>
-                    <div className='flex flex-col flex-1'>
+                    <div className='flex flex-col flex-1 md:max-w-main'>
                         {children}
                     </div>
                 </div>

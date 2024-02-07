@@ -40,7 +40,7 @@ export default async function Page({ params, searchParams }) {
     return (
         <div className='flex md:flex-row flex-col w-full h-full gap-6'>
             {/* main container*/}
-            <div className='flex flex-col flex-1'>
+            <div className='flex flex-col flex-1 md:max-w-main'>
                 <SortPanel />
                 <DiscussionList
                     categoryId={category.id}
