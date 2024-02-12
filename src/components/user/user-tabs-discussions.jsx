@@ -2,16 +2,17 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-
+import Image from 'next/image';
 import toast from 'react-hot-toast';
-import dateUtils from '@/lib/date-utils';
 
+import dateUtils from '@/lib/date-utils';
 import Box from '../ui/box';
 import NoContent from '../ui/no-content';
 import Button from '../ui/button';
 import SplitBall from '../ui/split-ball';
-import { LoadingIcon, LockedIcon, PinedIcon } from '../icons';
 import Spinner from '../ui/spinner';
+import DiscussionMark from '../ui/discussion-mark';
+import DiscussionListItem from '../discussion/discussion-list-item';
 
 // 只列出用户的话题（含首贴）
 export default function UserTabsDiscussions({ user }) {
@@ -45,28 +46,7 @@ export default function UserTabsDiscussions({ user }) {
     return (
         <div className='text-sm text-neutral-100 flex flex-col gap-2'>
             {dataList.map((item, i) => (
-                <Box key={i} className='flex flex-col'>
-                    <div className='inline align-middle'>
-                        <Link href={`/d/${item.id}`} className='inline align-middle hover:underline underline-offset-2 cursor-pointer'>{item.title}</Link>
-                        {item.isSticky && (<span className='inline-flex align-middle h-4 w-4 ml-1.5 text-green-400'><PinedIcon /></span>)}
-                        {item.isLocked && (<span className='inline-flex align-middle h-3.5 w-3.5 ml-0.5 text-yellow-400'><LockedIcon /></span>)}
-                        <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />
-                        <Link href={`/c/${item.category.slug}`} className='inline-block align-middle text-xs text-gray-200 hover:underline underline-offset-2 cursor-pointer'>c/{item.category.name}</Link>
-                        <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />
-                        <Link className='inline-block align-middle text-xs text-gray-400 hover:underline underline-offset-2 cursor-pointer' href={`/u/${user.name}`}>u/{user.name}</Link>
-                        <SplitBall className='inline-block align-middle ml-1.5 mr-1.5 bg-gray-300' />
-                        <span className='inline-flex align-middle text-xs text-gray-400' suppressHydrationWarning>{dateUtils.fromNow(item.createdAt)}</span>
-                    </div>
-                    <div className='text-xs inline-flex items-center text-gray-300 mt-1'>
-                        <div className='flex items-center'><span>参与 {item.userCount}</span></div>
-                        <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                        <div className='flex items-center'><span>帖子 {item.postCount || 0}</span></div>
-                        <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                        <div className='flex items-center'><span>反馈 {item.reactionCount || 0}</span></div>
-                        <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
-                        <div className='flex items-center'><span>浏览 {item.viewCount}</span></div>
-                    </div>
-                </Box>
+                <DiscussionListItem key={i} discussion={item} />
             ))}
             {isLoading && <Spinner center />}
             {hasMore && !isLoading && (

@@ -41,22 +41,26 @@ export default function DiscussionListItem({
                             <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                         </>
                     )}
-                    <div className='flex items-center'>
-                        <UserAvatar
-                            size='xs'
-                            className='mr-1.5'
-                            name={discussion.user?.name}
-                            avatar={discussion.user?.avatarUrl}
-                        />
-                        <Link
-                            href={`/u/${discussion.user?.name}`}
-                            onClick={e => e.stopPropagation()}
-                            className='text-xs hover:underline underline-offset-2 cursor-pointer'>
-                            u/{discussion.user?.name}
-                        </Link>
-                        <UserMark isAdmin={discussion.user?.isAdmin} isModerator={discussion.user?.isModerator} isLocked={discussion.user?.isLocked} />
-                    </div>
-                    <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
+                    {discussion.user &&
+                        <>
+                            <div className='flex items-center'>
+                                <UserAvatar
+                                    size='xs'
+                                    className='mr-1.5'
+                                    name={discussion.user?.name}
+                                    avatar={discussion.user?.avatarUrl}
+                                />
+                                <Link
+                                    href={`/u/${discussion.user?.name}`}
+                                    onClick={e => e.stopPropagation()}
+                                    className='text-xs hover:underline underline-offset-2 cursor-pointer'>
+                                    u/{discussion.user?.name}
+                                </Link>
+                                <UserMark isAdmin={discussion.user?.isAdmin} isModerator={discussion.user?.isModerator} isLocked={discussion.user?.isLocked} />
+                            </div>
+                            <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
+                        </>
+                    }
                     <span className='text-xs' suppressHydrationWarning>{dateUtils.fromNow(discussion.createdAt)}</span>
                     <DiscussionMark isSticky={discussion.isSticky} isLocked={discussion.isLocked} />
                 </div>

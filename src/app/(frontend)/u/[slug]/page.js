@@ -19,7 +19,7 @@ export default async function Page({ params, searchParams }) {
     return (
         <div className='flex md:flex-row flex-col w-full h-full gap-6'>
             {/* main container*/}
-            <div className='flex flex-col flex-1 order-2 md:order-1'>
+            <div className='flex flex-col flex-1 md:max-w-main order-2 md:order-1'>
                 <UserTabs user={user} tab={searchParams.tab} />
             </div>
             {/* right side */}

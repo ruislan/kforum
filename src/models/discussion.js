@@ -39,6 +39,7 @@ const discussionModel = {
             where: whereClause,
             include: {
                 category: { select: categoryModel.fields.simple },
+                tags: { select: { tag: true } },
             },
             orderBy: [
                 { createdAt: 'desc' }
@@ -48,6 +49,12 @@ const discussionModel = {
         });
 
         const [discussions, count] = await Promise.all([discussionsFetch, countFetch]);
+
+        // process tags
+        for (const d of discussions) {
+            d.tags = d.tags.map(t => t.tag);
+        }
+
         return { discussions, hasMore: count > skip + take };
     },
     async getDiscussions({

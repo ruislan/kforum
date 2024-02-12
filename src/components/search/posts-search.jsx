@@ -14,12 +14,10 @@ import Spinner from '../ui/spinner';
 import Button from '../ui/button';
 import SplitBall from '../ui/split-ball';
 import ProseContent from '../ui/prose-content';
-import { LockedIcon, PinedIcon } from '../icons';
 import UserAvatar from '../ui/user-avatar';
 import { POST_SORT, POST_SORT_NAMES } from '@/lib/constants';
 import DiscussionMark from '../ui/discussion-mark';
 import UserMark from '../ui/user-mark';
-import Tag from '../ui/tag';
 
 export default function PostsSearch({ query }) {
     const searchParams = useSearchParams();
