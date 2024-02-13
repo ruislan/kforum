@@ -1,5 +1,5 @@
-import { Fragment } from 'react';
 import clsx from 'clsx';
+import { Fragment } from 'react';
 import { Popover, Transition } from '@headlessui/react';
 import ProseContent from '../ui/prose-content';
 

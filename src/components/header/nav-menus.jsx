@@ -1,9 +1,9 @@
 'use client';
 
-import { Fragment, useRef, useState } from 'react';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Fragment, useRef, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
 import useOutsideClick from '@/hooks/use-outside-click';

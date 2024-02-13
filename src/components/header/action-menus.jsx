@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+
 import NotificationMenu from './notification-menu';
 import { PlusIcon } from '../icons';
-import { useSession } from 'next-auth/react';
 
 export default function ActionMenus() {
     const { data } = useSession();

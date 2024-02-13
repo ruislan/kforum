@@ -1,17 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
 import toast from 'react-hot-toast';
 
-import dateUtils from '@/lib/date-utils';
-import Box from '../ui/box';
 import NoContent from '../ui/no-content';
 import Button from '../ui/button';
-import SplitBall from '../ui/split-ball';
 import Spinner from '../ui/spinner';
-import DiscussionMark from '../ui/discussion-mark';
 import DiscussionListItem from '../discussion/discussion-list-item';
 
 // 只列出用户的话题（含首贴）

@@ -1,8 +1,8 @@
 'use client';
 
+import toast from 'react-hot-toast';
 import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import toast from 'react-hot-toast';
 
 import { runIfFn } from '@/lib/fn';
 import useTagsModal from '@/hooks/use-tags-modal';
