@@ -39,9 +39,22 @@ const notificationModel = {
 
         return { notifications, hasMore: count > skip + take };
     },
+    // clean one or all
+    async clean({
+        user,
+        id
+    }) {
+
+        await prisma.notification.deleteMany({
+            where: {
+                userId: user.id,
+                id: id > 0 ? id : undefined,
+            }
+        });
+    },
     async markAsRead({
         user
-    }){
+    }) {
         await prisma.notification.updateMany({
             where: {
                 userId: user.id,

@@ -21,7 +21,7 @@ function NewPost({ notification }) {
                     avatar={notification.data.user.avatar}
                 />
             </div>
-            <div className='flex flex-col'>
+            <div className='flex flex-col flex-1'>
                 <div className='flex items-center text-gray-300'>
                     <Link
                         href={`/u/${notification.data.user.name}`}
@@ -32,22 +32,25 @@ function NewPost({ notification }) {
                     </Link>
                     <SplitBall className='mx-1.5 bg-gray-300' />
                     <span className='text-xs'>回帖了主题</span>
-                    <Link
-                        href={`/u/${notification.data.discussion.id}`}
-                        onClick={e => e.stopPropagation()}
-                        className='text-xs font-bold hover:underline underline-offset-2 cursor-pointer ml-1.5'
-                    >
-                        {notification.data.discussion.title}
-                        </Link>
                     <SplitBall className='mx-1.5 bg-gray-300' />
                     <span className='text-xs' suppressHydrationWarning>{dateUtils.fromNow(notification.createdAt)}</span>
                 </div>
-                <Link
-                    href={`/d/${notification.data.discussion.id}`}
-                    className='text-sm hover:underline underline-offset-2 cursor-pointer'
-                >
-                    {notification.data.discussion.title}
-                </Link>
+                <div className='w-full break-words text-sm'>
+                    <Link
+                        href={`/d/${notification.data.discussion.id}`}
+                        className='hover:underline underline-offset-2 cursor-pointer'
+                    >
+                        {notification.data.discussion.title}
+                    </Link>
+                </div>
+                <div className='w-full mt-2 px-4 py-2 bg-neutral-700 rounded-lg shadow-md'>
+                    <Link
+                        href={`/d/${notification.data.discussion.id}`}
+                        className='text-sm hover:underline underline-offset-2 cursor-pointer'
+                    >
+                        {notification.data.discussion.title}
+                    </Link>
+                </div>
             </div>
         </Box>
     );

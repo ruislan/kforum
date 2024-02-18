@@ -6,15 +6,15 @@ import authOptions from '@/lib/auth';
 import { ModelError, notificationModel } from '@/models';
 import logger from '@/lib/logger';
 
-export async function PUT(request, { params }) {
+export async function DELETE(request, { params }) {
     // require user
     const session = await getServerSession(authOptions);
     if (!session.user?.id) return rest.unauthorized();
     if (session.user?.isLocked) return rest.forbidden();
 
     try {
-        await notificationModel.markAsRead({ user: session.user });
-        return rest.updated();
+        await notificationModel.clean({ user: session.user });
+        return rest.deleted();
     } catch (err) {
         if (err instanceof ModelError)
             return rest.badRequest({ message: err.message });
