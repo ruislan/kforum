@@ -39,8 +39,8 @@ const notificationModel = {
 
         return { notifications, hasMore: count > skip + take };
     },
-    // clean one or all
-    async clean({
+    // clear one or all
+    async clear({
         user,
         id
     }) {

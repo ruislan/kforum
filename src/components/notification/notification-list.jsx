@@ -11,6 +11,7 @@ import Box from '../ui/box';
 import UserAvatar from '../ui/user-avatar';
 import dateUtils from '@/lib/date-utils';
 import SplitBall from '../ui/split-ball';
+import useNotificationStore from '@/hooks/use-notification-store';
 
 function NewPost({ notification }) {
     return (
@@ -93,70 +94,18 @@ function NewDiscussion({ notification }) {
 }
 
 export default function NotificationList() {
-    const [isLoading, setIsLoading] = useState(true);
-    const [dataList, setDataList] = useState([]);
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(false);
+    const [isLoaded, setIsLoaded] = useState(false);
+    const dataList = useNotificationStore((state) => state.notifications);
+    const fetchNotifications = useNotificationStore((state) => state.fetchNotifications);
+    const isLoading = useNotificationStore((state) => state.isLoading);
+    const hasMore = useNotificationStore((state) => state.hasMore);
 
     useEffect(() => {
-        (async () => {
-            try {
-                let url = `/api/notifications?page=${page}`;
-                const res = await fetch(url);
-                if (res.ok) {
-                    const json = await res.json();
-                    // setDataList(prev => [...prev, ...json.data]);
-                    setDataList([
-                        {
-                            type: NOTIFICATION_TYPES.NEW_DISCUSSION,
-                            data: {
-                                discussion: {
-                                    id: 1,
-                                    title: 'somesomesomesomesomesomesomesomesome',
-                                },
-                                user: {
-                                    id: 1,
-                                    name: 'admin',
-                                    avatar: '/uploads/2024/02/02/bb36492b64f5b4560d2a7053c22df8f84a839054.jpeg',
-                                }
-                            },
-                            isRead: false,
-                            createdAt: new Date(),
-                        },
-                        {
-                            type: NOTIFICATION_TYPES.NEW_POST,
-                            data: {
-                                discussion: {
-                                    id: 1,
-                                    title: 'somesomesomesomesomesomesomesomesomesome',
-                                },
-                                post: {
-                                    id: 1,
-                                    content: 'some some some some',
-                                },
-                                user: {
-                                    id: 1,
-                                    name: 'admin',
-                                    avatar: '/uploads/2024/02/02/bb36492b64f5b4560d2a7053c22df8f84a839054.jpeg',
-                                }
-                            },
-                            isRead: false,
-                            createdAt: new Date(),
-                        }
-                    ]);
-                    setHasMore(json.hasMore);
-                } else {
-                    toast.error('未知错误，请刷新重试');
-                }
-            } catch (err) {
-                toast.error('未知错误，请刷新重试');
-            } finally {
-                setIsLoading(false);
-            }
-        })();
-    }, [page]);
+        fetchNotifications().then(() => setIsLoaded(true));
+    }, [fetchNotifications]);
 
-    if (!isLoading && dataList.length === 0) return <NoContent text={`没有新的通知信息`} />;
+    if (isLoaded && !isLoading && dataList.length === 0) return <NoContent text={`没有新的通知信息`} />;
+
     return (
         <div className='flex flex-col gap-2'>
             {dataList.map((item, index) => {
@@ -175,7 +124,7 @@ export default function NotificationList() {
                     <Button
                         kind='ghost'
                         disabled={isLoading}
-                        onClick={() => setPage(prev => prev + 1)}
+                        onClick={() => fetchNotifications()}
                     >
                         查看更多
                     </Button>

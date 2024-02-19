@@ -13,7 +13,7 @@ export async function DELETE(request, { params }) {
     if (session.user?.isLocked) return rest.forbidden();
 
     try {
-        await notificationModel.clean({ user: session.user });
+        await notificationModel.clear({ user: session.user });
         return rest.deleted();
     } catch (err) {
         if (err instanceof ModelError)

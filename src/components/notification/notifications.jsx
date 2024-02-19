@@ -1,52 +1,25 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import NotificationList from './notification-list';
-import { runIfFn } from '@/lib/fn';
+import useNotificationStore from '@/hooks/use-notification-store';
 
-function ActionClean({ onCleaned }) {
-    const [isLoading, setIsLoading] = useState(false);
-    const handleAction = async () => {
-        if (isLoading) return;
-        setIsLoading(true);
-        try {
-            const res = await fetch('/api/notifications/clean', {
-                method: 'DELETE',
-            });
-            if (res?.ok) {
-                toast.success('清空完成');
-                runIfFn(onCleaned);
-            } else {
-                if (res.status === 400) {
-                    const json = await res.json();
-                    toast.error(json.message);
-                } else if (res.status === 403) {
-                    toast.error('您没有权限进行此操作');
-                } else if (res.status === 401) {
-                    toast.error('您的登录已过期，请重新登录');
-                } else {
-                    throw new Error();
-                }
-            }
-        } catch (err) {
-            toast.error('未知错误，请重新尝试，或者刷新页面');
-        } finally {
-            setIsLoading(false);
-        }
-    }
+function ActionClean() {
+    const isDeleting = useNotificationStore((state) => state.isDeleting);
+    const clearNotifications = useNotificationStore((state) => state.clearNotifications);
 
     return (
         <div
             className='flex items-center cursor-pointer hover:text-gray-50'
-            onClick={e => {
+            onClick={async e => {
                 e.preventDefault();
-                handleAction();
+                await clearNotifications();
                 return false;
             }}
         >
-            <span>{isLoading ? '清空中...' : '清空'}</span>
+            <span>{isDeleting ? '清空中...' : '清空'}</span>
         </div>
     );
 }
