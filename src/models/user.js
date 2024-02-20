@@ -34,8 +34,8 @@ const userModel = {
             },
             select: { ...userModel.fields.simple, password: true }
         });
-        if (user.isLocked) throw new ModelError(this.errors.USER_WAS_LOCKED);
         if (!user) throw new ModelError(this.errors.CREDENTIAL_NOT_VALID);
+        if (user.isLocked) throw new ModelError(this.errors.USER_WAS_LOCKED);
 
         const isPasswordMatched = userModel.comparePassword(password, user.password);
         if (!isPasswordMatched) throw new ModelError(this.errors.CREDENTIAL_NOT_VALID);

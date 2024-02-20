@@ -1,6 +1,5 @@
 'use client';
-import toast from 'react-hot-toast';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 
 import Spinner from '../ui/spinner';
@@ -14,22 +13,23 @@ import SplitBall from '../ui/split-ball';
 import useNotificationStore from '@/hooks/use-notification-store';
 
 function NewPost({ notification }) {
+    const data = useMemo(() => ({ ...JSON.parse(notification.data || '{}') }), [notification]);
     return (
         <Box className='flex gap-2'>
             <div className='flex'>
                 <UserAvatar
-                    name={notification.data.user.name}
-                    avatar={notification.data.user.avatar}
+                    name={data.user.name}
+                    avatar={data.user.avatarUrl}
                 />
             </div>
             <div className='flex flex-col flex-1'>
                 <div className='flex items-center text-gray-300'>
                     <Link
-                        href={`/u/${notification.data.user.name}`}
+                        href={`/u/${data.user.name}`}
                         onClick={e => e.stopPropagation()}
                         className='text-xs hover:underline underline-offset-2 cursor-pointer'
                     >
-                        u/{notification.data.user.name}
+                        u/{data.user.name}
                     </Link>
                     <SplitBall className='mx-1.5 bg-gray-300' />
                     <span className='text-xs'>回帖了主题</span>
@@ -38,18 +38,18 @@ function NewPost({ notification }) {
                 </div>
                 <div className='w-full break-words text-sm'>
                     <Link
-                        href={`/d/${notification.data.discussion.id}`}
+                        href={`/d/${data.discussion.id}`}
                         className='hover:underline underline-offset-2 cursor-pointer'
                     >
-                        {notification.data.discussion.title}
+                        {data.discussion.title}
                     </Link>
                 </div>
                 <div className='w-full mt-2 px-4 py-2 bg-neutral-700 rounded-lg shadow-md'>
                     <Link
-                        href={`/d/${notification.data.discussion.id}`}
+                        href={`/d/${data.discussion.id}`}
                         className='text-sm hover:underline underline-offset-2 cursor-pointer'
                     >
-                        {notification.data.discussion.title}
+                        {data.discussion.title}
                     </Link>
                 </div>
             </div>
@@ -59,23 +59,23 @@ function NewPost({ notification }) {
 
 
 function NewDiscussion({ notification }) {
-
+    const data = useMemo(() => ({ ...JSON.parse(notification.data || '{}') }), [notification]);
     return (
         <Box className='flex gap-2'>
             <div className='flex'>
                 <UserAvatar
-                    name={notification.data.user.name}
-                    avatar={notification.data.user.avatar}
+                    name={data.user.name}
+                    avatar={data.user.avatarUrl}
                 />
             </div>
             <div className='flex flex-col'>
                 <div className='flex items-center text-gray-300'>
                     <Link
-                        href={`/u/${notification.data.user.name}`}
+                        href={`/u/${data.user.name}`}
                         onClick={e => e.stopPropagation()}
                         className='text-xs hover:underline underline-offset-2 cursor-pointer'
                     >
-                        u/{notification.data.user.name}
+                        u/{data.user.name}
                     </Link>
                     <SplitBall className='mx-1.5 bg-gray-300' />
                     <span className='text-xs'>发布了新的话题</span>
@@ -83,10 +83,10 @@ function NewDiscussion({ notification }) {
                     <span className='text-xs' suppressHydrationWarning>{dateUtils.fromNow(notification.createdAt)}</span>
                 </div>
                 <Link
-                    href={`/d/${notification.data.discussion.id}`}
+                    href={`/d/${data.discussion.id}`}
                     className='text-sm hover:underline underline-offset-2 cursor-pointer'
                 >
-                    {notification.data.discussion.title}
+                    {data.discussion.title}
                 </Link>
             </div>
         </Box>

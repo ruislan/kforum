@@ -4,6 +4,7 @@ import pageUtils, { DEFAULT_PAGE_LIMIT } from '@/lib/page-utils';
 import ModelError from './model-error';
 import userModel from './user';
 import uploadModel from './upload';
+import notificationModel from './notification';
 
 const postModel = {
     errors: {
@@ -103,6 +104,16 @@ const postModel = {
         // add ref
         data.user = localUser;
         data.replyPost = replyPost;
+
+        // send notifications
+        // TODO async process
+        await notificationModel.notifyNewPost({
+            user: localUser,
+            post: {
+                ...data,
+                discussion,
+            }
+        });
 
         return data;
     },
