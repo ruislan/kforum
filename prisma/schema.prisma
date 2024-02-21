@@ -37,8 +37,21 @@ model User {
   agreedReports        Report[]             @relation(name: "userAgreedReports")
   tags                 TagDiscussionRef[]
   bookmarks            Bookmark[]
-  followingDiscussions DiscussionFollower[]
   notifications        Notification[]
+  followingDiscussions DiscussionFollower[] // 关注的话题
+  followingUsers       UserFollower[] // 关注的人
+}
+
+model UserFollower {
+  followingId Int      @map("following_id") @db.UnsignedInt
+  userId      Int      @map("user_id") @db.UnsignedInt
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  //ref
+  user User @relation(fields: [userId], references: [id])
+
+  @@id([followingId, userId])
 }
 
 model Discussion {

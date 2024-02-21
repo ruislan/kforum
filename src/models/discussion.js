@@ -319,11 +319,11 @@ const discussionModel = {
 
         await prisma.discussion.update({ where: { id: discussionId }, data: { isSticky } });
     },
-    async follow({ user, discussionId, isFollowed }) {
+    async follow({ user, discussionId, isFollowing }) {
         const localUser = { ...user };
         const discussion = await prisma.discussion.findUnique({ where: { id: discussionId } });
         if (!discussion) throw new ModelError(this.errors.DISCUSSION_NOT_FOUND);
-        if (isFollowed) {
+        if (isFollowing) {
             await prisma.discussionFollower.upsert({
                 where: {
                     discussionId_userId: {

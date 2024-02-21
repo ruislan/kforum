@@ -2,6 +2,7 @@ import Box from '../ui/box';
 import Stats from '../ui/stats';
 import UserAvatar from '../ui/user-avatar';
 import UserMark from '../ui/user-mark';
+import ActionFollow from './action-follow';
 
 export default async function UserInfo({ user = null }) {
     if (!user) return null;
@@ -17,6 +18,9 @@ export default async function UserInfo({ user = null }) {
             <div className='flex items-center my-2'>
                 <div className='text-gray-100 text-xl'>{user.name}</div>
                 <UserMark isAdmin={user.isAdmin} isModerator={user.isModerator} isLocked={user.isLocked} className='mt-2' />
+            </div>
+            <div className='flex items-center gap-2'>
+                <ActionFollow user={user} />
             </div>
             <div className='grid grid-cols-3 gap-2 mt-2'>
                 <Stats name='话题数' value={user.discussionCount || 0} />

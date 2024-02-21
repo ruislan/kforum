@@ -11,6 +11,7 @@ const userModel = {
         CAN_NOT_LOCK_ADMIN: '管理员不能被封锁',
         USER_WAS_LOCKED: '你已经被管理员封禁',
         CREDENTIAL_NOT_VALID: '用户名或密码不正确',
+        CAN_NOT_FOLLOW_YOURSELF: '你不能关注你自己',
     },
     fields: {
         short: { id: true, name: true, gender: true, avatarUrl: true },
@@ -174,6 +175,47 @@ const userModel = {
             }
         });
         return moderators;
+    },
+    async follow({ user, followingUsername, isFollowing }) {
+        const localUser = { ...user };
+        const followingUser = await prisma.user.findUnique({ where: { name: followingUsername } });
+        if (!followingUser) throw new ModelError(this.errors.USER_NOT_FOUND);
+        if (localUser.id === followingUser) throw new ModelError(this.errors.CAN_NOT_FOLLOW_YOURSELF);
+        if (isFollowing) {
+            await prisma.userFollower.upsert({
+                where: {
+                    followingId_userId: {
+                        followingId: followingUser.id,
+                        userId: localUser.id
+                    }
+                },
+                create: {
+                    followingId: followingUser.id,
+                    userId: localUser.id
+                },
+                update: {}
+            });
+        } else {
+            await prisma.userFollower.delete({
+                where: {
+                    followingId_userId: {
+                        followingId: followingUser.id,
+                        userId: localUser.id
+                    }
+                }
+            });
+        }
+    },
+    async isUserFollowed({ userId, followingUserId }) {
+        const follower = await prisma.userFollower.findUnique({
+            where: {
+                followingId_userId: {
+                    followingId: followingUserId,
+                    userId,
+                }
+            }
+        });
+        return !!follower;
     }
 };
 
