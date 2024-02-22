@@ -6,6 +6,7 @@ import userModel from './user';
 import postModel from './post';
 import uploadModel from './upload';
 import categoryModel from './category';
+import notificationModel from './notification';
 
 const discussionModel = {
     errors: {
@@ -265,6 +266,15 @@ const discussionModel = {
 
             discussion.posts = [{ ...post }];
             return discussion;
+        });
+
+        // TODO async process
+        await notificationModel.notifyNewDiscussion({
+            user: localUser,
+            discussion: {
+                id: data.id,
+                title: data.title,
+            }
         });
 
         return data;

@@ -50,7 +50,7 @@ export default function ActionFollow({ user, onFollowed }) {
         }
     }
 
-    if (!user || user?.id === data?.user?.id) return null;
+    if (!user || !data?.user || user?.id === data?.user?.id) return null;
 
     return (
         <Button

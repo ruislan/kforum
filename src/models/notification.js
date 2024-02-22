@@ -10,21 +10,61 @@ const notificationModel = {
     fields: {
     },
     // notify user's followers
-    // async notifyNewDiscussion({
-    //     user,
-    //     discussion,
-    // }) {
-    //     await prisma.notification.create({
-    //         data: {
-    //             userId: user.id,
-    //             type: NOTIFICATION_TYPES.NEW_DISCUSSION,
-    //         }
-    //     });
-    // },
+    async notifyNewDiscussion({
+        user,
+        discussion,
+    }) {
+        const followers = await prisma.userFollower.findMany({
+            where: {
+                followingId: user.id,
+                userId: {
+                    not: user.id
+                }
+            },
+            select: {
+                userId: true,
+            }
+        });
+
+        if (followers.length <= 0) return;
+
+        await prisma.notification.createMany({
+            data: followers.map(follower => ({
+                userId: follower.userId,
+                type: NOTIFICATION_TYPES.NEW_DISCUSSION,
+                data: JSON.stringify({
+                    discussion: {
+                        id: discussion.id,
+                        title: discussion.title,
+                    },
+                    user: {
+                        id: user.id,
+                        name: user.name,
+                        avatarUrl: user.avatarUrl,
+                    }
+                })
+            })),
+            skipDuplicates: true
+        });
+    },
     // notify user's followers
     // notify discussions's followers
-    async notifyNewPost({ user, post }) {
-        const followers = await prisma.discussionFollower.findMany({
+    async notifyNewPost({
+        user,
+        post
+    }) {
+        const userFollowers = await prisma.userFollower.findMany({
+            where: {
+                followingId: user.id,
+                userId: {
+                    not: user.id
+                }
+            },
+            select: {
+                userId: true,
+            }
+        });
+        const discussionFollowers = await prisma.discussionFollower.findMany({
             where: {
                 discussionId: post.discussionId,
                 userId: {
@@ -36,11 +76,16 @@ const notificationModel = {
             }
         });
 
-        if (!followers) return;
+        // combine the followers
+        let followers = new Set();
+        userFollowers.forEach(f => followers.add(f.userId));
+        discussionFollowers.forEach(f => followers.add(f.userId));
+        followers = Array.from(followers); // convert to array
+        if (followers.length <= 0) return; // no followers, return early
 
         await prisma.notification.createMany({
-            data: followers.map(follower => ({
-                userId: follower.userId,
+            data: followers.map(followerId => ({
+                userId: followerId,
                 type: NOTIFICATION_TYPES.NEW_POST,
                 data: JSON.stringify({
                     discussion: {
