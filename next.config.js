@@ -19,6 +19,9 @@ const securityHeaders = [
 
 const nextConfig = {
     reactStrictMode: true,
+    experimental: {
+        instrumentationHook: true,
+    },
     images: {
         dangerouslyAllowSVG: true,
         remotePatterns: [

@@ -8,7 +8,10 @@ const Notifications = dynamicImport(() => import('@/components/notification/noti
 
 export default async function Page() {
     const session = await getServerSession(authOptions);
-    const notifications = await notificationModel.getNotifications({ userId: session?.user?.id });
+    const [notifications,] = await Promise.all([
+        notificationModel.getNotifications({ userId: session?.user?.id }),
+        notificationModel.markAsRead({ user: session?.user }),
+    ]);
 
     return (
         <div className='flex md:flex-row flex-col w-full md:w-[680px] h-full gap-6 mx-auto'>
