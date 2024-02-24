@@ -11,7 +11,6 @@ import RegisterModal from '@/components/auth/register-modal';
 const Header = dynamicImport(() => import('@/components/header/header'));
 const Footer = dynamicImport(() => import('@/components/footer/footer'));
 
-
 export default async function Layout({ children }) {
     const session = await getServerSession(authOptions);
 

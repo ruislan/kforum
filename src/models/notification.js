@@ -118,13 +118,11 @@ const notificationModel = {
         const fetchCount = prisma.notification.count({
             where: {
                 userId: user.id,
-                isRead: false,
             }
         });
         const fetchDataList = prisma.notification.findMany({
             where: {
                 userId: user.id,
-                isRead: false,
             },
             orderBy: [
                 { createdAt: 'desc' }
@@ -137,7 +135,6 @@ const notificationModel = {
 
         return { notifications, hasMore: count > skip + take };
     },
-    // clear one or all
     async clear({
         user,
         id
@@ -162,6 +159,18 @@ const notificationModel = {
                 isRead: true,
             }
         });
+    },
+    async getUnreadCount({
+        user
+    }) {
+        if (!user) return 0;
+        const count = await prisma.notification.count({
+            where: {
+                userId: user.id,
+                isRead: false,
+            }
+        });
+        return count;
     }
 };
 

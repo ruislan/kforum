@@ -6,14 +6,13 @@ import { useSession } from 'next-auth/react';
 import NotificationMenu from './notification-menu';
 import { PlusIcon } from '../icons';
 
-export default function ActionMenus() {
+export default function ActionMenus({ unreadCount }) {
     const { data } = useSession();
-
     if (!data) return null;
 
     return (
         <div className='flex items-center'>
-            <NotificationMenu />
+            <NotificationMenu unreadCount={unreadCount} />
             <Link
                 title='新话题'
                 href='/d/create'
