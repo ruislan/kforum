@@ -1,5 +1,5 @@
-import { useState } from 'react';
 'use client';
+import { useState } from 'react';
 
 import Link from 'next/link';
 import { NotificationIcon } from '../icons';

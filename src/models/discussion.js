@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma';
-import { DISCUSSION_SORT, MIN_LENGTH_TITLE } from '@/lib/constants';
+import { DISCUSSION_SORT, MIN_LENGTH_TITLE, NOTIFICATION_TYPES } from '@/lib/constants';
 import pageUtils, { DEFAULT_PAGE_LIMIT } from '@/lib/page-utils';
 import ModelError from './model-error';
 import userModel from './user';
@@ -7,6 +7,7 @@ import postModel from './post';
 import uploadModel from './upload';
 import categoryModel from './category';
 import notificationModel from './notification';
+import pubsub from '@/lib/pubsub';
 
 const discussionModel = {
     errors: {
@@ -268,12 +269,16 @@ const discussionModel = {
             return discussion;
         });
 
-        // TODO async process
-        await notificationModel.notifyNewDiscussion({
-            user: localUser,
-            discussion: {
-                id: data.id,
-                title: data.title,
+
+        // send async notification
+        await pubsub.emit('notification', {
+            type: NOTIFICATION_TYPES.NEW_DISCUSSION,
+            data: {
+                user: localUser,
+                discussion: {
+                    id: data.id,
+                    title: data.title,
+                }
             }
         });
 

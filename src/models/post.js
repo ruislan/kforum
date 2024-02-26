@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma';
-import { MIN_LENGTH_CONTENT } from '@/lib/constants';
+import { MIN_LENGTH_CONTENT, NOTIFICATION_TYPES } from '@/lib/constants';
 import pageUtils, { DEFAULT_PAGE_LIMIT } from '@/lib/page-utils';
 import ModelError from './model-error';
 import userModel from './user';
@@ -105,13 +105,15 @@ const postModel = {
         data.user = localUser;
         data.replyPost = replyPost;
 
-        // send notifications
-        // TODO async process
-        await notificationModel.notifyNewPost({
-            user: localUser,
-            post: {
-                ...data,
-                discussion,
+        // send async notification
+        await pubsub.emit('notification', {
+            type: NOTIFICATION_TYPES.NEW_POST,
+            data: {
+                user: localUser,
+                post: {
+                    ...data,
+                    discussion,
+                }
             }
         });
 

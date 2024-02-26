@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import pageUtils, { DEFAULT_PAGE_LIMIT } from '@/lib/page-utils';
 import ModelError from './model-error';
 import { NOTIFICATION_TYPES } from '@/lib/constants';
+import pubsub from '@/lib/pubsub';
 
 const notificationModel = {
     errors: {
@@ -133,6 +134,8 @@ const notificationModel = {
 
         const [notifications, count] = await Promise.all([fetchDataList, fetchCount]);
 
+        await pubsub.emit('notification', { hello: 'world' });
+
         return { notifications, hasMore: count > skip + take };
     },
     async clear({
@@ -173,5 +176,19 @@ const notificationModel = {
         return count;
     }
 };
+
+
+pubsub.on('notification', async (event) => {
+    const type = event?.type;
+    switch (type) {
+        case NOTIFICATION_TYPES.NEW_DISCUSSION:
+            notificationModel.notifyNewDiscussion(event.data);
+            break;
+        case NOTIFICATION_TYPES.NEW_POST:
+            notificationModel.notifyNewPost(event.data);
+            break;
+        default: break;
+    }
+});
 
 export default notificationModel;
