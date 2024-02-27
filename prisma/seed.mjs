@@ -131,8 +131,6 @@ async function initDev() {
 // 社区会员: 81347 人
 // 帖子数: 36005 个
 // 回帖数: 235207 条
-//
-// Mac i9 16G 386.178s
 async function initFaker() {
     console.log('开始进行faker数据填充，这会会花费一些时间：');
     const time = Date.now();
@@ -159,6 +157,14 @@ async function initFaker() {
     })
     await db.user.createMany({ data: users });
     console.log(`已完成初始化 ${userCount} 个用户`);
+
+    // 每个用户都关注第一个用户(10 万关注)，便于后续测试
+    const followers = _.range(2, userCount + 1).map(id => ({
+        followingId: 1,
+        userId: id,
+    }));
+    await db.userFollower.createMany({ data: followers });
+    console.log(`已完成初始化关注， ${followers.length} 个用户关注了 id:1 的用户`);
 
     // 1000 个用户，每个生成 20 个话题，共30000个话题
     let userLimit = 1000;
@@ -235,9 +241,21 @@ async function initFaker() {
     }
     console.log(`已完成初始化 200,000 个回帖`);
     console.log(`全部Faker初始化完成，总耗时：${(Date.now() - time) / 1000} 秒`);
+    // Mac i9 16G 276.203s
 }
 
 async function cleanDb() {
+    await db.siteNavMenu.deleteMany({});
+    await db.siteSetting.deleteMany({});
+    await db.tagDiscussionRef.deleteMany({});
+    await db.tag.deleteMany({});
+    await db.bookmark.deleteMany({});
+    await db.uploadAvatarRef.deleteMany({});
+    await db.uploadPostRef.deleteMany({});
+    await db.upload.deleteMany({});
+    await db.notification.deleteMany({});
+    await db.userFollower.deleteMany({});
+    await db.discussionFollower.deleteMany({});
     await db.reactionPostRef.deleteMany({});
     await db.post.deleteMany({});
     await db.discussion.deleteMany({});
