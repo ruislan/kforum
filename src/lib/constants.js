@@ -27,6 +27,14 @@ export const NOTIFICATION_TYPES = {
     NEW_POST: 'NEW_POST', // 话题有新的帖子
 };
 
+
+// 声望值的类型
+export const REPUTATION_TYPES = {
+    NEW_DISCUSSION: 'NEW_DISCUSSION', // 你发布了新的话题， +10
+    NEW_POST: 'NEW_POST', // 你发布了新的回帖，或者你的话题有了新的回帖， +10
+    NEW_REACTION: 'NEW_REACTION', // 你的帖子有新的反馈， +2
+};
+
 export const MIN_LENGTH_TITLE = 2;
 export const MIN_LENGTH_CONTENT = 2;
 
@@ -49,3 +57,4 @@ export const USER_SORT_NAMES = {
     recent: '最新',
     oldest: '最早',
 };
+
