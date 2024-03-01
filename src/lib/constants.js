@@ -29,10 +29,19 @@ export const NOTIFICATION_TYPES = {
 
 
 // 声望值的类型
+// 声望的概念来自于用户在论坛中的影响力，影响力通过个人或者话题被关注，话题的置顶与否，回帖的数量等体现
+// 用户的声望不能低于0，所以，如果有任何操作导致用户声望低于 0，那么都强制设置为 0。
 export const REPUTATION_TYPES = {
-    NEW_DISCUSSION: 'NEW_DISCUSSION', // 你发布了新的话题， +10
-    NEW_POST: 'NEW_POST', // 你发布了新的回帖，或者你的话题有了新的回帖， +10
-    NEW_REACTION: 'NEW_REACTION', // 你的帖子有新的反馈， +2
+    DISCUSSION_PINNED: 'DISCUSSION_PINNED', // 话题被置顶，奖励拥有人 20
+    DISCUSSION_UNPINNED: 'DISCUSSION_UNPINNED', // 话题被取消置顶，扣除拥有人 -20
+    DISCUSSION_FOLLOWED: 'DISCUSSION_FOLLOWED', // 话题被关注，奖励拥有人 2
+    DISCUSSION_UNFOLLOWED: 'DISCUSSION_UNFOLLOWED', // 话题被取消关注，扣除拥有人 -2
+    POST_CREATED: 'POST_CREATED', // 帖子被创建，奖励话题拥有人 10
+    POST_DELETED: 'POST_DELETED', // 帖子被删除，扣除话题拥有人 -10
+    REACTION_CREATED: 'REACTION_CREATED', // 帖子被反馈，奖励帖子拥有人 2
+    REACTION_DELETED: 'REACTION_DELETED', // 反馈被删除，扣除帖子拥有人 -2
+    USER_FOLLOWED: 'USER_FOLLOWED', // 用户被关注，奖励被关注用户 2
+    USER_UNFOLLOWED: 'USER_UNFOLLOWED', // 用户被取消关注，扣除被关注用户 -2
 };
 
 export const MIN_LENGTH_TITLE = 2;

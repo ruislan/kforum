@@ -53,7 +53,39 @@ async function initBase() {
             name: '站点 Favicon',
             description: '站点的 Favicon 图片，建议使用128x128的 png 图片。设置为空则展示默认。',
             value: '',
-        }
+        },
+        {
+            id: 5,
+            dataType: 'NUMBER',
+            key: 'reputation_post_created',
+            name: '回帖声望值',
+            description: '用户的话题有新的回帖获得的声望值，自己回复自己的话题不会产生声望值',
+            value: '10',
+        },
+        {
+            id: 6,
+            dataType: 'NUMBER',
+            key: 'reputation_reaction_created',
+            name: '反馈声望值',
+            description: '用户的帖子有新的反馈获得的声望值，自己反馈自己的帖子不会产生声望值',
+            value: '2',
+        },
+        {
+            id: 7,
+            dataType: 'NUMBER',
+            key: 'reputation_post_deleted',
+            name: '帖子被删除声望值',
+            description: '用户的帖子被删除扣除的声望值',
+            value: '-10',
+        },
+        {
+            id: 8,
+            dataType: 'NUMBER',
+            key: 'reputation_reaction_deleted',
+            name: '反馈被取消声望值',
+            description: '用户的反馈被取消扣除的声望值',
+            value: '-2',
+        },
     ];
     for (const item of siteSettings) {
         await db.siteSetting.upsert({ where: { id: item.id }, create: item, update: item });
