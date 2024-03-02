@@ -126,6 +126,16 @@ function ImageType({ value, onDeleted, onUploaded }) {
     );
 }
 
+function NumberType({ value, onChange }) {
+    return (
+        <Input
+            value={value}
+            type='number'
+            onChange={onChange}
+        />
+    );
+}
+
 export default function SiteForm({ settings: initSettings }) {
     const [settings, setSettings] = useState(initSettings);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -178,7 +188,7 @@ export default function SiteForm({ settings: initSettings }) {
         >
             {settings.map(setting =>
                 <FormControl key={setting.key} title={setting.name} subtitle={setting.description}>
-                    {setting.dataType?.toUpperCase() === SITE_SETTING_TYPES.STRING && (
+                    {setting.dataType?.toUpperCase() === SITE_SETTING_TYPES.STRING &&
                         <Input
                             value={setting.value}
                             name={setting.key}
@@ -187,7 +197,16 @@ export default function SiteForm({ settings: initSettings }) {
                                 setSettings([...settings]);
                             }}
                         />
-                    )}
+                    }
+                    {setting.dataType?.toUpperCase() === SITE_SETTING_TYPES.NUMBER &&
+                        <NumberType
+                            value={setting.value}
+                            onChange={e => {
+                                setting.value = e.target.value;
+                                setSettings([...settings]);
+                            }}
+                        />
+                    }
                     {setting.dataType?.toUpperCase() === SITE_SETTING_TYPES.IMAGE &&
                         <ImageType
                             value={setting.value}

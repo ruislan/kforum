@@ -7,6 +7,16 @@ const siteSettingModel = {
         siteAbout: 'site_about',
         siteLogo: 'site_logo',
         siteFavicon: 'site_favicon',
+        reputationDiscussionPinned: 'reputation_discussion_pinned',
+        reputationDiscussionUnpinned: 'reputation_discussion_unpinned',
+        reputationDiscussionFollowed: 'reputation_discussion_followed',
+        reputationDiscussionUnfollowed: 'reputation_discussion_unfollowed',
+        reputationPostCreated: 'reputation_post_created',
+        reputationPostDeleted: 'reputation_post_deleted',
+        reputationReactionCreated: 'reputation_reaction_created',
+        reputationReactionDeleted: 'reputation_reaction_deleted',
+        reputationUserFollowed: 'reputation_user_followed',
+        reputationUserUnfollowed: 'reputation_user_unfollowed'
     },
     async updateSettings(settings) {
         await prisma.$transaction(async tx => {

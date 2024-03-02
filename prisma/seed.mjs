@@ -22,72 +22,26 @@ async function initBase() {
 
     // init site settings
     const siteSettings = [
-        {
-            id: 1,
-            dataType: 'STRING',
-            key: 'site_title',
-            name: '站点标题',
-            description: '尽量用简单的词或者短句，对所有用户都可见。',
-            value: 'KForum'
-        },
-        {
-            id: 2,
-            dataType: 'STRING',
-            key: 'site_about',
-            name: '关于本站',
-            description: '用简单的一句话描述本站，对所有用户都可见。',
-            value: 'KForum 是一个开源的在线论坛。基于 NextJS、Prisma 等技术。秉承开源、简单、便捷、易用、易扩展和集成的理念，旨在帮助公司、组织或个人快速建立一个现代且时尚的在线论坛。'
-        },
-        {
-            id: 3,
-            dataType: 'IMAGE',
-            key: 'site_logo',
-            name: '站点 Logo',
-            description: '站点左上角的 Logo 图片，建议使用宽高比为 3:1 的矩形图片。设置为空则展示默认。',
-            value: '',
-        },
-        {
-            id: 4,
-            dataType: 'IMAGE',
-            key: 'site_favicon',
-            name: '站点 Favicon',
-            description: '站点的 Favicon 图片，建议使用128x128的 png 图片。设置为空则展示默认。',
-            value: '',
-        },
-        {
-            id: 5,
-            dataType: 'NUMBER',
-            key: 'reputation_post_created',
-            name: '回帖声望值',
-            description: '用户的话题有新的回帖获得的声望值，自己回复自己的话题不会产生声望值',
-            value: '10',
-        },
-        {
-            id: 6,
-            dataType: 'NUMBER',
-            key: 'reputation_reaction_created',
-            name: '反馈声望值',
-            description: '用户的帖子有新的反馈获得的声望值，自己反馈自己的帖子不会产生声望值',
-            value: '2',
-        },
-        {
-            id: 7,
-            dataType: 'NUMBER',
-            key: 'reputation_post_deleted',
-            name: '帖子被删除声望值',
-            description: '用户的帖子被删除扣除的声望值',
-            value: '-10',
-        },
-        {
-            id: 8,
-            dataType: 'NUMBER',
-            key: 'reputation_reaction_deleted',
-            name: '反馈被取消声望值',
-            description: '用户的反馈被取消扣除的声望值',
-            value: '-2',
-        },
+        // 网站配置相关
+        { dataType: 'STRING', key: 'site_title', value: 'KForum', name: '站点标题', description: '尽量用简单的词或者短句，对所有用户都可见。', },
+        { dataType: 'STRING', key: 'site_about', name: '关于本站', description: '用简单的一句话描述本站，对所有用户都可见。', value: 'KForum 是一个开源的在线论坛。基于 NextJS、Prisma 等技术。秉承开源、简单、便捷、易用、易扩展和集成的理念，旨在帮助公司、组织或个人快速建立一个现代且时尚的在线论坛。' },
+        { dataType: 'IMAGE', key: 'site_logo', value: '', name: '站点 Logo', description: '站点左上角的 Logo 图片，建议使用宽高比为 3:1 的矩形图片。设置为空则展示默认。', },
+        { dataType: 'IMAGE', key: 'site_favicon', value: '', name: '站点 Favicon', description: '站点的 Favicon 图片，建议使用128x128的 png 图片。设置为空则展示默认。', },
+        // 网站声望相关
+        { dataType: 'NUMBER', key: 'reputation_discussion_pinned', value: '20', name: '话题置顶声望值', description: '用户的话题被置顶获得的声望值', },
+        { dataType: 'NUMBER', key: 'reputation_discussion_unpinned', value: '-20', name: '话题取消置顶声望值', description: '用户的话题被取消置顶扣除的声望值', },
+        { dataType: 'NUMBER', key: 'reputation_discussion_followed', value: '2', name: '话题被关注声望值', description: '用户的话题被关注获得的声望值', },
+        { dataType: 'NUMBER', key: 'reputation_discussion_unfollowed', value: '-2', name: '话题被取消关注声望值', description: '用户的话题被取消关注扣除的声望值', },
+        { dataType: 'NUMBER', key: 'reputation_post_created', value: '10', name: '回帖声望值', description: '用户的话题有新的回帖获得的声望值，自己回复自己的话题不会产生声望值', },
+        { dataType: 'NUMBER', key: 'reputation_post_deleted', value: '-10', name: '帖子被删除声望值', description: '用户的帖子被删除扣除的声望值', },
+        { dataType: 'NUMBER', key: 'reputation_reaction_created', value: '2', name: '反馈声望值', description: '用户的帖子有新的反馈获得的声望值，自己反馈自己的帖子不会产生声望值', },
+        { dataType: 'NUMBER', key: 'reputation_reaction_deleted', value: '-2', name: '反馈被取消声望值', description: '用户的反馈被取消扣除的声望值', },
+        { dataType: 'NUMBER', key: 'reputation_user_followed', value: '2', name: '用户被关注声望值', description: '用户被关注获得的声望值', },
+        { dataType: 'NUMBER', key: 'reputation_user_unfollowed', value: '-2', name: '用户被取消关注声望值', description: '用户被取消关注扣除的声望值', },
     ];
-    for (const item of siteSettings) {
+    for (let i = 0; i < siteSettings.length; i++) {
+        const item = siteSettings[i];
+        item.id = i + 1;
         await db.siteSetting.upsert({ where: { id: item.id }, create: item, update: item });
     }
     console.log('已完成站点信息初始化.');

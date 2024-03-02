@@ -18,6 +18,7 @@ export const REPORT_FILTERS = [
 export const SITE_SETTING_TYPES = {
     IMAGE: 'IMAGE',
     STRING: 'STRING',
+    NUMBER: 'NUMBER',
     TEXT: 'TEXT',
     HTML: 'HTML'
 };
