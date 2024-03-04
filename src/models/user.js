@@ -216,6 +216,12 @@ const userModel = {
             }
         });
         return !!follower;
+    },
+    async updateReputation({ userId, value = 0 }) {
+        await prisma.user.update({
+            where: { id: userId },
+            data: { reputation: { increment: value } }
+        });
     }
 };
 
