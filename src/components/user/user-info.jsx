@@ -1,3 +1,5 @@
+'use client';
+
 import Box from '../ui/box';
 import Stats from '../ui/stats';
 import UserAvatar from '../ui/user-avatar';
@@ -5,7 +7,7 @@ import UserMark from '../ui/user-mark';
 import ActionFollow from './action-follow';
 import { CalenderIcon } from '../icons';
 
-export default async function UserInfo({ user = null }) {
+export default function UserInfo({ user = null }) {
     if (!user) return null;
     return (
         <Box className='flex flex-col text-sm relative p-3'>

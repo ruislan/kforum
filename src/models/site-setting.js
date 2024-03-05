@@ -63,14 +63,13 @@ const siteSettingModel = {
         return value;
     },
     decodeValue(item) {
-        switch (item.dataType) {
-            case 'json':
-                return JSON.parse(item.value);
-            case 'number':
-                return new Number(item.value);
-            default:
-                return item.value;
+        if ('JSON' === item.dataType?.toUpperCase()) {
+            return JSON.parse(item.value);
         }
+        if ('NUMBER' === item.dataType?.toUpperCase()) {
+            return Number(item.value);
+        }
+        return item.value;
     }
 };
 

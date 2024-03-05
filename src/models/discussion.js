@@ -1,12 +1,11 @@
 import prisma from '@/lib/prisma';
-import { DISCUSSION_SORT, MIN_LENGTH_TITLE, NOTIFICATION_TYPES } from '@/lib/constants';
+import { DISCUSSION_SORT, MIN_LENGTH_TITLE, NOTIFICATION_TYPES, REPUTATION_TYPES } from '@/lib/constants';
 import pageUtils, { DEFAULT_PAGE_LIMIT } from '@/lib/page-utils';
 import ModelError from './model-error';
 import userModel from './user';
 import postModel from './post';
 import uploadModel from './upload';
 import categoryModel from './category';
-import notificationModel from './notification';
 import pubsub from '@/lib/pubsub';
 
 const discussionModel = {
@@ -332,14 +331,23 @@ const discussionModel = {
         if (!discussion) throw new ModelError(this.errors.DISCUSSION_NOT_FOUND);
         if (!this.checkPermission(localUser, discussion, this.actions.STICKY)) throw new ModelError(this.errors.NO_PERMISSION);
 
-        await prisma.discussion.update({ where: { id: discussionId }, data: { isSticky } });
+        if (discussion.isSticky !== isSticky) { // is changed
+            await prisma.discussion.update({
+                where: { id: discussionId },
+                data: { isSticky }
+            });
+            await userModel.updateReputation({
+                userId: discussion.userId,
+                type: isSticky ? REPUTATION_TYPES.DISCUSSION_PINNED : REPUTATION_TYPES.DISCUSSION_UNPINNED
+            });
+        }
     },
     async follow({ user, discussionId, isFollowing }) {
         const localUser = { ...user };
         const discussion = await prisma.discussion.findUnique({ where: { id: discussionId } });
         if (!discussion) throw new ModelError(this.errors.DISCUSSION_NOT_FOUND);
         if (isFollowing) {
-            await prisma.discussionFollower.upsert({
+            const item = await prisma.discussionFollower.upsert({
                 where: {
                     discussionId_userId: {
                         discussionId: discussion.id,
@@ -352,6 +360,12 @@ const discussionModel = {
                 },
                 update: {}
             });
+            if (item.createdAt === item.updatedAt) { // it's new
+                await userModel.updateReputation({
+                    userId: discussion.userId,
+                    type: REPUTATION_TYPES.DISCUSSION_FOLLOWED
+                });
+            }
         } else {
             await prisma.discussionFollower.delete({
                 where: {
@@ -360,6 +374,10 @@ const discussionModel = {
                         userId: localUser.id
                     }
                 }
+            });
+            await userModel.updateReputation({
+                userId: discussion.userId,
+                type: REPUTATION_TYPES.DISCUSSION_UNFOLLOWED
             });
         }
     },

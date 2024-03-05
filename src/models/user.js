@@ -3,7 +3,8 @@ import prisma from '@/lib/prisma';
 import ModelError from './model-error';
 import pageUtils from '@/lib/page-utils';
 import uploadModel from './upload';
-import { USER_SORT } from '@/lib/constants';
+import { REPUTATION_TYPES, USER_SORT } from '@/lib/constants';
+import siteSettingModel from './site-setting';
 
 const userModel = {
     errors: {
@@ -14,8 +15,23 @@ const userModel = {
         CAN_NOT_FOLLOW_YOURSELF: '你不能关注你自己',
     },
     fields: {
-        short: { id: true, name: true, gender: true, avatarUrl: true },
-        simple: { id: true, name: true, email: true, gender: true, avatarUrl: true, isAdmin: true, isModerator: true, isLocked: true },
+        short: {
+            id: true,
+            name: true,
+            gender: true,
+            avatarUrl: true
+        },
+        simple: {
+            id: true,
+            name: true,
+            email: true,
+            gender: true,
+            avatarUrl: true,
+            reputation: true,
+            isAdmin: true,
+            isModerator: true,
+            isLocked: true
+        },
     },
     hashPassword(pwd) {
         return bcrypt.hashSync(pwd, 10);
@@ -97,7 +113,8 @@ const userModel = {
         const queryCondition = {
             where: { name },
             select: {
-                ...this.fields.simple, createdAt: true,
+                ...this.fields.simple,
+                createdAt: true,
             }
         };
         if (withStats) {
@@ -217,7 +234,47 @@ const userModel = {
         });
         return !!follower;
     },
-    async updateReputation({ userId, value = 0 }) {
+    async updateReputation({ userId, type }) {
+        if (!type) return;
+        // get siteSettings
+        let key = null;
+        switch (type) {
+            case REPUTATION_TYPES.DISCUSSION_PINNED:
+                key = siteSettingModel.fields.reputationDiscussionPinned;
+                break;
+            case REPUTATION_TYPES.DISCUSSION_UNPINNED:
+                key = siteSettingModel.fields.reputationDiscussionUnpinned;
+                break;
+            case REPUTATION_TYPES.DISCUSSION_FOLLOWED:
+                key = siteSettingModel.fields.reputationDiscussionFollowed;
+                break;
+            case REPUTATION_TYPES.DISCUSSION_UNFOLLOWED:
+                key = siteSettingModel.fields.reputationDiscussionUnfollowed;
+                break;
+            case REPUTATION_TYPES.POST_CREATED:
+                key = siteSettingModel.fields.reputationPostCreated;
+                break;
+            case REPUTATION_TYPES.POST_DELETED:
+                key = siteSettingModel.fields.reputationPostDeleted;
+                break;
+            case REPUTATION_TYPES.REACTION_CREATED:
+                key = siteSettingModel.fields.reputationReactionCreated;
+                break;
+            case REPUTATION_TYPES.REACTION_DELETED:
+                key = siteSettingModel.fields.reputationReactionDeleted;
+                break;
+            case REPUTATION_TYPES.USER_FOLLOWED:
+                key = siteSettingModel.fields.reputationUserFollowed;
+                break;
+            case REPUTATION_TYPES.USER_UNFOLLOWED:
+                key = siteSettingModel.fields.reputationUserUnfollowed;
+                break;
+            default:
+                break;
+        }
+        if (!key) return;
+        const value = await siteSettingModel.getFieldValue(key);
+        console.log('update value: ' + value);
         await prisma.user.update({
             where: { id: userId },
             data: { reputation: { increment: value } }

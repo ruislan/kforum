@@ -16,7 +16,7 @@ model User {
   bio          String? @db.VarChar(512)
   gender       String? @db.VarChar(16)
   displayTitle String? @map("display_title") @db.VarChar(64) // 用户展示的称号
-  reputation   Int     @default(0) @db.UnsignedInt // 用户声望
+  reputation   Int     @default(0) @db.Int // 用户声望，可以为负值
   isLocked     Boolean @default(false) @map("is_locked") // 锁定的用户无法登录，管理员和版主无法被锁定
   isAdmin      Boolean @default(false) @map("is_admin") // 是否是管理员，管理员管理网站
   isModerator  Boolean @default(false) @map("is_moderator") // 是否是版主，版主管理内容

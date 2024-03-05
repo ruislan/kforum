@@ -1,10 +1,8 @@
-import dynamicImport from 'next/dynamic';
-
 import { siteSettingModel } from '@/models';
+
 import Box from '@/components/ui/box';
 import { HeadingSmall } from '@/components/ui/heading';
-
-const SiteForm = dynamicImport(() => import('@/components/admin-panel/site-form'));
+import SiteForm from '@/components/admin-panel/site-form';
 
 async function getSiteSettings() {
     return siteSettingModel.getSettings();
