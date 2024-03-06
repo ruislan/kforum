@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma';
-import { MIN_LENGTH_CONTENT, NOTIFICATION_TYPES } from '@/lib/constants';
+import { MIN_LENGTH_CONTENT, NOTIFICATION_TYPES, REPUTATION_TYPES } from '@/lib/constants';
 import pageUtils, { DEFAULT_PAGE_LIMIT } from '@/lib/page-utils';
 import ModelError from './model-error';
 import userModel from './user';
@@ -34,13 +34,20 @@ const postModel = {
         if (!isAdmin && !isModerator && !isOwner) return false;
         return true;
     },
-    async create({ user, content, text, discussionId, replyPostId, ip }) {
+    async create({
+        user,
+        content,
+        text,
+        discussionId,
+        replyPostId,
+        ip
+    }) {
         const localUser = { ...user };
         const discussion = await prisma.discussion.findUnique({ where: { id: discussionId } });
         if (!discussion) throw new ModelError(this.errors.DISCUSSION_NOT_FOUND);
         if (discussion.isLocked) throw new ModelError(this.errors.DISCUSSION_IS_LOCKED);
 
-        // does it reply to a post?
+        // 是否回复回帖?
         let replyPost;
         if (replyPostId) {
             replyPost = await prisma.post.findUnique({
@@ -51,7 +58,6 @@ const postModel = {
             });
             if (!replyPost) throw new ModelError(this.errors.REPLY_TO_POST_NOT_FOUND);
         }
-
 
         // 检查用户是否已经发过帖子，没有则增加一次参与人计数
         const sessionUserPosted = await prisma.post.findFirst({
@@ -100,6 +106,16 @@ const postModel = {
 
             return post;
         });
+
+        // add reputation
+        // XXX 思考一下，如果是回帖，这里是否应该给目标贴的发布者增加声望
+        // 自己回帖自己的话题，不能进行加分
+        if (localUser.id !== discussion.userId) {
+            await userModel.updateReputation({
+                userId: discussion.userId,
+                type: REPUTATION_TYPES.POST_CREATED
+            });
+        }
 
         // add ref
         data.user = localUser;
@@ -156,7 +172,11 @@ const postModel = {
      *  无需删除帖子与图片的链接，因为帖子将无法读取，所以图片也无需读取。
      *  TODO 帖子删除后，帖子无法被查看，除非管理员，可以在后台查看已经删除的帖子和主题。
     */
-    async delete({ user, id, isBySystem = false }) {
+    async delete({
+        user,
+        id,
+        isBySystem = false
+    }) {
         const localUser = { ...user };
         const post = await prisma.post.findUnique({ where: { id }, include: { discussion: true } });
         if (!post) throw new ModelError(this.errors.POST_NOT_FOUND);
@@ -166,27 +186,20 @@ const postModel = {
         const isLastPost = post.discussion.lastPostId === post.id;
         await prisma.$transaction(async tx => {
             // 真实删除，将会清空所有的反馈
-            // await tx.reactionPostRef.deleteMany({ where: { postId: post.id } });// real delete reactions
             const deletedAt = new Date();
             if (isFirstPost) {
                 // 首贴删除将会同时删除所有的discussion
-                // XXX 如果是真实删除，那么所有话题的帖子的图片、反馈、举报等引用会级联删除
-                // await tx.post.deleteMany({ where: { discussionId: post.discussion.id } }); // real delete
-                // await tx.discussion.delete({ where: { id: post.discussion.id } }); // real delete
-
+                // 如果是真实删除，那么所有话题的帖子的图片、反馈、举报等引用会级联删除
                 // 软删除，首贴不用减去反馈数量，因为话题整个已经被删除了。
                 await tx.post.updateMany({ where: { discussionId: post.discussion.id }, data: { deletedAt, deletedUserId: localUser.id } });
                 await tx.discussion.update({ where: { id: post.discussion.id }, data: { deletedAt, deletedUserId: localUser.id } });
             } else {
-                // XXX 如果是真实删除，此贴的图片、反馈、举报等引用会级联删除
-                // await tx.post.delete({ where: { id: post.id } }); // real delete one
-
+                // 如果是真实删除，此贴的图片、反馈、举报等引用会级联删除
                 await tx.post.update({ where: { id: post.id }, data: { deletedAt, deletedUserId: localUser.id } });
                 let lastPost = null;
                 if (isLastPost) { // 查找新的最后一贴，并设置
                     lastPost = await tx.post.findFirst({ where: { discussionId: post.discussionId }, orderBy: { createdAt: 'desc' } });
                 }
-
                 // 软删除，非首贴需要减去反馈数量，如果恢复了删帖反馈数量需要加回来
                 const reactionCount = await tx.reactionPostRef.count({ where: { postId: post.id } });
                 await tx.discussion.update({
@@ -201,10 +214,15 @@ const postModel = {
 
             }
         });
+
+        // remove reputation
+        // TODO 如果是首贴，则需要计算删除了多少个帖子，然后进行统一扣分
+        await userModel.updateReputation({
+            userId: post.discussion.userId,
+            type: REPUTATION_TYPES.POST_DELETED
+        });
     },
-    async getPost({
-        id
-    }) {
+    async getPost({ id }) {
         const post = await prisma.post.findUnique({
             where: {
                 id,
@@ -380,12 +398,17 @@ const postModel = {
         let [posts, count] = await Promise.all([fetchPosts, fetchCount]);
         return { posts, hasMore: count > skip + take };
     },
-    async reaction({ user, postId, reactionId, isReact }) {
+    async reaction({
+        user,
+        postId,
+        reactionId,
+        isReact // true:react, false: unreact
+    }) {
         const localUser = { ...user };
         const post = await prisma.post.findUnique({ where: { id: postId }, include: { discussion: true } });
         if (!post) throw new ModelError(this.errors.POST_NOT_FOUND);
 
-        await prisma.$transaction(async (tx) => {
+        const inc = await prisma.$transaction(async (tx) => {
             const data = { postId, reactionId, userId: localUser.id };
             const ref = await tx.reactionPostRef.findUnique({ where: { reactionId_postId_userId: data } });
             let inc = 0;
@@ -399,13 +422,24 @@ const postModel = {
             }
             // isReact && ref 和 !isReact && !ref 这两个情况不用处理
 
-            if (inc !== 0) { // 更新discussion
+            if (inc !== 0) { // 更新 discussion 的反馈数量
                 await tx.discussion.update({
                     where: { id: post.discussion.id },
                     data: { reactionCount: { increment: inc } }
                 });
             }
+            return inc;
         });
+
+        // 如果inc增加了，说明多了反馈，则给 post 的作者加声望
+        // 否则，则给作者减声望
+        // 自己给自己的帖子反馈是不能增加声望的
+        if (localUser.id !== post.userId && inc !== 0) {
+            await userModel.updateReputation({
+                userId: post.userId,
+                type: inc > 0 ? REPUTATION_TYPES.REACTION_CREATED : REPUTATION_TYPES.REACTION_DELETED
+            });
+        }
     }
 };
 

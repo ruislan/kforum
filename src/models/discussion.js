@@ -18,7 +18,6 @@ const discussionModel = {
     actions: {
         STICKY: 'sticky',
     },
-    // 获取用户的discussion
     async getUserDiscussions({
         username,
         // page
@@ -204,7 +203,15 @@ const discussionModel = {
                 return isAdmin || isModerator || isOwner;
         }
     },
-    async create({ user, title, text, content, categorySlug, tags: tagIds, ip }) {
+    async create({
+        user,
+        title,
+        text,
+        content,
+        categorySlug,
+        tags: tagIds,
+        ip
+    }) {
         const localUser = { ...user };
         const cat = await prisma.category.findUnique({ where: { slug: categorySlug } });
         if (!cat) throw new ModelError(this.errors.SCHEMA_CATEGORY);
@@ -360,7 +367,7 @@ const discussionModel = {
                 },
                 update: {}
             });
-            if (item.createdAt === item.updatedAt) { // it's new
+            if (item.createdAt === item.updatedAt) { // is new
                 await userModel.updateReputation({
                     userId: discussion.userId,
                     type: REPUTATION_TYPES.DISCUSSION_FOLLOWED
