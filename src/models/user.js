@@ -5,6 +5,7 @@ import pageUtils from '@/lib/page-utils';
 import uploadModel from './upload';
 import { REPUTATION_TYPES, USER_SORT } from '@/lib/constants';
 import siteSettingModel from './site-setting';
+import _ from 'lodash';
 
 const userModel = {
     errors: {
@@ -234,16 +235,20 @@ const userModel = {
         });
         return !!follower;
     },
-    async updateReputation({ userId, type }) {
-        if (!type) return;
+    async updateReputation({
+        userId,
+        type,
+        times = 1,
+    }) {
+        if (!type || times <= 0) return;
         // get siteSettings
         let key = null;
         switch (type) {
-            case REPUTATION_TYPES.DISCUSSION_PINNED:
-                key = siteSettingModel.fields.reputationDiscussionPinned;
+            case REPUTATION_TYPES.DISCUSSION_STICKY:
+                key = siteSettingModel.fields.reputationDiscussionSticky;
                 break;
-            case REPUTATION_TYPES.DISCUSSION_UNPINNED:
-                key = siteSettingModel.fields.reputationDiscussionUnpinned;
+            case REPUTATION_TYPES.DISCUSSION_UNSTICKY:
+                key = siteSettingModel.fields.reputationDiscussionUnsticky;
                 break;
             case REPUTATION_TYPES.DISCUSSION_FOLLOWED:
                 key = siteSettingModel.fields.reputationDiscussionFollowed;
@@ -273,7 +278,8 @@ const userModel = {
                 break;
         }
         if (!key) return;
-        const value = await siteSettingModel.getFieldValue(key);
+        let value = await siteSettingModel.getFieldValue(key);
+        value = value * times;
         console.log('update value: ' + value);
         await prisma.user.update({
             where: { id: userId },

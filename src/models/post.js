@@ -184,6 +184,7 @@ const postModel = {
 
         const isFirstPost = post.discussion.firstPostId === post.id;
         const isLastPost = post.discussion.lastPostId === post.id;
+        const isSticky = post.discussion.isSticky;
         await prisma.$transaction(async tx => {
             // 真实删除，将会清空所有的反馈
             const deletedAt = new Date();
@@ -192,7 +193,8 @@ const postModel = {
                 // 如果是真实删除，那么所有话题的帖子的图片、反馈、举报等引用会级联删除
                 // 软删除，首贴不用减去反馈数量，因为话题整个已经被删除了。
                 await tx.post.updateMany({ where: { discussionId: post.discussion.id }, data: { deletedAt, deletedUserId: localUser.id } });
-                await tx.discussion.update({ where: { id: post.discussion.id }, data: { deletedAt, deletedUserId: localUser.id } });
+                // 这里不仅是要设置为删除，同时要将置顶取消
+                await tx.discussion.update({ where: { id: post.discussion.id }, data: { deletedAt, deletedUserId: localUser.id, isSticky: false } });
             } else {
                 // 如果是真实删除，此贴的图片、反馈、举报等引用会级联删除
                 await tx.post.update({ where: { id: post.id }, data: { deletedAt, deletedUserId: localUser.id } });
@@ -216,10 +218,29 @@ const postModel = {
         });
 
         // remove reputation
-        // TODO 如果是首贴，则需要计算删除了多少个帖子，然后进行统一扣分
+        // 如果是首贴，则需要计算删除了多少个帖子，然后进行统一扣分
+        let count = 1;
+        if (isFirstPost) {
+            count = await prisma.post.count({
+                where: {
+                    deletedAt: { not: null },
+                    userId: { not: post.discussion.userId },
+                }
+            });
+            console.log(isFirstPost);
+            console.log(count);
+            console.log(post.discussion.isSticky);
+            if (isSticky) { // 如果之前是置顶状态，那么还要减去置顶
+                await userModel.updateReputation({
+                    userId: post.discussion.userId,
+                    type: REPUTATION_TYPES.DISCUSSION_UNSTICKY,
+                });
+            }
+        }
         await userModel.updateReputation({
             userId: post.discussion.userId,
-            type: REPUTATION_TYPES.POST_DELETED
+            type: REPUTATION_TYPES.POST_DELETED,
+            times: count,
         });
     },
     async getPost({ id }) {

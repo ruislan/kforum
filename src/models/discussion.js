@@ -345,7 +345,7 @@ const discussionModel = {
             });
             await userModel.updateReputation({
                 userId: discussion.userId,
-                type: isSticky ? REPUTATION_TYPES.DISCUSSION_PINNED : REPUTATION_TYPES.DISCUSSION_UNPINNED
+                type: isSticky ? REPUTATION_TYPES.DISCUSSION_STICKY : REPUTATION_TYPES.DISCUSSION_UNSTICKY
             });
         }
     },

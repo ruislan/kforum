@@ -28,8 +28,8 @@ async function initBase() {
         { dataType: 'IMAGE', key: 'site_logo', value: '', name: '站点 Logo', description: '站点左上角的 Logo 图片，建议使用宽高比为 3:1 的矩形图片。设置为空则展示默认。', },
         { dataType: 'IMAGE', key: 'site_favicon', value: '', name: '站点 Favicon', description: '站点的 Favicon 图片，建议使用128x128的 png 图片。设置为空则展示默认。', },
         // 网站声望相关
-        { dataType: 'NUMBER', key: 'reputation_discussion_pinned', value: '20', name: '话题置顶声望值', description: '用户的话题被置顶获得的声望值', },
-        { dataType: 'NUMBER', key: 'reputation_discussion_unpinned', value: '-20', name: '话题取消置顶声望值', description: '用户的话题被取消置顶扣除的声望值', },
+        { dataType: 'NUMBER', key: 'reputation_discussion_sticky', value: '20', name: '话题置顶声望值', description: '用户的话题被置顶获得的声望值', },
+        { dataType: 'NUMBER', key: 'reputation_discussion_unsticky', value: '-20', name: '话题取消置顶声望值', description: '用户的话题被取消置顶扣除的声望值', },
         { dataType: 'NUMBER', key: 'reputation_discussion_followed', value: '2', name: '话题被关注声望值', description: '用户的话题被关注获得的声望值', },
         { dataType: 'NUMBER', key: 'reputation_discussion_unfollowed', value: '-2', name: '话题被取消关注声望值', description: '用户的话题被取消关注扣除的声望值', },
         { dataType: 'NUMBER', key: 'reputation_post_created', value: '10', name: '回帖声望值', description: '用户的话题有新的回帖获得的声望值，自己回复自己的话题不会产生声望值', },
