@@ -22,7 +22,7 @@ export default function UserInfo({ user = null }) {
                 <div className='text-gray-100 text-xl'>{user.name}</div>
                 <UserMark isAdmin={user.isAdmin} isModerator={user.isModerator} isLocked={user.isLocked} className='mt-2' />
             </div>
-            <div className='flex items-center gap-2 text-gray-400 mb-1'>
+            <div className='flex items-center gap-2 text-gray-400 mb-2'>
                 <span className='h-4 w-4 '><CalenderIcon /></span>
                 <span>{new Date(user.createdAt).toLocaleDateString()}</span>
             </div>

@@ -11,8 +11,7 @@ export default function SortPanel() {
     const searchParams = useSearchParams();
 
     return (
-        <Box className='flex items-center gap-2 mb-4'>
-            {/* The Link tag won't refetch data when the sort changes, so we use "a" tag. */}
+        <Box className='flex items-center gap-2 mb-4 px-2 py-1.5'>
             <a
                 className={clsx(
                     'flex items-center gap-1 px-4 py-2',
