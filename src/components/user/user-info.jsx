@@ -1,5 +1,7 @@
 'use client';
 
+import clsx from 'clsx';
+
 import Box from '../ui/box';
 import Stats from '../ui/stats';
 import UserAvatar from '../ui/user-avatar';
@@ -7,10 +9,16 @@ import UserMark from '../ui/user-mark';
 import ActionFollow from './action-follow';
 import { CalenderIcon } from '../icons';
 
-export default function UserInfo({ user = null }) {
+export default function UserInfo({
+    user = null,
+    className,
+}) {
     if (!user) return null;
     return (
-        <Box className='flex flex-col text-sm relative p-3'>
+        <Box className={clsx(
+            'flex flex-col text-sm relative p-3',
+            className
+        )}>
             <div className='absolute h-20 w-full top-0 left-0 bg-neutral-500 rounded-t'></div>
             <UserAvatar
                 size='2xl'

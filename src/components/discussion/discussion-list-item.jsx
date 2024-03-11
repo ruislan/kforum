@@ -1,4 +1,7 @@
 'use client';
+
+import clsx from 'clsx';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -12,15 +15,40 @@ import ProseContent from '../ui/prose-content';
 import UserAvatar from '../ui/user-avatar';
 import UserMark from '../ui/user-mark';
 import DiscussionMark from '../ui/discussion-mark';
-import clsx from 'clsx';
+import UserFancyLink from '../user/user-fancy-link';
+
+function UserLink({
+    user
+}) {
+    const [isHover, setIsHover] = useState(false);
+
+    return (
+        <div className='relative'>
+            <Link
+                href={`/u/${user?.name}`}
+                onMouseEnter={e => setIsHover(true)}
+                // onMouseOut={e => setIsHover(false)}
+                onClick={e => e.stopPropagation()}
+                className='text-xs hover:underline underline-offset-2 cursor-pointer'>
+                u/{user?.name}
+            </Link>
+            <div className={clsx(
+                'absolute z-40 rounded-lg shadow-lg min-w-64', isHover ? 'block' : 'hidden'
+            )}>
+                <UserFancyLink user={user} />
+            </div>
+        </div>
+    );
+}
 
 export default function DiscussionListItem({
     discussion,
     isCardStyle = false
 }) {
     const router = useRouter();
-    const c = discussion.category;
     if (!discussion) return null;
+    const c = discussion.category;
+
     return (
         <Box
             className='flex flex-col hover:border-neutral-500 cursor-pointer'
@@ -50,13 +78,21 @@ export default function DiscussionListItem({
                                     name={discussion.user?.name}
                                     avatar={discussion.user?.avatarUrl}
                                 />
-                                <Link
+                                <UserLink user={discussion.user} />
+                                {/* <Link
                                     href={`/u/${discussion.user?.name}`}
+                                    onMouseOver={e => {
+                                        e.preventDefault();
+                                    }}
                                     onClick={e => e.stopPropagation()}
                                     className='text-xs hover:underline underline-offset-2 cursor-pointer'>
                                     u/{discussion.user?.name}
-                                </Link>
-                                <UserMark isAdmin={discussion.user?.isAdmin} isModerator={discussion.user?.isModerator} isLocked={discussion.user?.isLocked} />
+                                </Link> */}
+                                <UserMark
+                                    isAdmin={discussion.user?.isAdmin}
+                                    isModerator={discussion.user?.isModerator}
+                                    isLocked={discussion.user?.isLocked}
+                                />
                             </div>
                             <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                         </>
