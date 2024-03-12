@@ -31,7 +31,8 @@ const userModel = {
             reputation: true,
             isAdmin: true,
             isModerator: true,
-            isLocked: true
+            isLocked: true,
+            createdAt: true,
         },
     },
     hashPassword(pwd) {

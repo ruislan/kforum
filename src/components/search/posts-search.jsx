@@ -18,6 +18,7 @@ import UserAvatar from '../ui/user-avatar';
 import { POST_SORT, POST_SORT_NAMES } from '@/lib/constants';
 import DiscussionMark from '../ui/discussion-mark';
 import UserMark from '../ui/user-mark';
+import UserFancyLink from '../user/user-fancy-link';
 
 export default function PostsSearch({ query }) {
     const searchParams = useSearchParams();
@@ -101,12 +102,7 @@ export default function PostsSearch({ query }) {
                                 name={item.discussion.user?.name}
                                 avatar={item.discussion.user?.avatarUrl}
                             />
-                            <Link
-                                href={`/u/${item.discussion.user?.name}`}
-                                onClick={e => e.stopPropagation()}
-                                className='text-xs hover:underline underline-offset-2 cursor-pointer'>
-                                u/{item.discussion.user?.name}
-                            </Link>
+                            <UserFancyLink user={item.discussion.user} />
                             <UserMark
                                 isAdmin={item.discussion.user?.isAdmin}
                                 isModerator={item.discussion.user?.isModerator}

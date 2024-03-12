@@ -2,15 +2,18 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 
+import { NOTIFICATION_TYPES } from '@/lib/constants';
+import dateUtils from '@/lib/date-utils';
+import useNotificationStore from '@/hooks/use-notification-store';
+
 import Spinner from '../ui/spinner';
 import Button from '../ui/button';
 import NoContent from '../ui/no-content';
-import { NOTIFICATION_TYPES } from '@/lib/constants';
 import Box from '../ui/box';
 import UserAvatar from '../ui/user-avatar';
-import dateUtils from '@/lib/date-utils';
 import SplitBall from '../ui/split-ball';
-import useNotificationStore from '@/hooks/use-notification-store';
+import UserFancyLink from '../user/user-fancy-link';
+
 
 function NewPost({ notification }) {
     const data = useMemo(() => ({ ...JSON.parse(notification.data || '{}') }), [notification]);
@@ -24,13 +27,7 @@ function NewPost({ notification }) {
             </div>
             <div className='flex flex-col flex-1'>
                 <div className='flex items-center text-gray-300'>
-                    <Link
-                        href={`/u/${data.user.name}`}
-                        onClick={e => e.stopPropagation()}
-                        className='text-xs hover:underline underline-offset-2 cursor-pointer'
-                    >
-                        u/{data.user.name}
-                    </Link>
+                    <UserFancyLink user={data.user} />
                     <SplitBall className='mx-1.5 bg-gray-300' />
                     <span className='text-xs'>回帖了主题</span>
                     <SplitBall className='mx-1.5 bg-gray-300' />
@@ -70,13 +67,7 @@ function NewDiscussion({ notification }) {
             </div>
             <div className='flex flex-col'>
                 <div className='flex items-center text-gray-300'>
-                    <Link
-                        href={`/u/${data.user.name}`}
-                        onClick={e => e.stopPropagation()}
-                        className='text-xs hover:underline underline-offset-2 cursor-pointer'
-                    >
-                        u/{data.user.name}
-                    </Link>
+                    <UserFancyLink user={data.user} />
                     <SplitBall className='mx-1.5 bg-gray-300' />
                     <span className='text-xs'>发布了新的话题</span>
                     <SplitBall className='mx-1.5 bg-gray-300' />

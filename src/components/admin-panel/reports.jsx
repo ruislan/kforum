@@ -17,6 +17,7 @@ import ProseContent from '@/components/ui/prose-content';
 import UserAvatar from '@/components/ui/user-avatar';
 import { REPORT_FILTERS, REPORT_TYPES } from '@/lib/constants';
 import { runIfFn } from '@/lib/fn';
+import UserFancyLink from '../user/user-fancy-link';
 
 function ActionPerform({ reportIds, action, label, onPerformed }) {
     const [isLoading, setIsLoading] = useState(false);
@@ -148,12 +149,7 @@ export default function ReportList({ filter }) {
                                     name={item.discussion.user.name}
                                     avatar={item.discussion.user.avatarUrl}
                                 />
-                                <Link
-                                    href={`/u/${item.discussion.user.name}`}
-                                    onClick={e => e.stopPropagation()}
-                                    className='text-xs hover:underline underline-offset-2 cursor-pointer'>
-                                    u/{item.discussion.user.name}
-                                </Link>
+                                <UserFancyLink user={item.discussion.user} />
                             </div>
                             <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                             <span className='text-xs text-gray-400' suppressHydrationWarning>{dateUtils.fromNow(item.discussion.createdAt)}</span>
@@ -172,7 +168,7 @@ export default function ReportList({ filter }) {
                             </div>
                             <div className='flex flex-col flex-1'>
                                 <div className='flex items-center text-gray-300'>
-                                    <Link href={`/u/${item.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{item.user.name}</Link>
+                                    <UserFancyLink user={item.user} />
                                     <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                                     <span className='text-xs' suppressHydrationWarning>{dateUtils.fromNow(item.createdAt)}</span>
                                 </div>

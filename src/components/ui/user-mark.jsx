@@ -1,5 +1,6 @@
 'use client';
 
+import clsx from 'clsx';
 import { LockedIcon, ModeratorFilledIcon, AdminFilledIcon } from '../icons';
 import Tooltip from './tooltip';
 
@@ -8,9 +9,13 @@ export default function UserMark({
     isAdmin,
     isLocked,
     isModerator,
+    className,
 }) {
     return (
-        <div className='flex items-center ml-1 gap-1.5'>
+        <div className={clsx(
+            'flex items-center ml-1 gap-1.5',
+            className,
+        )}>
             {isAdmin && (
                 <Tooltip content={
                     <div className='whitespace-nowrap text-xs'>

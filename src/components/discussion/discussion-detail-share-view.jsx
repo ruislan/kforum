@@ -12,6 +12,7 @@ import dateUtils from '@/lib/date-utils';
 import Tag from '../ui/tag';
 import ProseContent from '../ui/prose-content';
 import ReactionGroup from '../ui/reaction-group';
+import UserFancyLink from '../user/user-fancy-link';
 
 export default function DiscussionDetailShareView({ discussion, post }) {
     const c = discussion.category;
@@ -30,7 +31,7 @@ export default function DiscussionDetailShareView({ discussion, post }) {
                         <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                         <div className='flex items-center'>
                             <UserAvatar className='mr-1.5' size='xs' name={discussion.user.name} avatar={discussion.user.avatarUrl} />
-                            <Link href={`/u/${discussion.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{discussion.user.name}</Link>
+                            <UserFancyLink user={discussion.user} />
                             <UserMark isAdmin={discussion.user.isAdmin} isModerator={discussion.user.isModerator} isLocked={discussion.user.isLocked} />
                         </div>
                         <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
@@ -85,7 +86,7 @@ export default function DiscussionDetailShareView({ discussion, post }) {
                     </div>
                     <div className='flex flex-col flex-1'>
                         <div className='flex items-center text-gray-300'>
-                            <Link href={`/u/${post.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{post.user.name}</Link>
+                            <UserFancyLink user={post.user} />
                             <UserMark isAdmin={post.user.isAdmin} isModerator={post.user.isModerator} isLocked={post.user.isLocked} />
                             <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                             <span className='text-xs' suppressHydrationWarning>{dateUtils.fromNow(post.createdAt)}</span>

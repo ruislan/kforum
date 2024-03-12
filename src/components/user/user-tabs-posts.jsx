@@ -18,6 +18,7 @@ import Spinner from '../ui/spinner';
 import UserMark from '../ui/user-mark';
 import DiscussionMark from '../ui/discussion-mark';
 import UserAvatar from '../ui/user-avatar';
+import UserFancyLink from './user-fancy-link';
 
 // 只列出用户的回帖（非话题首贴）
 export default function UserTabsPosts({ user }) {
@@ -102,12 +103,7 @@ export default function UserTabsPosts({ user }) {
                                 name={discussion.user?.name}
                                 avatar={discussion.user?.avatarUrl}
                             />
-                            <Link
-                                href={`/u/${discussion.user?.name}`}
-                                onClick={e => e.stopPropagation()}
-                                className='text-xs hover:underline underline-offset-2 cursor-pointer'>
-                                u/{discussion.user?.name}
-                            </Link>
+                            <UserFancyLink user={discussion.user} />
                             <UserMark
                                 isAdmin={discussion.user?.isAdmin}
                                 isModerator={discussion.user?.isModerator}

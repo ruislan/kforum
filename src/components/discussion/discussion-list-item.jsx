@@ -17,30 +17,6 @@ import UserMark from '../ui/user-mark';
 import DiscussionMark from '../ui/discussion-mark';
 import UserFancyLink from '../user/user-fancy-link';
 
-function UserLink({
-    user
-}) {
-    const [isHover, setIsHover] = useState(false);
-
-    return (
-        <div className='relative'>
-            <Link
-                href={`/u/${user?.name}`}
-                onMouseEnter={e => setIsHover(true)}
-                // onMouseOut={e => setIsHover(false)}
-                onClick={e => e.stopPropagation()}
-                className='text-xs hover:underline underline-offset-2 cursor-pointer'>
-                u/{user?.name}
-            </Link>
-            <div className={clsx(
-                'absolute z-40 rounded-lg shadow-lg min-w-64', isHover ? 'block' : 'hidden'
-            )}>
-                <UserFancyLink user={user} />
-            </div>
-        </div>
-    );
-}
-
 export default function DiscussionListItem({
     discussion,
     isCardStyle = false
@@ -78,16 +54,7 @@ export default function DiscussionListItem({
                                     name={discussion.user?.name}
                                     avatar={discussion.user?.avatarUrl}
                                 />
-                                <UserLink user={discussion.user} />
-                                {/* <Link
-                                    href={`/u/${discussion.user?.name}`}
-                                    onMouseOver={e => {
-                                        e.preventDefault();
-                                    }}
-                                    onClick={e => e.stopPropagation()}
-                                    className='text-xs hover:underline underline-offset-2 cursor-pointer'>
-                                    u/{discussion.user?.name}
-                                </Link> */}
+                                <UserFancyLink user={discussion.user} />
                                 <UserMark
                                     isAdmin={discussion.user?.isAdmin}
                                     isModerator={discussion.user?.isModerator}

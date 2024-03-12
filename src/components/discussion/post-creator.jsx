@@ -14,6 +14,7 @@ import Button from '../ui/button';
 import PostDetailPopover from './post-detail-popover';
 import UserAvatar from '../ui/user-avatar';
 import { MIN_LENGTH_CONTENT } from '@/lib/constants';
+import UserFancyLink from '../user/user-fancy-link';
 
 export default function PostCreator({ discussion, replyToPost, onCreated }) {
     const { data: session } = useSession();
@@ -105,7 +106,7 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
                 </div>
                 <div className='flex flex-col w-full'>
                     <div className='flex items-center mb-1.5 text-xs text-gray-300'>
-                        <Link href={`/u/${session.user?.name}`} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{session.user?.name}</Link>
+                        <span className='text-xs'>u/{session.user?.name}</span>
                         <span className='w-4 h-4'><ArrowRightIcon /></span>
                         <div className='flex items-center text-gray-100'>
                             <span className='whitespace-nowrap'>回贴&nbsp;</span>

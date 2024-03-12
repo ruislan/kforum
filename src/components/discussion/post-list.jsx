@@ -24,6 +24,7 @@ import PostUpdater from './post-updater';
 import ActionReport from './action-report';
 import ActionBookmark from './action-bookmark';
 import ActionCopyLink from './action-copy-link';
+import UserFancyLink from '../user/user-fancy-link';
 
 export function PostReplyContent({ replyPost }) {
     const limit = 100;
@@ -42,11 +43,7 @@ export function PostReplyContent({ replyPost }) {
                             name={replyPost.user.name}
                             avatar={replyPost.user.avatarUrl}
                         />
-                        <Link
-                            href={`/u/${replyPost.user.name}`}
-                            onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>
-                            u/{replyPost.user.name}
-                        </Link>
+                        <UserFancyLink user={replyPost.user} />
                     </div>
                     {replyPost.text.length > limit && <div className='flex items-center'>
                         <span className='w-4 h-4 cursor-pointer' onClick={e => {
@@ -109,7 +106,7 @@ function PostItem({
             {isDeleted ? <div className='flex items-center text-sm text-gray-400'>内容已经被删除</div>
                 : <div className='flex flex-col flex-1'>
                     <div className='flex items-center text-gray-300'>
-                        <Link href={`/u/${post.user.name}`} onClick={e => e.stopPropagation()} className='text-xs hover:underline underline-offset-2 cursor-pointer'>u/{post.user.name}</Link>
+                        <UserFancyLink user={post.user} />
                         <UserMark isAdmin={post.user.isAdmin} isModerator={post.user.isModerator} isLocked={post.user.isLocked} />
                         <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                         <span className='text-xs' suppressHydrationWarning>{dateUtils.fromNow(post.createdAt)}</span>
