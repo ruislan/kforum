@@ -1,19 +1,21 @@
 'use client';
 
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import clsx from 'clsx';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+
+import dateUtils from '@/lib/date-utils';
+import { USER_SORT, USER_SORT_NAMES } from '@/lib/constants';
 
 import Box from '../ui/box';
 import NoContent from '../ui/no-content';
 import Spinner from '../ui/spinner';
 import Button from '../ui/button';
 import SplitBall from '../ui/split-ball';
-import dateUtils from '@/lib/date-utils';
 import UserAvatar from '../ui/user-avatar';
-import { USER_SORT, USER_SORT_NAMES } from '@/lib/constants';
+import UserFancyLink from '../user/user-fancy-link';
 
 export default function UsersSearch({ query }) {
     const searchParams = useSearchParams();
@@ -72,12 +74,7 @@ export default function UsersSearch({ query }) {
                         />
                     </div>
                     <div className='flex items-center text-xs'>
-                        <Link
-                            href={`/u/${item.name}`}
-                            className='font-semibold text-gray-300 hover:underline hover:underline-offset-2'
-                        >
-                            u/{item.name}
-                        </Link>
+                        <UserFancyLink user={item} />
                         <SplitBall className='ml-1.5 mr-1.5 bg-gray-300' />
                         <span className='text-gray-400' suppressHydrationWarning>注册于 {dateUtils.fromNow(item.createdAt)}</span>
                     </div>
