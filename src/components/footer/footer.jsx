@@ -12,8 +12,8 @@ export default function Footer() {
                 </span>
                 <div className='flex items-center gap-2'>
                     <Link className='text-gray-200 underline underline-offset-2' href='https://github.com/ruislan/kforum'>源码</Link>
-                    <Link className='text-gray-200 underline underline-offset-2' href='#'>社区规则</Link>
-                    <Link className='text-gray-200 underline underline-offset-2' href='/privacy'>隐私声明</Link>
+                    <Link className='text-gray-200 underline underline-offset-2' href='/policy/content'>内容规范</Link>
+                    <Link className='text-gray-200 underline underline-offset-2' href='/policy/privacy'>隐私策略</Link>
                 </div>
             </div>
         </div>
