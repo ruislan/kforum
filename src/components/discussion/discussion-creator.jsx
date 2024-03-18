@@ -1,9 +1,9 @@
 'use client';
 
+import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-import _ from 'lodash';
 
 import Box from '../ui/box';
 import Button from '../ui/button';
@@ -39,8 +39,10 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
     const resetFields = () => {
         setCategorySlug('');
         setTitle('');
-        setContentJson({});
         setContentText('');
+        setContentJson({});
+        setTags([]);
+        setHasImage(false);
         setError(null);
     };
 

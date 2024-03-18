@@ -93,6 +93,17 @@ async function initBase() {
         await db.reaction.upsert({ where: { id: reaction.id }, create: reaction, update: reaction });
     }
     console.log('已完成反馈初始化.');
+
+    const tags = [
+        { name: '求助', textColor: '#ffffff', bgColor: '#008751' },
+        { name: 'AI', textColor: '#ffffff', bgColor: '#29aeff' },
+        { name: '闲聊', textColor: '#ffffff', bgColor: '#5f574e' },
+    ];
+    for (let i = 1; i <= tags.length; i++) {
+        const tag = tags[i - 1];
+        tag.id = i;
+        await db.tag.upsert({ where: { id: tag.id }, create: tag, update: tag });
+    }
 }
 
 // 用于测试
