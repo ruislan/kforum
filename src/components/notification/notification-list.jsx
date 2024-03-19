@@ -90,9 +90,10 @@ export default function NotificationList() {
     const fetchNotifications = useNotificationStore((state) => state.fetchNotifications);
     const isLoading = useNotificationStore((state) => state.isLoading);
     const hasMore = useNotificationStore((state) => state.hasMore);
+    const page = useNotificationStore((state) => state.page);
 
     useEffect(() => {
-        fetchNotifications().then(() => setIsLoaded(true));
+        fetchNotifications(1).then(() => setIsLoaded(true));
     }, [fetchNotifications]);
 
     if (isLoaded && !isLoading && dataList.length === 0) return <NoContent text={`没有新的通知信息`} />;
@@ -115,7 +116,7 @@ export default function NotificationList() {
                     <Button
                         kind='ghost'
                         disabled={isLoading}
-                        onClick={() => fetchNotifications()}
+                        onClick={() => fetchNotifications(page + 1)}
                     >
                         查看更多
                     </Button>

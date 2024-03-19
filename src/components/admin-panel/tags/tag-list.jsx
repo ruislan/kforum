@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import clsx from 'clsx';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
@@ -12,47 +11,25 @@ import Spinner from '@/components/ui/spinner';
 import Input from '@/components/ui/input';
 import NoContent from '@/components/ui/no-content';
 import Tag from '@/components/ui/tag';
+import useAdminTagsStore from '@/hooks/use-admin-tags-store';
 
 
 export default function TagList() {
-    const [isLoading, setIsLoading] = useState(false);
-    const [dataList, setDataList] = useState([]);
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(false);
+    const dataList = useAdminTagsStore((state) => state.tags);
+    const fetchTags = useAdminTagsStore((state) => state.fetchTags);
+    const isLoading = useAdminTagsStore((state) => state.isLoading);
+    const hasMore = useAdminTagsStore((state) => state.hasMore);
+    const page = useAdminTagsStore((state) => state.page);
+
     const router = useRouter();
     const queryRef = useRef();
 
-    const fetchDataList = useCallback(async () => {
-        setIsLoading(true);
-        try {
-            let url = `/api/admin/tags?page=${page}`;
-            const query = queryRef.current.value;
-            if (query) url += `&q=${query}`;
-            const res = await fetch(url);
-            if (res.ok) {
-                const json = await res.json();
-                setDataList(prev => page > 1 ? [...prev, ...json.data] : json.data);
-                setHasMore(json.hasMore);
-            } else {
-                toast.error('未知错误，请刷新重试');
-            }
-        } catch (err) {
-            toast.error('未知错误，请刷新重试');
-        } finally {
-            setIsLoading(false);
-        }
-    }, [page]);
-
-    const onSearchClick = async () => {
-        setDataList([]);
-        page > 1 ? setPage(1) : fetchDataList();
-    };
-
+    const onSearchClick = async () => fetchTags(queryRef.current.value, 1);
     const onNewClick = async () => router.push('/admin-panel/tags/create');
 
     useEffect(() => {
-        fetchDataList();
-    }, [fetchDataList]);
+        fetchTags('', 1);
+    }, [fetchTags]);
 
     return (
         <Box className='flex flex-col'>
@@ -97,7 +74,13 @@ export default function TagList() {
             {isLoading && <Spinner className='self-center' />}
             {hasMore && !isLoading && (
                 <div className='self-center py-2'>
-                    <Button kind='ghost' disabled={isLoading} onClick={() => setPage(prev => prev + 1)}>查看更多</Button>
+                    <Button
+                        kind='ghost'
+                        disabled={isLoading}
+                        onClick={() => fetchTags(queryRef.current.value, page + 1)}
+                    >
+                        查看更多
+                    </Button>
                 </div>
             )}
         </Box>

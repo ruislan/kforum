@@ -8,19 +8,24 @@ const useNotificationStore = create((set, get) => ({
     isDeleting: false,
     hasMore: false,
     error: null,
-    fetchNotifications: async () => {
-        const { page, isLoading } = get();
+    fetchNotifications: async (page) => {
+        const { isLoading } = get();
         if (isLoading) return;
 
         set({ isLoading: true });
-        const res = await fetch(`/api/notifications?page=${page}`);
-        const json = await res.json();
-        set((state) => ({
-            notifications: page === 1 ? [...json.data] : [...state.notifications, ...json.data],
-            page: state.page + 1,
-            isLoading: false,
-            hasMore: json.hasMore,
-        }));
+        try {
+            const res = await fetch(`/api/notifications?page=${page}`);
+            const json = await res.json();
+            set((state) => ({
+                notifications: page === 1 ? [...json.data] : [...state.notifications, ...json.data],
+                page: page,
+                isLoading: false,
+                hasMore: json.hasMore,
+            }));
+        } catch (err) {
+            toast.error('未知错误，请刷新重试');
+        }
+        set({ isLoading: false });
     },
     clearNotifications: async () => {
         set({ isDeleting: true, error: null });
