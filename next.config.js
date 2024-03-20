@@ -33,6 +33,11 @@ const nextConfig = {
             { source: '/(.*)', headers: securityHeaders },
         ];
     },
+    logging: {
+        fetches: {
+            fullUrl: false,
+        },
+    },
     async rewrites() {
         return [
             {
