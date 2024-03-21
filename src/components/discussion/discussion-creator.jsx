@@ -63,7 +63,8 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
         return true;
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         if (isSubmitting) return;
         if (!validateFields()) return;
         setIsSubmitting(true);
@@ -111,7 +112,7 @@ export default function DiscussionCreator({ categories, initCategorySlug }) {
 
     return (
         <Box>
-            <form onSubmit={async e => { e.preventDefault(); handleSubmit(); }}>
+            <form onSubmit={handleSubmit}>
                 <div className='flex flex-col w-full gap-2'>
                     <Select
                         label='选择分类'

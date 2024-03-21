@@ -36,6 +36,7 @@ export default function PostUpdater({ post, onUpdated, onCanceled }) {
     };
 
     const handleSubmit = async () => {
+        e.preventDefault();
         if (isSubmitting) return;
         if (!validateFields()) return;
         setIsSubmitting(true);
@@ -78,7 +79,7 @@ export default function PostUpdater({ post, onUpdated, onCanceled }) {
 
     if (!session || !post) return null;
     return (
-        <form className='my-2' ref={formRef} onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
+        <form className='my-2' ref={formRef} onSubmit={handleSubmit}>
             <div className='flex flex-col gap-2'>
                 <Tiptap
                     content={toHTML(contentJson)}

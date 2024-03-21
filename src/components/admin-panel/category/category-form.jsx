@@ -140,7 +140,8 @@ export default function CategoryForm({ category }) {
         }
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         if (isSubmitting) return;
         if (!validateFields()) return;
         setIsSubmitting(true);
@@ -156,7 +157,7 @@ export default function CategoryForm({ category }) {
 
     return (
         <form
-            onSubmit={e => { e.preventDefault(); handleSubmit(); }}
+            onSubmit={handleSubmit}
             className='flex flex-col gap-4 text-gray-100'
         >
             <FormControl title='名称' subtitle='应该尽量简洁'>

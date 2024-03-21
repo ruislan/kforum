@@ -24,6 +24,7 @@ export default function ProfileForm({ user }) {
     };
 
     const handleSubmit = async () => {
+        e.preventDefault();
         if (isSubmitting) return;
         if (!validateFields()) return;
         setIsSubmitting(true);
@@ -59,10 +60,7 @@ export default function ProfileForm({ user }) {
     return (
         <form
             className='flex flex-col gap-4 text-gray-100'
-            onSubmit={e => {
-                e.preventDefault();
-                handleSubmit();
-            }}
+            onSubmit={handleSubmit}
         >
             <FormControl title='性别'>
                 <Select

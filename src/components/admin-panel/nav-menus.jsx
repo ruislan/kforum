@@ -23,7 +23,8 @@ export default function NavMenus() {
         setDataList(dataList.filter(i => i !== item));
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         setIsSubmitting(true);
         try {
             const menus = dataList.filter(item => item.name?.length > 0 && item.url?.length > 0);
@@ -77,10 +78,7 @@ export default function NavMenus() {
             <HeadingSmall>导航设置</HeadingSmall>
 
             {isLoading && <Spinner className='self-center' />}
-            <form onSubmit={e => {
-                e.preventDefault();
-                handleSubmit();
-            }}>
+            <form onSubmit={handleSubmit}>
                 <div className='grid grid-cols-4 items-center gap-2 w-full mb-2 text-sm'>
                     <div>名称</div>
                     <div>URL</div>

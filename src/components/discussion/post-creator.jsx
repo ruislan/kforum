@@ -41,7 +41,8 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
         return true;
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         if (isSubmitting) return;
         if (!validateFields()) return;
         setIsSubmitting(true);
@@ -113,7 +114,7 @@ export default function PostCreator({ discussion, replyToPost, onCreated }) {
                             {!replyToPost || replyToPost?.isFirst ? '主贴' : <PostDetailPopover post={replyToPost} />}
                         </div>
                     </div>
-                    <form ref={formRef} onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
+                    <form ref={formRef} onSubmit={handleSubmit}>
                         <Tiptap onCreate={({ editor }) => setTipTap(editor)} onUpdate={({ editor }) => {
                             setContentJson(editor.getJSON());
                             setContentText(editor.getText());

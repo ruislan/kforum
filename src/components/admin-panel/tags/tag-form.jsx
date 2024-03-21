@@ -135,6 +135,7 @@ export default function TagForm({ tag }) {
     };
 
     const handleSubmit = async () => {
+        e.preventDefault();
         if (isSubmitting) return;
         if (!validateFields()) return;
         setIsSubmitting(true);
@@ -162,10 +163,7 @@ export default function TagForm({ tag }) {
                 <Tag color={textColor} bgColor={bgColor}>{name || '范例标签'}</Tag>
             </div>
             <form
-                onSubmit={e => {
-                    e.preventDefault();
-                    handleSubmit();
-                }}
+                onSubmit={handleSubmit}
                 className='flex flex-col gap-4 text-gray-100'
             >
                 <FormControl title='名称' subtitle='应该尽量简洁，最长 20 个字符'>

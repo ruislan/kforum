@@ -141,7 +141,8 @@ export default function SiteForm({ settings: initSettings }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         if (isSubmitting) return;
         setError(null);
         setIsSubmitting(true);
@@ -181,10 +182,7 @@ export default function SiteForm({ settings: initSettings }) {
     return (
         <form
             className='flex flex-col gap-4 text-gray-100'
-            onSubmit={e => {
-                e.preventDefault();
-                handleSubmit();
-            }}
+            onSubmit={handleSubmit}
         >
             {settings.map(setting =>
                 <FormControl key={setting.key} title={setting.name} subtitle={setting.description}>

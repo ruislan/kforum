@@ -31,7 +31,8 @@ export default function LoginModal() {
         setError(null);
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         if (isSubmitting) return;
         setIsSubmitting(true);
         setError(null);
@@ -80,7 +81,7 @@ export default function LoginModal() {
                                 <Dialog.Description className='text-sm pl-8 pr-8 mb-4'>
                                     欢迎回来👋。继续登录，即表示您同意我们的用户协议，并承认您理解隐私政策。
                                 </Dialog.Description>
-                                <form onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
+                                <form onSubmit={handleSubmit}>
                                     <div className='flex flex-col gap-2 pl-8 pr-8 mb-4 w-full'>
                                         <div className='flex items-center text-sm w-full focus:outline-none bg-neutral-800 p-2 border border-solid border-neutral-700 rounded-md focus-within:border-neutral-400'>
                                             <input type='text' className='w-full h-7 text-neutral-200 bg-transparent outline-none'

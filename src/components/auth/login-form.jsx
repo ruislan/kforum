@@ -24,7 +24,8 @@ export default function LoginForm() {
         setError(null);
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         if (isSubmitting || isSuccess) return;
         setIsSubmitting(true);
         setError(null);
@@ -48,7 +49,7 @@ export default function LoginForm() {
         }
     };
     return (
-        <form className='flex flex-col' onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
+        <form className='flex flex-col' onSubmit={handleSubmit}>
             <h2 className='text-2xl font-bold mb-4'>登陆</h2>
             <div className='text-sm mb-4'>
                 欢迎回来👋。继续登录，即表示您同意我们的用户协议，并承认您理解隐私政策。

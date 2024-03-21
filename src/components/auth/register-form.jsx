@@ -23,7 +23,8 @@ export default function RegisterForm() {
         setError(null);
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         if (isSubmitting) return;
         setIsSubmitting(true);
         try {
@@ -51,7 +52,7 @@ export default function RegisterForm() {
     };
 
     return (
-        <form className='flex flex-col' onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
+        <form className='flex flex-col' onSubmit={handleSubmit}>
             <h2 className='text-2xl font-bold mb-4'>注册</h2>
             <div className='text-sm mb-4'>
                 欢迎加入👏。继续注册，即表示您同意我们的用户协议，并承认您理解隐私政策。

@@ -33,7 +33,8 @@ export default function SecurityForm() {
         return true;
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         if (isSubmitting) return;
         if (!validateFields()) return;
         setIsSubmitting(true);
@@ -67,10 +68,7 @@ export default function SecurityForm() {
 
     return (
         <form
-            onSubmit={async e => {
-                e.preventDefault();
-                handleSubmit();
-            }}
+            onSubmit={handleSubmit}
             className='flex flex-col gap-4 text-gray-100'
         >
             <FormControl title='当前密码'>
