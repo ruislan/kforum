@@ -42,16 +42,19 @@ const uploadModel = {
     },
     async cleanup() {
         // 清理的图片通常是不能 PostRef, AvatarRef，Discussion Poster
+        // 同时清理 3 天前的，避免清理掉正在上传的。
         // 清理掉数据库记录
         // 清理掉文件
         // 为了避免清理过大，我们一次最多只处理 1000 条记录
+        const deadDay = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
         const uploads = await prisma.upload.findMany({
             take: 1000,
             where: {
                 discussions: { none: {} },
                 posts: { none: {} },
                 avatars: { none: {} },
-                siteSettings: { none: {} }
+                siteSettings: { none: {} },
+                createdAt: { lte: deadDay }
             }
         });
         const data = await prisma.upload.deleteMany({ where: { id: { in: uploads.map(u => u.id) } } });

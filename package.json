@@ -43,7 +43,7 @@
     "zustand": "^4.5.2"
   },
   "devDependencies": {
-    "@tailwindcss/typography": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.11",
     "autoprefixer": "10.4.15",
     "casual": "^1.6.2",
     "clsx": "^2.1.0",
