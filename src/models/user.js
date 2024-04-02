@@ -281,7 +281,6 @@ const userModel = {
         if (!key) return;
         let value = await siteSettingModel.getFieldValue(key);
         value = value * times;
-        console.log('update value: ' + value);
         await prisma.user.update({
             where: { id: userId },
             data: { reputation: { increment: value } }

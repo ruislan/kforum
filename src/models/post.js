@@ -227,9 +227,9 @@ const postModel = {
                     userId: { not: post.discussion.userId },
                 }
             });
-            console.log(isFirstPost);
-            console.log(count);
-            console.log(post.discussion.isSticky);
+            // console.log(isFirstPost);
+            // console.log(count);
+            // console.log(post.discussion.isSticky);
             if (isSticky) { // 如果之前是置顶状态，那么还要减去置顶
                 await userModel.updateReputation({
                     userId: post.discussion.userId,
