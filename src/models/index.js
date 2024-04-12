@@ -1,4 +1,3 @@
-import 'server-only';
 export { default as bookmarkModel } from './bookmark';
 export { default as categoryModel } from './category';
 export { default as discussionModel } from './discussion';
